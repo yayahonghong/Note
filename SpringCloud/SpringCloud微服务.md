@@ -250,3 +250,80 @@ void updateBalanceByIds(@Param("ew") LambdaQueryWrapper<User> wrapper, @Param("a
 ```
 
 
+
+
+
+### Service接口
+
+![cf661e6a-b8e4-4e89-89f4-9e0b77b4e330](./images/cf661e6a-b8e4-4e89-89f4-9e0b77b4e330.png)
+
+   使用步骤：
+
+1. 自定义Service接口继承IService接口
+
+```java
+public interface IUserService extends IService<User> {
+}
+```
+
+2. 自定义Service实现类，实现自定义接口并继承ServiceImpl类
+
+```java
+@Service
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+}
+```
+
+
+
+IService中还提供了Lambda功能来简化我们的复杂查询及更新功能。
+
+**案例一**：实现一个根据复杂条件查询用户的接口，查询条件如下：
+
+* name：用户名关键字，可以为空
+
+* status：用户状态，可以为空
+
+* minBalance：最小余额，可以为空
+
+* maxBalance：最大余额，可以为空
+
+可以理解成一个用户的后台管理界面，管理员可以自己选择条件来筛选用户，因此上述条件不一定存在，需要做判断。
+
+
+
+```java
+    List<User> users = userService.lambdaQuery()
+            .like(username != null, User::getUsername, username)
+            .eq(status != null, User::getStatus, status)
+            .ge(minBalance != null, User::getBalance, minBalance)
+            .le(maxBalance != null, User::getBalance, maxBalance)
+            .list();
+```
+
+> 在组织查询条件的时候，我们加入了 `username != null` 这样的参数，意思就是当条件成立时才会添加这个查询条件
+
+可以发现lambdaQuery方法中除了可以构建条件，还需要在链式编程的最后添加一个`list()`，这是在告诉MP我们的调用结果需要是一个list集合。这里不仅可以用`list()`，可选的方法有：
+
+* `.one()`：最多1个结果
+
+* `.list()`：返回集合结果
+
+* `.count()`：返回计数结果
+
+MybatisPlus会根据链式编程的最后一个方法来判断最终的返回结果。
+
+
+
+根据id修改用户余额
+
+```java
+lambdaUpdate()
+            .set(User::getBalance, remainBalance) // 更新余额
+            .set(remainBalance == 0, User::getStatus, 2) // 动态判断，是否更新status
+            .eq(User::getId, id)
+            .eq(User::getBalance, user.getBalance()) // 乐观锁，解决并发问题
+            .update();
+```
+
+

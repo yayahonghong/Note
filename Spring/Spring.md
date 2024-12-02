@@ -2035,7 +2035,7 @@ Spring事务编程相关的类主要有如下三个
 
 ### xml方式
 
-导入Spring事务的相关的坐标，spring-jdbc坐标已经引入的**spring-tx**坐标
+导入Spring事务的相关的坐标，spring-jdbc坐标已经引入**spring-tx**坐标
 
 ```xml
         <dependency>
@@ -2067,7 +2067,7 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
             <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
-    
+
     <!-- 配置切面 -->
     <aop:config>
         <aop:pointcut id="myPointcut" expression="execution(* com.ysh.service.*.*(..))"/>
@@ -2084,8 +2084,222 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 > 
 >     Hibernate作为持久层框架时，使用的平台事务管理器是HibernateTransactionManager。
 
+
+
+**事务定义信息配置**，每个事务有很多特性，例如：隔离级别、只读状态、超时时间等，这些信息在开发时可以通过connection进行指定，而此处要通过配置文件进行配置
+
+```xml
+    <tx:attributes>
+        <tx:method name="方法名称"
+                   isolation="隔离级别"
+                   propagation="传播行为"
+                   read-only="只读状态"
+                   timeout="超时时间"/>
+    </tx:attributes>
+```
+
+
+
+**name属性**：指定哪个方法要进行哪些事务的属性配置
+
+> 方法名在配置时，也可以使用* 进行模糊匹配
+
+
+
+**isolation属性**：指定事务的隔离级别，事务并发存在三大问题：脏读、不可重复读、幻读/虚读。可以通过设置事务的隔离级别来保证并发问题的出现，常用的是READ_COMMITTED 和REPEATABLE_READ
+
+| 属性               | 说明                                                      |
+| ---------------- | ------------------------------------------------------- |
+| DEFAULT          | 默认隔离级别，取决于当前数据库隔离级别，例如MySQL默认隔离级别是REPEATABLE_READ       |
+| READ_UNCOMMITTED | A事务可以读取到B事务尚未提交的事务记录，不能解决任何并发问题，安全性最低，性能最高              |
+| READ_COMMITTED   | A事务只能读取到其他事务已经提交的记录，不能读取到未提交的记录。可以解决脏读问题，但是不能解决不可重复读和幻读 |
+| REPEATABLE_READ  | A事务多次从数据库读取某条记录结果一致，可以解决不可重复读，不可以解决幻读                   |
+| SERIALIZABLE     | 串行化，可以解决任何并发问题，安全性最高，但是性能最低                             |
+
+
+
+**read-only属性**：设置当前的只读状态，如果是查询则设置为true，可以**提高查询性能**，如果是更新（增删改）操作则设置为false
+
+```xml
+<!-- 一般查询相关的业务操作都会设置为只读模式-->
+ <tx:method name="select*" read-only="true"/>
+ <tx:method name="find*" read-only="true"/>
+```
+
+
+
+**timeout属性**：设置事务执行的超时时间，单位是秒，如果超过该时间限制但事务还没有完成，则自动回滚事务，不在继续执行。默认值是-1，即没有超时时间限制
+
+
+
+**propagation属性**：设置事务的传播行为，主要解决是A方法调用B方法时，事务的传播方式问题的，例如：使用单方的事务，还是A和B都使用自己的事务等。事务的传播行为有如下七种属性值可配置
+
+| 属性            | 说明                                            |
+| ------------- | --------------------------------------------- |
+| REQUIRED（默认值） | A调用B，B需要事务，如果A有事务B就加入A的事务中，如果A没有事务，B就自己创建一个事务 |
+| REQUIRED_NEW  | A调用B，B需要新事务，如果A有事务就挂起，B自己创建一个新的事务             |
+| SUPPORTS      | A调用B，B有无事务无所谓，A有事务就加入到A事务中，A无事务B就以非事务方式执行     |
+| NOT_SUPPORTS  | A调用B，B以无事务方式执行，A如有事务则挂起                       |
+| NEVER         | A调用B，B以无事务方式执行，A如有事务则抛出异常                     |
+| MANDATORY     | A调用B，B要加入A的事务中，如果A无事务就抛出异常                    |
+| NESTED        | A调用B，B创建一个新事务，A有事务就作为嵌套事务存在，A没事务就以创建的新事务执行    |
+
+
+
+
+
+**xml方式声明式事务控制原理**：
+
+`<tx:advice>`配置的实际上是一个遵守了Advice规范的类，该类实现了`MethodInterceptor`接口可以对方法进行环绕增强。(AOP原理)
+
+
+
 ### 注解方式
 
+在**方法上**添加@Transactional注解，该注解可以配置事务定义信息配置
+
+> 若配置在类上，则该类全局受事务控制
+
+```xml
+    <tx:annotation-driven/>
+    <!-- 事务自动代理 -->
+```
+
+若使用全注解方式：
+
+```java
+@Configuration
+@ComponentScan("com.ysh")
+@MapperScan("com.ysh.mapper")
+@EnableTransactionManagement    //自动事务管理
+public class SpringConfig {
+    @Bean
+    public DataSource dataSource() {
+        DruidDataSource dataSource =  new DruidDataSource();
+        dataSource.setUsername("root");
+        dataSource.setPassword("123456");
+        dataSource.setUrl("jdbc:mysql://8.138.186.154:3306/mp");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        return dataSource;
+    }
+
+    @Bean
+    public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource) {
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource);
+        return sqlSessionFactoryBean;
+    }
+    
+    // 配置事务管理器
+    @Bean("transactionManager")
+    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource);
+        dataSourceTransactionManager.setDataSource(dataSource);
+        return dataSourceTransactionManager;
+    }
+}
+```
+
+
+
 ---
+
+# Spring整合Web环境
+
+## Javaweb三大组件
+
+Javaweb组件的特点
+
+| 组件         | 作用                      | 特点                                                                                                                         |
+| ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `Servlet`  | 服务端小程序，负责接收客户端请求并作出响应的  | 单例对象，默认第一次访问创建，可以通过配置指定服务器启动就创建，Servlet创建完毕会执行初始化init方法。每个Servlet有一个service方法，每次访问都会 执行service方法，但是缺点是一个业务功能就需要配置一个Servlet |
+| `Filter`   | 过滤器，负责对客户端请求进行过滤操作的     | 单例对象，服务器启动时就创建，对象创建完毕执行init方法，对客户端的请求进行过滤，符合要求的放行，不符合要求的直接响应客户端，执行过滤的核心方法doFilter                                          |
+| `Listener` | 监听器，负责对域对象的创建和属性变化进行监听的 | 根据类型和作用不同，又可分为监听域对象创建销毁和域对象属性内容变化的，根据监听的域不同，又可以分为监听Request域的，监听Session域的，监听ServletContext域的                                |
+
+
+
+## 整合web的思路及实现
+
+在进行Java开发时要遵循三层架构+MVC，Spring操作最核心的就是Spring容器，web层需要注入Service，service层需要注入Dao（Mapper），web层使用Servlet技术充当的话，需要在Servlet中获得Spring容器
+
+```java
+AnnotationConfigApplicationContext applicationContext =
+ new AnnotationConfigApplicationContext(ApplicationContextConfig.class);
+ AccountService accountService = (AccountService)applicationContext.getBean("accountService");
+ accountService.transferMoney("tom","lucy",100);
+```
+
+web层代码如果都去编写创建AnnotationConfigApplicationContext的代码，那么配置类重复被加载了，Spring容器也重复被创建了，不能每次想从容器中获得一个Bean都得先创建一次容器，这样肯定是不允许。
+
+需要实现如下要求：
+
+- ApplicationContext创建一次，配置类加载一次;
+
+- 最好web服务器启动时，就执行第1步操作，后续直接从容器中获取Bean使用即可;
+
+- ApplicationContext的引用需要在web层任何位置都可以获取到。
+
+
+
+针对以上诉求我们给出解决思路，如下：
+
+- 在ServletContextListener的contextInitialized方法中执行ApplicationContext的创建。或在Servlet的init方法中执行ApplicationContext的创建，并给Servlet的load-on-startup属性一个数字值，确保服务器启动Servlet就创建;
+
+- 将创建好的ApplicationContext存储到`ServletContext`域中，**这样整个web层任何位置就都可以获取到了**
+
+```java
+public class SpringContextListener implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        // 创建Spring的IoC容器
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        // 将Spring的IoC容器保存到ServletContext中
+        sce.getServletContext().setAttribute("applicationContext", context);
+
+        ServletContextListener.super.contextInitialized(sce);
+    }
+}
+```
+
+
+
+## web开发组件spring-web
+
+导入依赖(`pom.xml`)：
+
+```xml
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.1.14</version>
+        </dependency>
+```
+
+
+
+配置(`web.xml`)
+
+```xml
+    <!-- 定义全局参数 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    
+    <!-- 定义Spring监听器 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+```
+
+
+
+使用spring容器
+
+```java
+        ServletContext servletContext = getServletContext();
+        WebApplicationContext app = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+```
 
 
