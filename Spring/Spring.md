@@ -2189,7 +2189,7 @@ public class SpringConfig {
         sqlSessionFactoryBean.setDataSource(dataSource);
         return sqlSessionFactoryBean;
     }
-    
+
     // 配置事务管理器
     @Bean("transactionManager")
     public DataSourceTransactionManager transactionManager(DataSource dataSource) {
@@ -2238,8 +2238,8 @@ web层代码如果都去编写创建AnnotationConfigApplicationContext的代码�
 - 最好web服务器启动时，就执行第1步操作，后续直接从容器中获取Bean使用即可;
 
 - ApplicationContext的引用需要在web层任何位置都可以获取到。
-
-
+  
+  
 
 针对以上诉求我们给出解决思路，如下：
 
@@ -2286,7 +2286,7 @@ public class SpringContextListener implements ServletContextListener {
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
-    
+
     <!-- 定义Spring监听器 -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -2303,3 +2303,222 @@ public class SpringContextListener implements ServletContextListener {
 ```
 
 
+
+
+
+如果**核心配置类使用的是注解形式**的，那么Spring容器是AnnotationConfigWebApplicationContext，如下配置方式
+
+```java
+public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWebApplicationContext {
+    public MyAnnotationConfigWebApplicationContext(){
+        super();
+        //注册核心配置类
+        super.register(ApplicationContextConfig.class);
+    }
+}
+```
+
+`web.xml`
+
+```xml
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>com.ysh.web.MyAnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+```
+
+
+
+
+
+## web层MVC框架思想与设计思路
+
+原始Javaweb开发中，Servlet充当Controller的角色，Jsp充当View角色，JavaBean充当模型角色，后期Ajax异步流行后，在加上现在前后端分离开发模式成熟后，View就被原始Html+Vue替代。原始Javaweb开发中，Service充当Controller有很多弊端，显而易见的有如下几个：
+
+| Servlet作为Controller的问题                   | 解决思路和方案                                       |
+| ---------------------------------------- | --------------------------------------------- |
+| 每个业务功能请求都对应一个Servlet                     | 根据业务模块去划分Controller                           |
+| 每个Servlet的业务操作太繁琐                        | 将通用的行为，功能进行抽取封装                               |
+| Servlet获得Spring容器的组件只能通过客户端代码去获取，不能优雅的整合 | 通过Spring的扩展点，去封装一个框架，从原有的Servlet完全接手过来web层的业务 |
+
+
+
+
+
+负责共有行为的Servlet称之为前端控制器，负责业务行为的JavaBean称之为控制器Controller
+
+![bb03a60c-7e55-482a-be45-27d28851183d](./images/bb03a60c-7e55-482a-be45-27d28851183d.png)
+
+分析前端控制器基本功能如下：
+
+1. 具备可以映射到业务Bean的能力
+
+2. 具备可以解析请求参数、封装实体等共有功能
+
+3. 具备响应视图及响应其他数据的功能
+   
+   
+
+---
+
+
+
+# SpringMVC框架
+
+---
+
+## SpringMVC简介
+
+### SpringMVC概述
+
+    SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布的组件，SpringMVC和Spring可以无缝整合，使用DispatcherServlet作为前端控制器，且内部提供了处理器映射器、处理器适配器、视图解析器等组件，可以简化JavaBean封装，Json转化、文件上传等操作。
+
+![31277af6-97bb-4697-9eeb-ae0190205738](./images/31277af6-97bb-4697-9eeb-ae0190205738.png)
+
+
+
+### SpringMVC快速入门
+
+1. 导入`spring-webmvc`坐标（pom.xml）
+
+```xml
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+```
+
+2. 编写一个控制器Controller，配置映射信息
+
+```java
+@Controller
+public class UserController {
+    @RequestMapping("/show")
+    public String show(){
+        System.out.println("show 执行....");
+        //视图跳转到index.jsp
+        return "/index.jsp";
+    }
+}
+```
+
+3. 在web.xml中配置SpringMVC的前端控制器ServletDispatcher
+
+```xml
+    <servlet>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--指定springMVC配置文件位置-->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring-mvc.xml</param-value>
+        </init-param>
+        <!--服务器启动就创建-->
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+```
+
+4. 创建springMVC的核心配置文件 spring-mvc.xml，并配置组件扫描web层
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.ysh.controller" />
+        
+</beans>
+```
+
+
+
+### Controller中访问容器中的Bean
+
+1. 创建一个applicationContext.xml文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.ysh">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+</beans>
+```
+
+2. 在web.xml中配置ContextLoaderListener
+
+```xml
+    <!-- 配置Spring容器 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+```
+
+3. 编写Service类并使用`@Service`注解标记
+
+4. @Autowried注入可正常使用
+
+
+
+### SpringMVC关键组件浅析
+
+| 组件                    | 描述                                                   | 常用类                          |
+| --------------------- | ---------------------------------------------------- | ---------------------------- |
+| 处理器映射器：HandlerMapping | 匹配映射路径对应的Handler，返回可执行的处理器链对象HandlerExecutionChain对象 | RequestMappingHandlerMapping |
+| 处理器适配器：HandlerAdapter | 匹配HandlerExecutionChain对应的适配器进行处理器调用，返回视图模型对象        | RequestMappingHandlerAdapter |
+| 视图解析器：ViewResolver    | 对视图模型对象进行解析                                          | InternalResourceViewResolver |
+
+![7ea58f93-0164-4675-b4e7-0491db88910b](./images/7ea58f93-0164-4675-b4e7-0491db88910b.png)
+
+
+
+## SpringMVC的请求处理
+
+
+
+
+
+## SpringMVC的响应处理
+
+
+
+
+
+## SpringMVC的拦截器
+
+
+
+
+
+## SpringMVC的全注解开发
+
+
+
+
+
+## SpringMVC的组件原理剖析
+
+
+
+
+
+## SpringMVC的异常处理机制

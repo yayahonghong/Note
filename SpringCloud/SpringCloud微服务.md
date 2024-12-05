@@ -255,6 +255,8 @@ void updateBalanceByIds(@Param("ew") LambdaQueryWrapper<User> wrapper, @Param("a
 
 ### Service接口
 
+#### 基本使用
+
 ![cf661e6a-b8e4-4e89-89f4-9e0b77b4e330](./images/cf661e6a-b8e4-4e89-89f4-9e0b77b4e330.png)
 
    使用步骤：
@@ -276,7 +278,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
 
 
-IService中还提供了Lambda功能来简化我们的复杂查询及更新功能。
+#### Lambda
+
+IService中还提供了**Lambda**功能来简化我们的复杂查询及更新功能。
 
 **案例一**：实现一个根据复杂条件查询用户的接口，查询条件如下：
 
@@ -325,5 +329,130 @@ lambdaUpdate()
             .eq(User::getBalance, user.getBalance()) // 乐观锁，解决并发问题
             .update();
 ```
+
+
+
+#### 批量新增
+
+测试逐条插入数据，效率极低。
+
+
+
+然后再试试MybatisPlus的批处理：
+
+```java
+@Test
+void testSaveBatch() {
+    // 准备10万条数据
+    List<User> list = new ArrayList<>(1000);
+    long b = System.currentTimeMillis();
+    for (int i = 1; i <= 100000; i++) {
+        list.add(buildUser(i));
+        // 每1000条批量插入一次
+        if (i % 1000 == 0) {
+            userService.saveBatch(list);
+            list.clear();
+        }
+    }
+    long e = System.currentTimeMillis();
+    System.out.println("耗时：" + (e - b));
+}
+```
+
+> 比逐条新增效率提高了10倍左右
+
+
+
+`MybatisPlus`的批处理是基于`PrepareStatement`的预编译模式，然后批量提交，最终在数据库执行时还是会有多条insert语句，逐条插入数据。SQL类似这样：
+
+```sql
+Preparing: INSERT INTO user ( username, password, phone, info, balance, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+Parameters: user_1, 123, 18688190001, "", 2000, 2023-07-01, 2023-07-01
+Parameters: user_2, 123, 18688190002, "", 2000, 2023-07-01, 2023-07-01
+Parameters: user_3, 123, 18688190003, "", 2000, 2023-07-01, 2023-07-01
+```
+
+而如果想要得到最佳性能，最好是将多条SQL合并为一条，像这样：
+
+```sql
+INSERT INTO user ( username, password, phone, info, balance, create_time, update_time )
+VALUES 
+(user_1, 123, 18688190001, "", 2000, 2023-07-01, 2023-07-01),
+(user_2, 123, 18688190002, "", 2000, 2023-07-01, 2023-07-01),
+(user_3, 123, 18688190003, "", 2000, 2023-07-01, 2023-07-01),
+(user_4, 123, 18688190004, "", 2000, 2023-07-01, 2023-07-01);
+```
+
+
+
+**解决方案：**
+
+**MySQL**的客户端连接参数中有这样的一个参数：`rewriteBatchedStatements`。顾名思义，就是重写批处理的`statement`语句。
+
+> 这个参数的默认值是false，我们需要修改连接参数，将其配置为true
+
+修改项目中的application.yml文件，在jdbc的url后面添加参数`&rewriteBatchedStatements=true`
+
+```yml
+spring:
+  datasource:
+    url: jdbc:mysql://8.138.186.154:3306/mp?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+```
+
+
+
+## 扩展功能
+
+### 代码生成
+
+在使用MybatisPlus以后，基础的`Mapper`、`Service`、`PO`代码相对固定，重复编写也比较麻烦。因此MybatisPlus官方提供了代码生成器根据数据库表结构生成`PO`、`Mapper`、`Service`等相关代码。只不过代码生成器同样要编码使用，也很麻烦。
+
+推荐使用一款`MybatisPlus`的插件(IDEA插件)，它可以基于图形化界面完成`MybatisPlus`的代码生成，非常简单。
+
+![c228f3a6-b4a3-4209-9bf1-e9da9ca24eb7](./images/c228f3a6-b4a3-4209-9bf1-e9da9ca24eb7.png)
+
+
+
+### 静态工具
+
+有的时候Service之间也会相互调用，为了**避免出现循环依赖问题**，MybatisPlus提供一个静态工具类：`Db`，其中的一些静态方法与`IService`中方法签名基本一致，也可以帮助我们实现CRUD功能：
+
+![246f37d2-f85c-4e93-a656-72380da78ba9](./images/246f37d2-f85c-4e93-a656-72380da78ba9.png)
+
+示例：
+
+```java
+@Test
+void testDbGet() {
+    User user = Db.getById(1L, User.class);
+    System.out.println(user);
+}
+
+@Test
+void testDbList() {
+    // 利用Db实现复杂条件查询
+    List<User> list = Db.lambdaQuery(User.class)
+            .like(User::getUsername, "o")
+            .ge(User::getBalance, 1000)
+            .list();
+    list.forEach(System.out::println);
+}
+
+@Test
+void testDbUpdate() {
+    Db.lambdaUpdate(User.class)
+            .set(User::getBalance, 2000)
+            .eq(User::getUsername, "Rose");
+}
+```
+
+
+
+### 逻辑删除
+
+### 通用枚举
 
 
