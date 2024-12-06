@@ -2436,7 +2436,7 @@ public class UserController {
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.ysh.controller" />
-        
+
 </beans>
 ```
 
@@ -2476,8 +2476,8 @@ public class UserController {
 3. 编写Service类并使用`@Service`注解标记
 
 4. @Autowried注入可正常使用
-
-
+   
+   
 
 ### SpringMVC关键组件浅析
 
@@ -2491,7 +2491,106 @@ public class UserController {
 
 
 
+- SpringMVC的默认组件，SpringMVC在前端控制器 `DispatcherServlet`加载时，就会进行初始化操作。
+
+- 在进行初始化时，就会加载SpringMVC默认指定的一些组件，这些默认组件配置在与spring-webmvc.jar包下的 `org\springframework\web\servlet\DispatcherServlet.properties`
+
+- 在DispatcherServlet中存在集合存储着这些组件，SpringMVC的默认组件会在 DispatcherServlet 中进行维护，但是并没有存储在与SpringMVC的容器中
+
+- 如果不想使用默认组件，可以将替代方案使用Spring Bean的方式进行配置,`<bean />`
+  
+  
+
 ## SpringMVC的请求处理
+
+### 请求映射路径的配置
+
+配置映射路径，映射器处理器才能找到Controller的方法资源，目前主流映射路径配置方式就是`@RequestMapping`
+
+| 注解              | 作用                          | 使用位置  |
+| --------------- | --------------------------- | ----- |
+| @RequestMapping | 设置控制器方法的访问资源路径，可以接收任何请求使用位置 | 方法和类上 |
+| @GetMapping     | 设置控制器方法的访问资源路径，可以接收GET请求    | 方法和类上 |
+| @PostMapping    | 设置控制器方法的访问资源路径，可以接收POST请求   | 方法和类上 |
+
+
+
+@RequestMapping注解，主要使用在控制器的方法上，用于标识客户端访问资源路径，常用的属性有value、path、method、headers、params等。
+
+
+
+value和path指定单个或多个路径
+
+```java
+@RequestMapping(value = "/show")//使用value属性指定一个访问路径
+public String show(){}
+@RequestMapping(value = {"/show","/haohao","/abc"})//使用value属性指定多个访问路径
+public String show(){}
+@RequestMapping(path = "/show")//使用path属性指定一个访问路径
+public String show(){}
+@RequestMapping(path = {"/show","/haohao","/abc"})//使用path属性指定多个访问路径
+public String show(){}
+@RequestMapping("/show")//如果只设置访问路径时，value和path可以省略
+public String show(){}
+@RequestMapping({"/show","/haohao","/abc"})
+public String show(){}
+```
+
+
+
+method属性，限定访问方式
+
+```java
+//请求地址是/show,且请求方式必须是POST才能匹配成功
+@RequestMapping(value = "/show",method = RequestMethod.POST)
+public String show(){}
+```
+
+method的属性值是一个枚举类型，源码如下：
+
+```java
+public enum RequestMethod {
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    PATCH,
+    DELETE,
+    OPTIONS,
+    TRACE;
+
+    private RequestMethod() {
+    }
+}
+```
+
+
+
+@GetMapping，当请求方式是GET时，我们可以使用@GetMapping替代@RequestMapping
+
+@PostMapping，当请求方式是POST时，我们可以使用@PostMapping替代@RequestMapping
+
+
+
+以上注解使用在类上后，该类所有方法都公用该注解设置的属性，访问路径则为类上的`映射地址+方法上`的映射地址
+
+
+
+### 请求数据的接收
+
+
+
+
+
+### Javaweb常用对象获取
+
+
+
+
+
+### 请求静态资源注解驱动 标签
+
+
 
 
 
