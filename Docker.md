@@ -4,11 +4,121 @@ Docker 是一个用于 [开发](https://docker.github.net.cn/get-started/overvi
 
 
 
+# 安装Docker
+
+> Centos7
+
+首先如果系统中已经存在旧的Docker，则先卸载
+
+```bash
+yum remove docker \
+    docker-client \
+    docker-client-latest \
+    docker-common \
+    docker-latest \
+    docker-latest-logrotate \
+    docker-logrotate \
+    docker-engine \
+    docker-selinux 
+```
+
+
+
+首先要安装一个yum工具
+
+```bash
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+```
+
+
+
+
+安装成功后，执行命令，配置Docker的yum源（已更新为阿里云源）：
+
+```bash
+sudo yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.reposudo sed -i 's+download.docker.com+mirrors.aliyun.com/docker-ce+' /etc/yum.repos.d/docker-ce.repo
+```
+
+
+
+
+更新yum，建立缓存
+
+```bash
+sudo yum makecache fast
+```
+
+
+执行命令，安装Docker
+
+```bash
+yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+
+
+启动和校验
+
+```bash
+# 启动Docker
+systemctl start docker
+
+# 停止Docker
+systemctl stop docker
+
+# 重启
+systemctl restart docker
+
+# 设置开机自启
+systemctl enable docker
+
+# 执行docker ps命令，如果不报错，说明安装启动成功
+docker ps
+```
+
+
+
+配置镜像加速
+
+```bash
+# 创建目录
+mkdir -p /etc/docker
+
+# 复制内容
+tee /etc/docker/daemon.json <<-'EOF'
+{
+    "registry-mirrors": [
+        "http://hub-mirror.c.163.com",
+        "https://mirrors.tuna.tsinghua.edu.cn",
+        "http://mirrors.sohu.com",
+        "https://ustc-edu-cn.mirror.aliyuncs.com",
+        "https://ccr.ccs.tencentyun.com",
+        "https://docker.m.daocloud.io",
+        "https://docker.awsl9527.cn"
+    ]
+}
+EOF
+
+# 重新加载配置
+systemctl daemon-reload
+
+# 重启Docker
+systemctl restart docker
+```
+
+
+
+# 部署应用
+
+> 以Mysql为例
+
 ```shell
 docker run    #创建并运行一个容器
 ```
 
-ps:
+
+
+Docker运行mysql:
 
 ```shell
 docker run -d \
@@ -24,6 +134,10 @@ mysql
 # -e KEY=VALUE 设置容器环境变量
 # mysql 指定运行的镜像名 --> [名称]:[版本号] 不指定版本号默认使用最新版本
 ```
+
+
+
+
 
 
 
@@ -43,6 +157,8 @@ docker rm [name]    #删除容器
 docker stop [name]    #停止容器
 
 docker start [name]    #启动容器
+
+docker exec -it [name] bash    #进入容器内部
 ```
 
 
@@ -69,9 +185,9 @@ docker volume prune    #清除数据卷
 
 ```shell
 docker run -d \
-    --name nginx \
-    -p 80:80 \
-    -v html:/var/lib/docker/volumes/html/_data \
+    --name nginx \
+    -p 80:80 \
+    -v html:/usr/share/nginx/html \
 nginx
 ```
 
@@ -153,3 +269,75 @@ docker network inspect
 定义一组相关联的应用容器，实现快速部署
 
 ([Docker Compose | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-compose.html))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -2578,27 +2578,451 @@ public enum RequestMethod {
 
 ### 请求数据的接收
 
+#### 一般数据
 
+- 当客户端提交的数据是<font color=red>普通键值对形式</font>时，直接使用同名形参接收即可
+
+请求：`http://localhost/mvc/hello?name=lisi`
+
+```java
+    @GetMapping("hello")
+    public String hello(String name){
+        System.out.println(name);
+        return "OK";
+    }
+    // 控制台输出 lisi
+```
+
+> 当请求参数的名称与方法参数名不一致时，可以使用@RequestParam注解进行标注
+
+请求：`http://localhost/mvc/hello?username=lisi`
+
+```java
+    @GetMapping("hello")
+    public String hello(@RequestParam(value = "username",required = true) String name){
+        System.out.println(name);
+        return "OK";
+    }
+```
+
+
+
+- 接收实体<font color=red>JavaBean属性数据</font>，单个JavaBean数据：提交的**参数名称只要与Java的属性名**一致，就可以进行自动封装
+
+> 嵌套JavaBean数据：提交的参数名称用` . `描述嵌套对象的属性关系即可 eg：address.city
+
+
+
+- 接收<font color=red>数组或集合数据</font>，客户端传递多个**同名参数**时，可以使用**数组**接收
+
+> 也可以使用单列集合接收，但是需要使用`@RequestParam`告知框架传递的参数是要同名设置的，不是对象属性设置的
+
+
+
+- 接收<font color=red>数组或集合数据</font>，客户端传递多个**不同名参数**时，也可以使用Map 进行接收，同样需要用`@RequestParam` 进行修饰
+  
+  
+
+- 接收<font color=red>Json数据格式数据</font>，Json数据都是以请求体的方式提交的，且不是原始的键值对格式的，所以我们要使用`@RequestBody`注解整体接收该数据。(接收到的数据为字符串格式)
+
+> 使用Json工具（jackson）将Json格式的字符串转化为JavaBean进行操作
+
+配置`RequestMappingHandlerAdapter`，指定消息转换器，就不用手动转换json格式字符串了(仍需`@RequestBody`注解)
+
+```xml
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+```
+
+
+
+
+
+#### 接收Restful风格数据
+
+Rest(Representational State Transfer)表象化状态转变（表述性状态转变），在2000年被提出，基于HTTP、URI、xml、JSON等标准和协议，支持轻量级、跨平台、跨语言的架构设计。是Web服务的一种新网络应用程序的设计风格和开发方式。
+
+
+
+Restful风格的请求，常见的规则有如下三点：
+
+| 模块   | URI资源                      |
+| ---- | -------------------------- |
+| 用户模块 | `http://localhost/user`    |
+| 商品模块 | `http://localhost/product` |
+| 账户模块 | `http://localhost/account` |
+| 日志模块 | `http://localhost/log`     |
+
+- 用请求方式表示模块具体业务动作，例如：<font color=red>GET表示查询、POST表示插入、PUT表示更新、DELETE表示删除</font>
+
+![3d9d9084-a2e8-4ad6-bd73-120831d90124](./images/3d9d9084-a2e8-4ad6-bd73-120831d90124.png)
+
+
+
+- 用HTTP响应状态码表示结果，国内常用的响应包括三部分：<font color=red>状态码、状态信息、响应数据</font>
+
+```json
+{
+  "code":200,
+  "message":"成功",
+  "data":{
+    "username":"haohao",
+    "age":18
+
+  }
+ }
+ {
+  "code":300,
+  "message":"执行错误",
+  "data":"",
+ }
+
+```
+
+
+
+
+
+接收Restful风格数据，Restful请求数据一般会在URL地址上携带，可以使用注解 `@PathVariable`(占位符参数名称)
+
+```java
+@PostMapping("/user/{id}")
+ public String findUserById(@PathVariable("id") Integer id){
+    System.out.println(id);
+    return "/index.jsp";
+ }
+```
+
+
+
+#### 文件上传
+
+接收文件上传的数据，文件上传的表单需要一定的要求，如下：
+
+- 表单的提交方式必须是POST 
+
+- 表单的enctype属性必须是`multipart/form-data`
+
+-  文件上传项需要有name属性
+
+```html
+<form action="" enctype="multipart/form-data">
+ <input type="file" name="myFile">
+</form>
+```
+
+
+
+服务器端，由于映射器适配器需要文件上传解析器，而该解析器默认未被注册，所以**手动注册**
+
+```xml
+    <!--配置文件上传解析器，注意：id的名字是固定写法-->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/><!--文件的编码格式 默认是ISO8859-1-->
+        <property name="maxUploadSizePerFile" value="1048576"/><!--上传的每个文件限制的大小 单位字节-->
+        <property name="maxUploadSize" value="3145728"/><!--上传文件的总大小-->
+        <property name="maxInMemorySize" value="1048576"/><!--上传文件的缓存大小-->
+    </bean>
+```
+
+
+
+而CommonsMultipartResolver底层使用的Apache的是Common-fileuplad等工具API进行的文件上传
+
+```xml
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.4</version>
+</dependency>
+```
+
+
+
+使用`MultipartFile`类型接收上传文件
+
+```java
+    @PostMapping("/fileUpload")
+    public String fileUpload(@RequestBody MultipartFile myFile) throws IOException {
+        System.out.println(myFile);
+        //获得上传的文件的流对象
+        InputStream inputStream = myFile.getInputStream();
+        //使用commons-io存储文件
+        FileOutputStream outputStream = new
+                FileOutputStream("D:\\"+myFile.getOriginalFilename());
+        IOUtils.copy(inputStream,outputStream);
+        //关闭资源
+        inputStream.close();
+        outputStream.close();
+        return "/index.jsp";
+    }
+```
+
+> 上传多个文件，可以使用MultipartFile[]数组，或者使用多个MultipartFile参数
+
+
+
+#### 获取请求头数据
+
+接收Http请求头数据，接收指定名称的请求头-->`@RequestHeader`
+
+```java
+    @GetMapping("/headers")
+    public String headers(@RequestHeader("Accept-Encoding") String acceptEncoding){
+        System.out.println("Accept-Encoding:"+acceptEncoding);
+        return "/index.jsp";
+    }
+```
+
+
+
+接收所有的请求头信息
+
+```java
+    @GetMapping("/headersMap")
+    public String headersMap(@RequestHeader Map<String,String> map){
+        map.forEach((k,v)->{
+            System.out.println(k+":"+v);
+        });
+        return "/index.jsp";
+    }
+
+```
+
+
+
+获得客户端携带的Cookie数据-->`@CookieValue`
+
+```java
+    @GetMapping("/cookies")
+    public String cookies(@CookieValue(value = "JSESSIONID",defaultValue = "") String jsessionid){
+        System.out.println(jsessionid);
+        return "/index.jsp";
+    }
+```
+
+
+
+#### 获得转发Request域中数据
+
+在进行资源之间转发时，有时需要将一些参数存储到request域中携带给下一个资源
+
+```java
+    @GetMapping("/request1")
+    public String request1(HttpServletRequest request){
+        //存储数据
+        request.setAttribute("username","haohao");
+        return "forward:/request2";
+    }
+    @GetMapping("/request2")
+    public String request2(@RequestAttribute("username") String username){
+        System.out.println(username);
+        return "/index.jsp";
+    }
+```
+
+
+
+
+
+#### 请求参数乱码的解决
+
+Spring已经提供好的CharacterEncodingFilter来进行编码过滤
+
+```xml
+    <!--配置全局的编码过滤器-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+```
 
 
 
 ### Javaweb常用对象获取
 
+获得Javaweb常见原生对象，有时在我们的Controller方法中需要用到Javaweb的原生对象，例如：Request、Response等，我们只需要将需要的对象以形参的形式写在方法上，SpringMVC框架在调用Controller方法时，会**自动传递**实参
+
+```java
+    @GetMapping("/javawebObject")
+    public String javawebObject(HttpServletRequest request, HttpServletResponse response, HttpSession session){
+        return null;
+    }
+```
 
 
 
+### 请求静态资源
 
-### 请求静态资源注解驱动 标签
+静态资源请求失效的原因，当DispatcherServlet的映射路径配置为 / 的时候，那么就覆盖的Tomcat容器默认的缺省Servlet，在Tomcat的config目录下有一个web.xml 是对所有的web项目的全局配置，其中有如下配置
+
+```xml
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+```
+
+url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当其他Servlet都匹配不成功时，就找缺省的Servlet，静态资源由于没有匹配成功的Servlet，所以会找缺省的DefaultServlet，该DefaultServlet具备二次去匹配静态资源的功能。但是我们配置DispatcherServlet后就将其覆盖掉了，而DispatcherServlet会将请求的静态资源的名称当成Controller的映射路径去匹配，即静态资源访问不成功
 
 
 
+**三种解决方案**
 
+- 可以再次激活Tomcat的DefaultServlet，Servlet的url-pattern的匹配优先级是：精确匹配>目录匹配>扩展名匹配>缺省匹配，所以可以指定某个目录下或某个扩展名的资源使用DefaultServlet进行解析
+
+```xml
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/img/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+```
+
+
+
+- 在spring-mvc.xml中去配置静态资源映射，匹配映射路径的请求到指定的位置去匹配资源
+
+```xml
+    <!-- mapping是映射资源路径，location是对应资源所在的位置 -->
+    <mvc:resources mapping="/img/*" location="/img/"/>
+    <mvc:resources mapping="/css/*" location="/css/"/>
+    <mvc:resources mapping="/css/*" location="/js/"/>
+    <mvc:resources mapping="/html/*" location="/html/"/>
+```
+
+
+
+- ，在spring-mvc.xml中去配置< mvc:default-servlet-handler >，该方式是注册了一个DefaultServletHttpRequestHandler 处理器，静态资源的访问都由该处理器去处理，这也是**开发中使用最多**的
+
+```xml
+<mvc:default-servlet-handler/>
+```
+
+
+
+### 注解驱动`<mvc:annotation-driven/>`
+
+静态资源配置的第二第三种方式我们可以正常访问静态资源了，但是Controller又无法访问了，报错404，即找不到对应的资源
+
+
+
+第二种方式是通过SpringMVC去解析mvc命名空间下的resources标签完成的静态资源解析，第三种方式式通过SpringMVC去解析mvc命名空间下的default-servlet-handler标签完成的静态资源解析，根据前面所学习的自定义命名空间的解析的知识，可以发现不管是以上哪种方式，最终都会注册`SimpleUrlHandlerMapping`
+
+
+
+一旦SpringMVC容器中存在 HandlerMapping 类型的组件时，前端控制器DispatcherServlet在进行初始化时，就会从容器中获得HandlerMapping ，不在加载 dispatcherServlet.properties中默认处理器映射器策略，那也就意味着`RequestMappingHandlerMapping`不会被加载到了。(即Spring无法解析Controller中的Mapping)
+
+
+
+**解决办法**
+
+可以手动注册Handler,但比较麻烦
+
+该标签内部会帮我们注册RequestMappingHandlerMapping、注册RequestMappingHandlerAdapter并注入Json消息转换器等
+
+```xml
+ <!--mvc注解驱动-->
+ <mvc:annotation-driven/>
+ <!--配置DefaultServletHttpRequestHandler-->
+ <mvc:default-servlet-handler/>
+```
 
 
 
 ## SpringMVC的响应处理
 
+响应数据主要分为两大部分：
 
+- 传统同步方式：准备好模型数据，在跳转到执行页面进行展示，此方式使用越来越少了，基于历史原因，一些旧项目还在使用；
+
+- 前后端分离异步方式：前端使用Ajax技术+Restful风格与服务端进行Json格式为主的数据交互，目前市场上几乎都是此种方式了。
+
+
+
+### 传统同步业务数据响应
+
+传统同步业务在数据响应时，SpringMVC又涉及如下四种形式：
+
+- 请求资源转发；
+
+- 请求资源重定向；
+
+- 响应模型数据；
+
+- 直接回写数据给客户端；
+
+![0aa2a10f-4b50-44c4-bafb-207ba4b45e8a](./images/0aa2a10f-4b50-44c4-bafb-207ba4b45e8a.png)
+
+
+
+响应模型数据，响应模型数据本质也是转发，在转发时可以准备模型数据
+
+```java
+    @GetMapping("/forward5")
+    public ModelAndView forward5(ModelAndView modelAndView){
+        //准备JavaBean模型数据
+        User user = new User();
+        user.setUsername("haohao");
+        //设置模型
+        modelAndView.addObject("user",user);
+        //设置视图
+        modelAndView.setViewName("/index.jsp");
+        return modelAndView;
+    }
+```
+
+
+
+直接回写数据，直接通过方法的返回值返回给客户端的字符串，但是SpringMVC默认的方法返回值是视图，可以通过 `@ResponseBody` 注解显示的告知此处的返回值不要进行视图处理，是要以响应体的方式处理的
+
+```java
+    @GetMapping("/response2")
+    @ResponseBody
+    public String response2() throws IOException {
+        return "Hello haohao!";
+    }
+```
+
+
+
+### 前后端分离异步业务数据响应
+
+- 同步方式回写数据，是将数据响应给浏览器进行页面展示的，而异步方式回写数据一般是回写给Ajax引擎的，即谁访问服务器端，服务器端就将数据响应给谁
+
+- 同步方式回写的数据，一般就是一些无特定格式的字符串，而异步方式回写的数据大多是**Json格式字符串**
+
+
+
+回写普通数据使用`@ResponseBody`标注方法，直接返回字符串即可,回写Json格式的字符串，即将直接拼接Json格式的字符串或使用工具将JavaBean转换成Json格式的字符串回写
+
+> `@ResponseBody`会自动将JavaBean转换成Json格式字符串回响应
+
+
+
+可以使用`@RestController`替代@Controller和@ResponseBody，@RestController内部具备的这两个注解的功能
 
 
 
