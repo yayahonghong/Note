@@ -2708,7 +2708,7 @@ Restful风格的请求，常见的规则有如下三点：
 
 - 表单的enctype属性必须是`multipart/form-data`
 
--  文件上传项需要有name属性
+- 文件上传项需要有name属性
 
 ```html
 <form action="" enctype="multipart/form-data">
@@ -2959,8 +2959,8 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 - 传统同步方式：准备好模型数据，在跳转到执行页面进行展示，此方式使用越来越少了，基于历史原因，一些旧项目还在使用；
 
 - 前后端分离异步方式：前端使用Ajax技术+Restful风格与服务端进行Json格式为主的数据交互，目前市场上几乎都是此种方式了。
-
-
+  
+  
 
 ### 传统同步业务数据响应
 
@@ -3013,8 +3013,8 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 - 同步方式回写数据，是将数据响应给浏览器进行页面展示的，而异步方式回写数据一般是回写给Ajax引擎的，即谁访问服务器端，服务器端就将数据响应给谁
 
 - 同步方式回写的数据，一般就是一些无特定格式的字符串，而异步方式回写的数据大多是**Json格式字符串**
-
-
+  
+  
 
 回写普通数据使用`@ResponseBody`标注方法，直接返回字符串即可,回写Json格式的字符串，即将直接拼接Json格式的字符串或使用工具将JavaBean转换成Json格式的字符串回写
 
@@ -3028,17 +3028,343 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 ## SpringMVC的拦截器
 
+### 拦截器 Interceptor 简介
+
+ingMVC的拦截器Interceptor规范，主要是对Controller资源访问时进行拦截操作的技术，当然拦截后可以进行权限控制，功能增强等都是可以的。拦截器有点类似 Javaweb开发中的Filter，拦截器与Filter的区别如下图
+
+![084cf638-dfd0-47f0-946d-eac5a67a97b7](./images/084cf638-dfd0-47f0-946d-eac5a67a97b7.png)
+
+|       | Filter                           | Interceptor                             |
+| ----- | -------------------------------- | --------------------------------------- |
+| 技术范畴  | JavaWeb原生技术                      | SpringMVC框架技术                           |
+| 拦截/过滤 | 可以对所有请求都过滤，包括任何Servlet、Jsp、其他资源等 | 只对进入了SpringMVC管辖范围的才拦截，主要拦截Controller请求 |
+| 执行时机  | 早于任何Servlet执行                    | 晚于DispatcherServlet执行                   |
+
+
+
+> 实现了HandlerInterceptor接口，且被Spring管理的Bean都是拦截器
+
+HandlerInterceptor接口方法的作用及其参数、返回值详解如下
+
+|                 | 作用                                            | 参数                                                 | 返回值                           |
+| --------------- | --------------------------------------------- | -------------------------------------------------- | ----------------------------- |
+| preHandle       | 对拦截到的请求进行预处理，返回true放行执行处理器方法，false不放行         | Handler是拦截到的Controller方法处理器                        | 一旦返回false，代表终止向后执行，所有后置方法都不执行 |
+| postHandle      | 在处理器的方法执行后，对拦截到的请求进行后处理，可以在方法中对模型数据和视图进行修改    | Handler是拦截到的Controller方法处理器；modelAndView是返回的模型视图对象 | 无                             |
+| afterCompletion | 视图渲染完成后(整个流程结束之后)，进行最后的处理，如果请求流程中有异常，可以处理异常对象 | Handler是拦截到的Controller方法处理器；ex是异常对象                | 无                             |
+
+
+
+### 拦截器快速入门
+
+实现HandlerInterceptor接口
+
+```java
+public class MyInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle执行了");
+        return true;
+    }
+
+    @Override
+    public void postHandle(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle执行了");
+    }
+
+    @Override
+    public void afterCompletion(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion执行了");
+    }
+}
+```
+
+HandlerInterceptor
+
+```xml
+    <!-- 配置拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 配置拦截路径 -->
+            <mvc:mapping path="/**"/>
+            <bean class="com.ysh.interceptor.MyInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+```
+
+
+
+### 拦截器执行顺序
+
+![b04a3e68-defc-4833-9cf6-24ef292be7b5](./images/b04a3e68-defc-4833-9cf6-24ef292be7b5.png)
+
+> 以上路径在所有interceptor都放行的情况下满足
+
+
+
+Interceptor3不放行的情况
+
+![8ef092e1-24fc-43f8-94d8-b59384f0f3b2](./images/8ef092e1-24fc-43f8-94d8-b59384f0f3b2.png)
+
+
+
+> 拦截器执行顺序取决于 interceptor 的配置顺序
+
+
+
+### 拦截器执行原理
+
+请求到来时先会使用组件HandlerMapping去匹配Controller的方法（Handler）和符合拦截路径的Interceptor，Handler和多个Interceptor被封装成一个`HandlerExecutionChain`的对象:
+
+```java
+public class HandlerExecutionChain {
+    //映射的Controller的方法
+    private final Object handler;
+    //当前Handler匹配的拦截器集合
+    private final List<HandlerInterceptor> interceptorList;
+    // ... 省略其他代码 ...
+}
+```
+
+
+
+在`DispatcherServlet`的`doDispatch`方法中获得`HandlerExecutionChain`的对象，然后按逻辑执行其中拦截器方法
+
 
 
 
 
 ## SpringMVC的全注解开发
 
+### spring-mvc.xml 中组件转化为注解形式
+
+- 组件扫描，可以通过@ComponentScan注解完成；
+
+- 文件上传解析器multipartResolver可以通过非自定义Bean的注解配置方式，即@Bean注解完成
+
+```java
+@Configuration
+@ComponentScan("com.ysh.controller")
+@EnableWebMvc
+public class MVCConfig {
+
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setMaxUploadSize(10000000);
+        resolver.setDefaultEncoding("UTF-8");
+        // ...
+        return resolver;
+    }
+}
+```
+
+
+
+- `<mvc:default-servlet-handler/>`和`<mvc:interceptor/>` 怎么办呢？SpringMVC提供了一个注解叫做`@EnableWebMvc`，内部通过@Import 导入了DelegatingWebMvcConfiguration类,该类有如下的一个方法：
+
+```java
+    //从容器中注入WebMvcConfigurer类型的Bean
+    @Autowired(required = false)
+    public void setConfigurers(List<WebMvcConfigurer> configurers) {
+        if (!CollectionUtils.isEmpty(configurers)) {
+            this.configurers.addWebMvcConfigurers(configurers);
+        }}
+    //省略其他代码
+```
+
+> 该方法会获得WebMvcConfigurer类，并执行其中方法
+
+- `WebMvcConfigurer`**接口**定义如下:
+
+```java
+public interface WebMvcConfigurer {
+    //配置默认Servet处理器
+    default void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) { }
+    //添加拦截器
+    default void addInterceptors(InterceptorRegistry registry) { }
+    //添加资源处理器
+    default void addResourceHandlers(ResourceHandlerRegistry registry) { }
+    //添加视图控制器
+    default void addViewControllers(ViewControllerRegistry registry) { }
+    //配置视图解析器
+    default void configureViewResolvers(ViewResolverRegistry registry) { }
+    //添加参数解析器
+    default void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) { }
+    //... 省略其他代码 ...
+}
+```
+
+实现该接口，并交给Spring容器管理，在配置类上加入`@EnableWebMvc`即可
+
+```java
+@Component
+public class WebMVCConfig implements WebMvcConfigurer {
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MyInterceptor()).addPathPatterns("/**");
+    }
+}
+```
+
+
+
+### DispatcherServlet加载核心配置类
+
+现在是使用SpringMVCConfig核心配置类提替代的spring-mvc.xml，怎么加载呢？参照Spring的ContextLoaderListener加载核心配置类的做法，定义了一个AnnotationConfigWebApplicationContext，通过代码注册核心配置类
+
+```java
+public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWebApplicationContext {
+    public MyAnnotationConfigWebApplicationContext(){
+        //注册核心配置类
+        super.register(SpringMVCConfig.class);
+    }
+}
+```
+
+```xml
+<!--指定springMVC的applicationContext全限定名 -->
+ <init-param>
+    <param-name>contextClass</param-name>
+    <param-value>com.itheima.config.MyAnnotationConfigWebApplicationContext</param-value>
+ </init-param>
+```
+
+### 消除web.xml
+
+- Servlet3.0环境中，web容器提供了`javax.servlet.ServletContainerInitializer`接口，实现了该接口后，在对应的类加载路径的`META-INF/services` 目录创建一个名为`javax.servlet.ServletContainerInitializer`的文件，文件内容指定具体的ServletContainerInitializer实现类，那么，当web容器启动时就会运行这个初始化器做一些组件内的初始化工作；
+
+- 基于这个特性，Spring就定义了一个`SpringServletContainerInitializer`实现了ServletContainerInitializer接口; 
+
+- 而SpringServletContainerInitializer会查找实现了WebApplicationInitializer的类，Spring又提供了一个WebApplicationInitializer的基础实现类AbstractAnnotationConfigDispatcherServletInitializer，当我们编写类继承AbstractAnnotationConfigDispatcherServletInitializer时，容器就会自动发现我们自己的类，在该类中我们就可以配置Spring和SpringMVC的入口了。
+  
+  
+
+编写如下代码即可
+
+```java
+public class MyAnnotationConfigDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+    //返回的带有@Configuration注解的类用来配置ContextLoaderListener
+    protected Class<?>[] getRootConfigClasses() {
+        System.out.println("加载核心配置类创建ContextLoaderListener");
+        return new Class[]{ApplicationContextConfig.class};
+    }
+    //返回的带有@Configuration注解的类用来配置DispatcherServlet
+    protected Class<?>[] getServletConfigClasses() {
+        System.out.println("加载核心配置类创建DispatcherServlet");
+        return new Class[]{SpringMVCConfig.class};
+    }
+    //将一个或多个路径映射到DispatcherServlet上
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
+}
+```
+
 
 
 
 
 ## SpringMVC的组件原理剖析
+
+### 前端控制器初始化
+
+前端控制器DispatcherServlet是SpringMVC的入口，也是SpringMVC的大脑，主流程的工作都是在此完成的。DispatcherServlet 本质是个Servlet，当配置了 load-on-startup 时，会在服务器启动时就执行创建和执行初始化init方法，每次请求都会执行service方法
+
+DispatcherServlet 的初始化主要做了两件事
+
+- 获得了一个 SpringMVC的 ApplicationContext容器
+
+- 注册了 SpringMVC的 九大组件
+1. 获得SpringMVC容器
+
+SpringMVC 的ApplicationContext容器创建时机，Servlet 规范的 init(ServletConfig config) 方法经过子类重写，最终会调用 FrameworkServlet 抽象类的initWebApplicationContext() 方法，该方法中最终获得 一个根Spring容器（Spring产生的），一个子Spring容器（SpringMVC产生的）
+
+![3e1aedc2-af7f-49b2-9f21-4d6ad385ea57](./images/3e1aedc2-af7f-49b2-9f21-4d6ad385ea57.png)
+
+HttpServletBean 的初始化方法
+
+```java
+public final void init() throws ServletException {
+ this.initServletBean();
+ }
+```
+
+> HttpServletBean的initServletBean方法并没有具体实现，由子类(FrameworkServlet)重写来实现
+
+
+
+FrameworkServlet的initServletBean方法
+
+```java
+protected final void initServletBean() throws ServletException {
+ this.webApplicationContext = this.initWebApplicationContext();//初始化ApplicationContext
+ this.initFrameworkServlet();//模板设计模式，供子类覆盖实现，但是子类DispatcherServlet没做使用
+}
+```
+
+
+
+initWebApplicationContext方法中获得Spring容器和SpringMVC容器，并将Spring容器作为SpringMVC容器的父容器，子容器中的parent维护着父容器的引用
+
+```java
+//初始化ApplicationContext是一个及其关键的代码
+protected WebApplicationContext initWebApplicationContext() {
+    //获得根容器，其实就是通过ContextLoaderListener创建的ApplicationContext
+    //如果配置了ContextLoaderListener则获得根容器，没配置获得的是null
+    WebApplicationContext rootContext = 
+WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
+    //定义SpringMVC产生的ApplicationContext子容器
+    WebApplicationContext wac = null;
+    if (wac == null) {
+        //==>创建SpringMVC的子容器，创建同时将Spring的创建的rootContext传递了过去
+        wac = this.createWebApplicationContext(rootContext);
+    }
+    //将SpringMVC产生的ApplicationContext子容器存储到ServletContext域中
+    //key名是：org.springframework.web.servlet.FrameworkServlet.CONTEXT.DispatcherServlet
+    if (this.publishContext) {
+        String attrName = this.getServletContextAttributeName();
+        this.getServletContext().setAttribute(attrName, wac);
+    }}
+
+```
+
+> - 父容器：Spring 通过ContextLoaderListener为入口产生的applicationContext容器，内部主要维护的是applicationContext.xml（或相应配置类）配置的Bean信息；
+> 
+> - 子容器：SpringMVC通过DispatcherServlet的init() 方法产生的applicationContext容器，内部主要维护的是spring-mvc.xml（或相应配置类）配置的Bean信息，且内部还通过parent属性维护这父容器的引用。
+> 
+> - Bean的检索顺序：根据上面子父容器的概念，可以知道Controller存在与子容器中，而Controller中要注入Service时，会先从子容器本身去匹配，匹配不成功时在去父容器中去匹配，于是最终从父容器中匹配到的UserService，这样子父容器就可以进行联通了。但是父容器只能从自己容器中进行匹配，不能从子容器中进行匹配。
+
+
+
+2. 注册组件
+
+在初始化容器initWebApplicationContext方法中执行了onRefresh方法，进而执行了初始化策略initStrategies方法，注册了九个解析器组件
+
+```java
+//DispatcherServlet初始化SpringMVC九大组件
+protected void initStrategies(ApplicationContext context) {
+    this.initMultipartResolver(context);//1、初始化文件上传解析器
+    this.initLocaleResolver(context);//2、初始化国际化解析器
+    this.initThemeResolver(context);//3、初始化模板解析器
+    this.initHandlerMappings(context);//4、初始化处理器映射器
+    this.initHandlerAdapters(context);//5、初始化处理器适配器
+    this.initHandlerExceptionResolvers(context);//6、初始化处理器异常解析器
+    this.initRequestToViewNameTranslator(context);//7、初始化请求视图转换器
+    this.initViewResolvers(context);//8、初始化视图解析器
+    this.initFlashMapManager(context);//9、初始化lashMapManager策略组件
+}
+```
+
+
+
+### 前端控制器执行主流程
+
+![7ea58f93-0164-4675-b4e7-0491db88910b](./images/7ea58f93-0164-4675-b4e7-0491db88910b.png)
 
 
 
