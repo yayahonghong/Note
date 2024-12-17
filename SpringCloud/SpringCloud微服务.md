@@ -953,10 +953,10 @@ public class PageDTO<V> {
 * **系统发布效率低**：任何模块变更都需要发布整个系统，而系统发布过程中需要多个模块之间制约较多，需要对比各种文件，任何一处出现问题都会导致发布失败，往往一次发布需要数十分钟甚至数小时。
 
 * **系统可用性差**：单体架构各个功能模块是作为一个服务部署，相互之间会互相影响，一些热点功能会耗尽系统资源，导致其它服务低可用。
+  
+  
 
-
-
-## 微服务
+## 微服务架构
 
 微服务架构，首先是服务化，就是将单体架构中的功能模块从单体应用中拆分出来，独立部署为多个服务。同时要满足下面的一些特点：
 
@@ -997,8 +997,8 @@ public class PageDTO<V> {
 * 页面请求到底该访问哪个服务？
 
 * 如何实现各个服务之间的服务隔离？
-
-
+  
+  
 
 ## Spring Cloud
 
@@ -1026,3 +1026,486 @@ public class PageDTO<V> {
 
 
 另外，Alibaba的微服务产品SpringCloudAlibaba目前也成为了SpringCloud组件中的一员，我们课堂中也会使用其中的部分组件。
+
+
+
+## 服务拆分
+
+### 拆分原则
+
+什么时候拆？
+
+    对于**大多数小型项目来说，一般是先采用单体架构**，随着用户规模扩大、业务复杂后**再逐渐拆分为微服务架构**。这样初期成本会比较低，可以快速试错。但是，这么做的问题就在于后期做服务拆分时，可能会遇到很多代码耦合带来的问题，拆分比较困难（**前易后难**）。
+
+    而对于一些大型项目，在立项之初目的就很明确，为了长远考虑，在架构设计时就直接选择微服务架构。虽 然前期投入较多，但后期就少了拆分服务的烦恼（**前难后易**）。
+
+
+
+怎么拆？
+
+* **高内聚**：每个微服务的职责要尽量单一，包含的业务相互关联度高、完整度高。
+
+* **低耦合**：每个微服务的功能要相对独立，尽量减少对其它微服务的依赖，或者依赖接口的稳定性要强。
+  
+  
+
+明确了拆分目标，接下来就是拆分方式了。我们在做服务拆分时一般有两种方式：
+
+* **纵向**拆分
+
+* **横向**拆分
+1. 所谓**纵向拆分**，就是按照项目的功能模块来拆分。例如黑马商城中，就有用户管理功能、订单管理功能、购物车功能、商品管理功能、支付功能等。那么按照功能模块将他们拆分为一个个服务，就属于纵向拆分。这种拆分模式可以尽可能提高服务的内聚性。
+
+2. 而**横向拆分**，是看各个功能模块之间有没有公共的业务部分，如果有将其抽取出来作为通用服务。例如用户登录是需要发送消息通知，记录风控数据，下单时也要发送短信，记录风控数据。因此消息发送、风控数据记录就是通用的业务功能，因此可以将他们分别抽取为公共服务：消息中心服务、风控管理服务。这样可以提高业务的复用性，避免重复开发。同时通用业务一般接口稳定性较强，也不会使服务之间过分耦合。
+   
+   
+
+### 服务调用
+
+服务拆分前，多个服务间可以相互进行本地调用，但是拆分后就行不通了
+
+因此要想解决这个问题，我们就必须改造其中的代码，把原本本地方法调用，改造成跨微服务的**远程调用**（RPC，即**R**emote **P**roduce **C**all）
+
+
+
+解决方案：通过网络调用接口
+
+
+
+Spring给我们提供了一个`RestTemplate`的API，可以方便的实现Http请求的发送。
+
+
+
+首先将`Restemplate`交给spring管理
+
+```java
+@Configuration
+public class RemoteCallConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+}
+```
+
+使用`Restemplate`
+
+```java
+    // 发起请求
+    ResponseEntity<List<ItemDTO>> response = restTemplate.exchange(
+            "http://localhost:8081/items?ids={ids}",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<ItemDTO>>() {
+            },
+            Map.of("ids", CollUtil.join(itemIds, ","))
+    );
+    // 解析响应
+    if(!response.getStatusCode().is2xxSuccessful()){
+        // 查询失败，直接结束
+        return;
+    }
+```
+
+
+
+## 服务治理
+
+### 注册中心原理
+
+在上一节实现了微服务拆分，并且通过Http请求实现了跨微服务的远程调用。不过这种手动发送Http请求的方式存在一些问题。
+
+试想一下，假如商品微服务被调用较多，为了应对更高的并发，我们进行了**多实例部署**
+
+
+
+服务的主机和端口都不固定，如何解决？
+
+
+
+在微服务远程调用的过程中，包括两个角色：
+
+* 服务提供者：提供接口供其它微服务访问
+
+* 服务消费者：调用其它微服务提供的接口
+  
+  
+
+在大型微服务项目中，服务提供者的数量会非常多，为了管理这些服务就引入了**注册中心**的概念。注册中心、服务提供者、服务消费者三者间关系如下：
+
+![2f3e8d9e-5040-4680-a84d-9bfcbee1d6af](./images/2f3e8d9e-5040-4680-a84d-9bfcbee1d6af.png)
+
+流程如下：
+
+* 服务启动时就会注册自己的服务信息（服务名、IP、端口）到注册中心
+
+* 调用者可以从注册中心订阅想要的服务，获取服务对应的实例列表（1个服务可能多实例部署）
+
+* 调用者自己对实例列表负载均衡，挑选一个实例
+
+* 调用者向该实例发起远程调用
+  
+  
+
+当服务提供者的实例宕机或者启动新实例时，调用者如何得知呢？
+
+* 服务提供者会定期向注册中心发送请求，报告自己的健康状态（心跳请求）
+
+* 当注册中心长时间收不到提供者的心跳时，会认为该实例宕机，将其从服务的实例列表中剔除
+
+* 当服务有新实例启动时，会发送注册服务请求，其信息会被记录在注册中心的服务实例列表
+
+* 当注册中心服务列表变更时，会主动通知微服务，更新本地服务列表
+  
+  
+
+### Nacos注册中心
+
+[Nacos官网| Nacos 配置中心 | Nacos 下载| Nacos 官方社区 | Nacos 官网](https://nacos.io/)
+
+目前开源的注册中心框架有很多，国内比较常见的有：
+
+* Eureka：Netflix公司出品，目前被集成在SpringCloud当中，一般用于Java应用
+
+* Nacos：Alibaba公司出品，目前被集成在SpringCloudAlibaba中，一般用于Java应用
+
+* Consul：HashiCorp公司出品，目前集成在SpringCloud中，不限制微服务语言
+  
+  
+
+下载nacos镜像
+
+```bash
+docker pull nacos/nacos-server
+```
+
+
+
+初始化数据库信息
+
+> 找到nacos的安装目录，打开conf目录下的nacos-mysql.sql文件
+
+
+
+配置数据库信息(编写配置文件，并在docker中挂载)
+
+```properties
+PREFER_HOST_MODE=hostname
+MODE=standalone
+SPRING_DATASOURCE_PLATFORM=mysql
+MYSQL_SERVICE_HOST=IP
+MYSQL_SERVICE_DB_NAME=nacos
+MYSQL_SERVICE_PORT=3306
+MYSQL_SERVICE_USER=root
+MYSQL_SERVICE_PASSWORD=123
+MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+```
+
+
+
+启动容器
+
+```bash
+docker run -d \
+--name nacos \
+--env-file ./nacos/custom.env \
+-p 8848:8848 \
+-p 9848:9848 \
+-p 9849:9849 \
+--restart=always \
+nacos/nacos-server
+```
+
+
+
+访问页面查看是否启动成功
+
+```url
+http://localhost:8848/nacos
+```
+
+
+
+### 服务注册
+
+服务发现除了要引入nacos依赖以外，由于还需要负载均衡，因此要引入SpringCloud提供的LoadBalancer依赖。
+
+我们在`pom.xml`中添加下面的依赖：
+
+```xml
+<!--nacos 服务注册发现-->
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+</dependency>
+```
+
+在application.yml`中添加nacos地址配置：
+
+```yml
+spring:
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+```
+
+启动服务即可自动注册
+
+
+
+### 服务发现
+
+接下来，服务调用者就可以去订阅服务了。不过服务可能有多个实例，而真正发起调用时只需要知道一个实例的地址。
+
+因此，服务调用者必须利用负载均衡的算法，从多个实例中挑选一个去访问。常见的负载均衡算法有：
+
+* 随机
+
+* 轮询
+
+* IP的hash
+
+* 最近最少访问
+
+* ...
+
+这里我们可以选择最简单的随机负载均衡。
+
+
+
+1. 引入依赖并配置nacos服务地址（同上一小节）
+
+
+
+2. 服务发现需要用到一个工具，DiscoveryClient，SpringCloud已经帮我们自动装配，我们可以直接注入使用：
+
+```java
+    @Autowired
+    private final DiscoveryClient discoveryClient;
+```
+
+
+
+3. 使用服务
+
+```java
+        // 根据服务名称获取服务实例列表
+        List<ServiceInstance> instances = discoveryClient.getInstances("item-service");
+        if (CollUtils.isEmpty(instances)) {
+            return;
+        }
+        // 根据负载均衡算法选择一个服务实例
+        ServiceInstance instance = instances.get(RandomUtil.randomInt(instances.size()));
+        // 得到服务实例的URI
+        URI uri = instance.getUri();
+        ResponseEntity<List<ItemDTO>> response = restTemplate.exchange(
+                uri + "/items?ids={ids}",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<ItemDTO>>() {
+                },
+                Map.of("ids", CollUtil.join(itemIds, ","))
+        );
+```
+
+
+
+
+
+## OpenFeign
+
+OpenFeign客户端是一个web声明式http远程调用工具，直接可以根据服务名称去注册中心拿到指定的服务IP集合，提供了接口和注解方式进行调用，内嵌集成了Ribbon本地负载均衡器（现在流行使用loadbalancer）
+
+### 快速入门
+
+上一节远程调用代码仍然比较复杂
+
+
+
+而且这种调用方式，与原本的本地方法调用差异太大，编程时的体验也不统一，一会儿远程调用，一会儿本地调用。
+
+因此，我们必须想办法改变远程调用的开发模式，让**远程调用像本地方法调用一样简单**。而这就要用到OpenFeign组件了。
+
+其实远程调用的关键点就在于四个：
+
+* 请求方式
+
+* 请求路径
+
+* 请求参数
+
+* 返回值类型
+
+所以，OpenFeign就利用SpringMVC的相关注解来声明上述4个参数，然后基于动态代理帮我们生成远程调用的代码，而无需我们手动再编写，非常方便。
+
+
+
+1. 引入依赖
+
+```xml
+  <!--openFeign-->
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
+  </dependency>
+  <!--负载均衡器-->
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+  </dependency>
+```
+
+2. 启用OpenFeign
+
+接下来，我们在启动类上添加注解，启动OpenFeign功能
+
+```java
+@EnableFeignClients
+```
+
+3. 编写OpenFeign客户端
+
+```java
+@FeignClient("item-service")
+public interface ItemClient {
+    
+    // 注解指定请求方式、请求路径、参数类型、返回类型
+    @GetMapping("/items")
+    List<ItemDTO> queryItemsByIds(@RequestParam("ids") List<Long> ids);
+}
+
+```
+
+> 这里只需要声明接口，无需实现方法。接口中的几个关键信息：
+> 
+> * `@FeignClient("item-service")` ：声明服务名称
+> 
+> * `@GetMapping` ：声明请求方式
+> 
+> * `@GetMapping("/items")` ：声明请求路径
+> 
+> * `@RequestParam("ids") Collection<Long> ids` ：声明请求参数
+> 
+> * `List<ItemDTO>` ：返回值类型
+
+
+
+4. 使用FeignClient
+
+注入并调用接口中的方法即可
+
+
+
+### 连接池
+
+> OpenFeign默认使用JDK提供的`HttpURLConnection`, 效率较低
+
+Feign底层发起http请求，依赖于其它的框架。其底层支持的http客户端实现包括：
+
+* HttpURLConnection：默认实现，不支持连接池
+
+* Apache HttpClient ：支持连接池
+
+* OKHttp：支持连接池
+
+因此我们通常会使用带有连接池的客户端来代替默认的HttpURLConnection。比如，我们使用OK Http
+
+
+
+1. 引入依赖
+
+```xml
+<!--OK http 的依赖 -->
+<dependency>
+  <groupId>io.github.openfeign</groupId>
+  <artifactId>feign-okhttp</artifactId>
+</dependency>
+```
+
+2. 开启连接池
+
+> 在`application.yml`配置文件中开启Feign的连接池功能：
+
+```yml
+feign:
+  okhttp:
+    enabled: true # 开启OKHttp功能
+```
+
+3. 重启生效
+
+
+
+### 最佳使用方案
+
+如果在其他微服务中也需要调用该接口，需要重新编写相同的`Client`，导致代码重复
+
+相信大家都能想到，避免重复编码的办法就是**抽取**。不过这里有两种抽取思路：
+
+* 思路1：抽取到微服务之外的公共module
+
+* 思路2：每个微服务自己抽取一个module（推荐）
+
+如图：
+
+![a3767cd1-7a6d-4063-8dbb-81740f1d8aa1](./images/a3767cd1-7a6d-4063-8dbb-81740f1d8aa1.png)
+
+
+
+> 方案1抽取更加简单，工程结构也比较清晰，但缺点是整个项目耦合度偏高。
+> 
+> 方案2抽取相对麻烦，工程结构相对更复杂，但服务之间耦合度降低。
+
+
+
+需要调用接口的服务引入相关API模块的依赖，并且在启动类的注解`@EnableFeignClients`中**指定扫描的Client即可**
+
+
+
+### 日志配置
+
+OpenFeign只会在FeignClient所在包的日志级别为**DEBUG**时，才会输出日志。而且其日志级别有4级：
+
+* **NONE**：不记录任何日志信息，这是默认值。
+
+* **BASIC**：仅记录请求的方法，URL以及响应状态码和执行时间
+
+* **HEADERS**：在BASIC的基础上，额外记录了请求和响应的头信息
+
+* **FULL**：记录所有请求和响应的明细，包括头信息、请求体、元数据。
+
+Feign默认的日志级别就是NONE，所以默认我们看不到请求日志。
+
+
+
+在api模块下新建一个配置类，定义Feign的日志级别：
+
+```java
+public class DefaultFeignConfig {
+    @Bean
+    public Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;
+    }
+}
+```
+
+接下来，要让日志级别生效，还需要配置这个类。有两种方式：
+
+* **局部**生效：在某个`FeignClient`中配置，只对当前`FeignClient`生效
+
+```java
+@FeignClient(value = "item-service", configuration = DefaultFeignConfig.class)
+```
+
+* **全局**生效：在`@EnableFeignClients`中配置，针对所有`FeignClient`生效。
+
+```java
+@EnableFeignClients(defaultConfiguration = DefaultFeignConfig.class)
+```
+
+
+
+> 一般情况下无需开启日志，调试时才需开启
+
+
