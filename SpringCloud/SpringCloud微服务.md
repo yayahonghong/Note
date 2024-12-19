@@ -1275,8 +1275,8 @@ spring:
 
 
 1. 引入依赖并配置nacos服务地址（同上一小节）
-
-
+   
+   
 
 2. 服务发现需要用到一个工具，DiscoveryClient，SpringCloud已经帮我们自动装配，我们可以直接注入使用：
 
@@ -1369,7 +1369,7 @@ OpenFeign客户端是一个web声明式http远程调用工具，直接可以根�
 ```java
 @FeignClient("item-service")
 public interface ItemClient {
-    
+
     // 注解指定请求方式、请求路径、参数类型、返回类型
     @GetMapping("/items")
     List<ItemDTO> queryItemsByIds(@RequestParam("ids") List<Long> ids);
@@ -1434,8 +1434,8 @@ feign:
 ```
 
 3. 重启生效
-
-
+   
+   
 
 ### 最佳使用方案
 
@@ -1509,3 +1509,153 @@ public class DefaultFeignConfig {
 > 一般情况下无需开启日志，调试时才需开启
 
 
+
+
+
+## 网关
+
+由于每个微服务都有不同的地址或端口，入口不同，相信大家在与前端联调的时候发现了一些问题：
+
+* 请求不同数据时要访问不同的入口，需要维护多个入口地址，麻烦
+
+* 前端无法调用nacos，无法实时更新服务列表
+  
+  
+
+单体架构时我们只需要完成一次用户登录、身份校验，就可以在所有业务中获取到用户信息。而微服务拆分后，每个微服务都独立部署，这就存在一些问题：
+
+* 每个微服务都需要编写登录校验、用户信息获取的功能吗？
+
+* 当微服务之间调用时，该如何传递用户信息？
+
+
+
+### 认识网关
+
+顾明思议，网关就是网络的关口。数据在网络间传输，从一个网络传输到另一网络时就需要经过网关来做数据的**路由和转发以及数据安全的校验**
+
+
+
+现在，微服务网关就起到同样的作用。前端请求不能直接访问微服务，而是要请求网关：
+
+* 网关可以做安全控制，也就是登录身份校验，校验通过才放行
+
+* 通过认证后，网关再根据请求判断应该访问哪个微服务，将请求转发过去
+
+
+
+![756b84dc-06d6-453a-a3f1-ab46b2bdaa80](./images/756b84dc-06d6-453a-a3f1-ab46b2bdaa80.png)
+
+
+
+在SpringCloud当中，提供了两种网关实现方案：
+
+* Netflix Zuul：早期实现，目前已经淘汰
+
+* SpringCloudGateway：基于Spring的WebFlux技术，完全支持响应式编程，吞吐能力更强
+
+[Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway#learn)
+
+
+
+### 快速入门
+
+接下来，我们先看下如何利用网关实现请求路由。由于网关本身也是一个独立的微服务，因此也需要创建一个模块开发功能。大概步骤如下：
+
+* 创建网关微服务
+
+* 引入SpringCloudGateway、NacosDiscovery依赖
+
+* 编写启动类
+
+* 配置网关路由
+
+
+
+相关依赖
+
+```xml
+        <!--网关-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <!--nacos discovery-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <!--负载均衡-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+```
+
+
+
+配置文件
+
+```yml
+server:
+  port: 8080
+
+spring:
+  # spring服务配置
+  application:
+    name: gateway
+
+  # SpringCloud配置
+  cloud:
+    # Nacos注册中心配置
+    nacos:
+      server-addr: localhost:8848
+
+    # 网关配置
+    gateway:
+      routes:
+        - id: item-service
+          uri: lb://item-service
+          predicates:
+            - Path=/items/**,/search/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**,/addresses/**
+```
+
+
+
+### 路由属性
+
+* `id`：路由的唯一标示
+
+* `predicates`：路由断言，其实就是匹配条件
+
+* `filters`：路由过滤条件
+
+* `uri`：路由目标地址，`lb://`代表负载均衡，从注册中心获取目标微服务的实例列表，并且负载均衡选择一个访问。
+
+
+
+这里我们重点关注`predicates`，也就是路由断言。`SpringCloudGateway`中支持的断言类型有很多：
+
+| **名称**     | **说明**            | **示例**                                                                                                 |
+| ---------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| After      | 是某个时间点后的请求        | - After=2037-01-20T17:42:47.789-07:00[America/Denver]                                                  |
+| Before     | 是某个时间点之前的请求       | - Before=2031-04-13T15:14:47.433+08:00[Asia/Shanghai]                                                  |
+| Between    | 是某两个时间点之前的请求      | - Between=2037-01-20T17:42:47.789-07:00[America/Denver], 2037-01-21T17:42:47.789-07:00[America/Denver] |
+| Cookie     | 请求必须包含某些cookie    | - Cookie=chocolate, ch.p                                                                               |
+| Header     | 请求必须包含某些header    | - Header=X-Request-Id, \d+                                                                             |
+| Host       | 请求必须是访问某个host（域名） | - Host=**.somehost.org,**.anotherhost.org                                                              |
+| Method     | 请求方式必须是指定方式       | - Method=GET,POST                                                                                      |
+| Path       | 请求路径必须符合指定规则      | - Path=/red/{segment},/blue/**                                                                         |
+| Query      | 请求参数必须包含指定参数      | - Query=name, Jack或者- Query=name                                                                       |
+| RemoteAddr | 请求者的ip必须是指定范围     | - RemoteAddr=192.168.1.1/24                                                                            |
+| weight     | 权重处理              |                                                                                                        |
+
+
+
+
+
+![326c32f2-b8d8-44d8-a79a-c4f2da718e86](./images/326c32f2-b8d8-44d8-a79a-c4f2da718e86.png)
