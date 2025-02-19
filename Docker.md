@@ -215,7 +215,7 @@ nginx
 
 
 
-**Dockerfile**是用来说明如何构建镜像的
+`Dockerfile`是用来说明如何构建镜像的
 
 ```dockerfile
 FROM        #指定基础镜像 FROM centos:6
@@ -269,7 +269,6 @@ docker network inspect
 定义一组相关联的应用容器，实现快速部署
 
 ([Docker Compose | 菜鸟教程 (runoob.com)](https://www.runoob.com/docker/docker-compose.html))
-
 
 
 

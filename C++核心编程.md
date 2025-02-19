@@ -3827,7 +3827,7 @@ int main() {
 
 **示例：**
 
-```C++
+```C+
 class Animal
 {
 public:
@@ -3913,7 +3913,7 @@ int main() {
 
 
 
-```C++
+```c++
 class Animal
 {
 public:

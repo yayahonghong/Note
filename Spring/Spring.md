@@ -56,7 +56,7 @@ BeanFactory怎么知道产生哪些Bean实例呢？
 > 
 >     DI：Dependency Injection，依赖注入，某个Bean的完整创建依赖于其他Bean（或普通参数）的注入
 > 
-> 其次，在回答IoC和DI的关系：
+> 其次，再回答IoC和DI的关系：
 > 
 >     第一种观点：IoC强调的是Bean创建权的反转，而DI强调的是Bean的依赖关系，认为不是一回事
 > 
@@ -258,7 +258,7 @@ applicationContext.getBean("bbb");
 
 ### Bean的范围配置
 
-默认情况下，<u>单纯的Spring环境</u>Bean的作用范围有两个：Singleton和Prototype
+默认情况下，<u>单纯的Spring环境</u>Bean的作用范围有两个：singleton和prototype
 
 - singleton：单例，**默认值**，Spring容器创建的时候，就会进行Bean的实例化，并存储到容器内部的单例池中，每次getBean时都是从单例池中获取相同的Bean实例；
 
@@ -268,7 +268,7 @@ applicationContext.getBean("bbb");
 
 ### Bean的延迟加载
 
-当lazy-init设置为true时为延迟加载，也就是当Spring容器创建的时候，不会立即创建Bean实例，等待用到时在创建Bean实例并存储到单例池中去，后续在使用该Bean直接从单例池获取即可，本质上该Bean还是**单例**的
+当lazy-init设置为true时为延迟加载，也就是当Spring容器创建的时候，不会立即创建Bean实例，等待用到时再创建Bean实例并存储到单例池中去，后续在使用该Bean直接从单例池获取即可，本质上该Bean还是**单例**的
 
 ```xml
 <bean id="userDao" class="com.itheima.dao.impl.UserDaoImpl" lazy-init="true"/>
@@ -361,7 +361,7 @@ public UserDaoImpl(String name){
    - 实例工厂方法实例化Bean 
    
    - 实现FactoryBean规范延迟实例化Bean
-- 静态工厂方法实例化Bean，其实就是定义一个工厂类，提供一个静态方法用于生产Bean实例，在将该工厂类及其静态方法配置给Spring即可:
+- 静态工厂方法实例化Bean，其实就是定义一个工厂类，提供一个静态方法用于生产Bean实例，再将该工厂类及其静态方法配置给Spring即可:
 
 ```java
 //工厂类
@@ -660,7 +660,7 @@ Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是�
  <!--配置 DruidDataSource数据源-->
  <bean class="com.alibaba.druid.pool.DruidDataSource">
      <!--配置必要属性-->
-     <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+     <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
      <property name="url" value="jdbc://localhost:3306/mybatis"/>
      <property name="username" value="root"/>
      <property name="password" value="root"/>
@@ -915,7 +915,7 @@ public interface BeanPostProcessor {
 
 - 由于Bean方法不确定，所以使用动态代理在运行期间执行增强操作；
 
-- 在Bean实例创建完毕后，进入到单例池之前，使用Proxy代替真是的目标Bean
+- 在Bean实例创建完毕后，进入到单例池之前，使用Proxy代替真实的目标Bean
   
   
 
@@ -993,7 +993,7 @@ Spring在进行属性注入时，会分为如下几种情况：
 
 - 注入普通属性，String、int或存储基本类型的集合时，直接通过set方法的反射设置进去；
 
-- 注入单向对象引用属性时，从容器中getBean获取后通过set方法反射设置进去，如果容器中没有，则先创建被注入对象Bean实例（完成整个生命周期）后，在进行注入操作；
+- 注入单向对象引用属性时，从容器中getBean获取后通过set方法反射设置进去，如果容器中没有，则先创建被注入对象Bean实例（完成整个生命周期）后，再进行注入操作；
 
 - 注入双向对象引用属性时，就比较复杂了，涉及了循环引用（**循环依赖**）问题，下面会详细阐述解决方案。
   
@@ -1019,7 +1019,7 @@ public class DefaultSingletonBeanRegistry ... {
      //2、早期Bean单例池，缓存半成品对象，且当前对象已经被其他对象引用了，称之为"二级缓存"
      Map<String, Object> earlySingletonObjects = new ConcurrentHashMap(16);
 
-     //3、单例Bean的工厂池，缓存半成品对象，对象未被引用，使用时在通过工厂创建Bean，称之为"三级缓存"
+     //3、单例Bean的工厂池，缓存半成品对象，对象未被引用，使用时再通过工厂创建Bean，称之为"三级缓存"
      Map<String, ObjectFactory<?>> singletonFactories = new HashMap(16);
  }
 
@@ -1209,7 +1209,7 @@ jdbc.password=root
    
    
 
---- 
+---
 
 # 基于注解的Spring应用
 
@@ -3544,5 +3544,4 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 | `ExceptionHandlerExceptionResolver` | 异常处理器异常解析器，默认会被注册到Spring容器中，@ExceptionHandler方式异常处理就是该解析器解析的 |
 | `DefaultHandlerExceptionResolver`   | 默认处理器异常解析器，所有异常处理器都不匹配时，最后执行的异常处理器                           |
 | `ResponseStatusExceptionResolver`   | 响应状态异常解析器，结合使用@ResponseStatus标注的异常使用                         |
-
 
