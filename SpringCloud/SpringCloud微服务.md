@@ -5412,6 +5412,1163 @@ GET /items/_search
 
 
 
+# 面试
+
+## Redis
+
+### 主从集群
+
+单节点Redis的并发能力是有上限的，要进一步提高Redis的并发能力，就需要搭建主从集群，实现读写分离。
 
 
-# Redis
+
+简单架构图：
+
+![image-20250227154827246](./images/image-20250227154827246.png)
+
+如图所示，集群中有一个master节点、两个slave节点（现在叫replica）。当我们通过Redis的Java客户端访问主从集群时，应该做好路由：
+
+- 如果是写操作，应该访问master节点，master会自动将数据同步给两个slave节点
+- 如果是读操作，建议访问各个slave节点，从而分担并发压力
+
+
+
+使用docker compose启动多个Redis实例：
+
+```bash
+version: "3.2"
+
+services:
+  r1:
+    image: redis
+    container_name: r1
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7001"]
+  r2:
+    image: redis
+    container_name: r2
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7002"]
+  r3:
+    image: redis
+    container_name: r3
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7003"]
+```
+
+>｀docker compose up -d｀启动
+>
+>在host网络模式下，容器不会创建隔离的网络空间，而是直接共享宿主机的网络栈。在 host 模式下，性能较高
+
+
+
+我们需要通过命令来配置主从关系：
+
+```Bash
+# Redis5.0以前
+slaveof <masterip> <masterport>
+# Redis5.0以后
+replicaof <masterip> <masterport>
+```
+
+> `redis-cli` 下执行
+
+有临时和永久两种模式：
+
+- 永久生效：在redis.conf文件中利用`slaveof`命令指定`master`节点
+- 临时生效：直接利用redis-cli控制台输入`slaveof`命令，指定`master`节点
+
+
+
+### 同步原理
+
+#### **全量同步**
+
+主从第一次建立连接时，会执行**全量同步**，将master节点的所有数据都拷贝给slave节点
+
+![image-20250227161941450](./images/image-20250227161941450.png)
+
+`master`如何得知`salve`是否是第一次来同步？
+
+- **`Replication Id`**：简称`replid`，是数据集的标记，replid一致则是同一数据集。每个`master`都有唯一的`replid`，`slave`则会继承`master`节点的`replid`
+- **`offset`**：偏移量，随着记录在`repl_baklog`中的数据增多而逐渐增大。`slave`完成同步时也会记录当前同步的`offset`。如果`slave`的`offset`小于`master`的`offset`，说明`slave`数据落后于`master`，需要更新。
+
+> **master**判断一个节点是否是第一次同步的依据，就是看replid是否一致
+
+
+
+#### **增量同步**
+
+全量同步需要先做RDB，然后将RDB文件通过网络传输个slave，成本太高了。因此除了第一次做全量同步，其它大多数时候slave与master都是做**增量同步**
+
+![image-20250227162518193](./images/image-20250227162518193.png)
+
+这就要说到全量同步时的`repl_baklog`文件了。这个文件是一个固定大小的数组，只不过数组是环形，也就是说**角标到达数组末尾后，会再次从0开始读写**，这样数组头部的数据就会被覆盖。
+
+`repl_baklog`中会记录Redis处理过的命令及`offset`，包括master当前的`offset`，和slave已经拷贝到的`offset`：
+
+![img](./images/1740644756468-1.png)
+
+slave与master的offset之间的差异，就是salve需要增量拷贝的数据了。
+
+
+
+如果slave出现网络阻塞，导致master的`offset`远远超过了slave的`offset`，当master的offset覆盖了slave未同步的offset,如果slave恢复，需要同步，却发现自己的`offset`都没有了，无法完成增量同步了。只能做**全量同步**。
+
+
+
+**优化**
+
+- 在master中配置`repl-diskless-sync  yes`启用无磁盘复制，避免全量同步时的磁盘IO。
+
+- Redis单节点上的内存占用不要太大，减少RDB导致的过多磁盘IO
+
+- 适当提高`repl_baklog`的大小，发现slave宕机时尽快实现故障恢复，尽可能避免全量同步
+
+- 限制一个master上的slave节点数量，如果实在是太多slave，则可以采用`主-从-从`链式结构，减少master压力
+
+  
+
+  `主-从-从`架构图：
+
+  ![img](./images/1740645048302-8.png)
+
+
+
+
+
+### 哨兵
+
+Redis提供了`哨兵`（`Sentinel`）机制来监控主从集群监控状态，确保集群的高可用性。
+
+![image-20250227163247450](./images/image-20250227163247450.png)
+
+哨兵的作用如下：
+
+- **状态监控**：`Sentinel` 会不断检查`master`和`slave`是否按预期工作
+- **故障恢复（failover）**：如果`master`故障，`Sentinel`会将一个`slave`提升为`master`。当故障实例恢复后会成为`slave`
+- **状态通知**：`Sentinel`充当`Redis`客户端的服务发现来源，当集群发生`failover`时，会将最新集群信息推送给`Redis`的客户端
+
+
+
+
+
+`Sentinel`基于**心跳机制**监测服务状态，每隔1秒向集群的每个节点发送ping命令，并通过实例的响应结果来做出判断：
+
+- **主观下线（sdown）**：如果某sentinel节点发现某Redis节点未在规定时间响应，则认为该节点主观下线。
+- **客观下线(odown)**：若超过指定数量（通过`quorum`设置）的sentinel都认为该节点主观下线，则该节点客观下线。quorum值最好超过Sentinel节点数量的一半，Sentinel节点数量至少3台。
+
+
+
+一旦发现master故障，sentinel需要在salve中选择一个作为新的master，选择依据是这样的：
+
+- 首先会判断slave节点与master节点断开时间长短，如果超过`down-after-milliseconds * 10`则会排除该slave节点
+- 然后判断slave节点的`slave-priority`值，越小优先级越高，如果是0则永不参与选举（默认都是1）。
+- 如果`slave-prority`一样，则判断slave节点的`offset`值，越大说明数据越新，优先级越高
+- 最后是判断slave节点的`run_id`大小，越小优先级越高（`通过info server可以查看run_id`）。
+
+https://redis.io/docs/management/sentinel/#replica-selection-and-priority
+
+
+
+#### **搭建哨兵集群**
+
+sentinel.conf文件
+
+```conf
+sentinel announce-ip "localhost"
+sentinel monitor hmaster localhost 7001 2
+sentinel down-after-milliseconds hmaster 5000
+sentinel failover-timeout hmaster 60000
+```
+
+- `sentinel announce-ip "localhost"`：声明当前sentinel的ip
+- `sentinel monitor hmaster localhost 7001 2`：指定集群的主节点信息 
+  - `hmaster`：主节点名称，自定义，任意写
+  - `localhost 7001`：主节点的ip和端口
+  - `2`：认定`master`下线时的`quorum`值
+- `sentinel down-after-milliseconds hmaster 5000`：声明master节点超时多久后被标记下线
+- `sentinel failover-timeout hmaster 60000`：在第一次故障转移失败后多久再次重试
+
+
+
+`docker-compose.yaml`
+
+```yaml
+version: "3.2"
+
+services:
+  r1:
+    image: redis
+    container_name: r1
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7001"]
+  r2:
+    image: redis
+    container_name: r2
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7002", "--slaveof", "localhost", "7001"]
+  r3:
+    image: redis
+    container_name: r3
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7003", "--slaveof", "localhost", "7001"]
+  s1:
+    image: redis
+    container_name: s1
+    volumes:
+      - /root/redis/s1:/etc/redis
+    network_mode: "host"
+    entrypoint: ["redis-sentinel", "/etc/redis/sentinel.conf", "--port", "27001"]
+  s2:
+    image: redis
+    container_name: s2
+    volumes:
+      - /root/redis/s2:/etc/redis
+    network_mode: "host"
+    entrypoint: ["redis-sentinel", "/etc/redis/sentinel.conf", "--port", "27002"]
+  s3:
+    image: redis
+    container_name: s3
+    volumes:
+      - /root/redis/s3:/etc/redis
+    network_mode: "host"
+    entrypoint: ["redis-sentinel", "/etc/redis/sentinel.conf", "--port", "27003"]
+```
+
+
+
+
+
+### 分片集群
+
+主从模式可以解决高可用、高并发读的问题。但依然有两个问题没有解决：
+
+- 海量数据存储
+- 高并发写
+
+
+
+要解决这两个问题就需要用到分片集群了。分片的意思，就是把数据拆分存储到不同节点，这样整个集群的存储数据量就更大了。
+
+Redis分片集群的结构如图：
+
+![img](./images/1740648892397-11.jpeg)
+
+特征：
+
+-  集群中有多个master，每个master保存不同分片数据 ，解决海量数据存储问题
+-  每个master都可以有多个slave节点 ，确保高可用
+-  master之间通过ping监测彼此健康状态 ，类似哨兵作用
+-  客户端请求可以访问集群任意节点，最终都会被转发到数据所在节点 
+
+
+
+#### 搭建分片集群
+
+分片集群中的Redis节点必须开启集群模式，一般在配置文件中添加下面参数：
+
+```conf
+port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+```
+
+- `cluster-enabled`：是否开启集群模式
+- `cluster-config-file`：集群模式的配置文件名称，无需手动创建，由集群自动维护
+- `cluster-node-timeout`：集群中节点之间心跳超时时间
+
+
+
+`docker-compose.yaml`部署节点
+
+```yaml
+version: "3.2"
+
+services:
+  r1:
+    image: redis
+    container_name: r1
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7001", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+  r2:
+    image: redis
+    container_name: r2
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7002", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+  r3:
+    image: redis
+    container_name: r3
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7003", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+  r4:
+    image: redis
+    container_name: r4
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7004", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+  r5:
+    image: redis
+    container_name: r5
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7005", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+  r6:
+    image: redis
+    container_name: r6
+    network_mode: "host"
+    entrypoint: ["redis-server", "--port", "7006", "--cluster-enabled", "yes", "--cluster-config-file", "node.conf"]
+```
+
+> **注意**：使用Docker部署Redis集群，network模式必须采用host
+
+
+
+创建集群
+
+```Bash
+# 进入任意节点容器
+docker exec -it r1 bash
+# 然后，执行命令
+redis-cli --cluster create --cluster-replicas 1 \
+192.168.150.101:7001 192.168.150.101:7002 192.168.150.101:7003 \
+192.168.150.101:7004 192.168.150.101:7005 192.168.150.101:7006
+```
+
+- `redis-cli --cluster`：代表集群操作命令
+- `create`：代表是创建集群
+- `--cluster-replicas 1` ：指定集群中每个`master`的副本(`slave`)个数为1
+  - 此时`节点总数 ÷ (replicas + 1)` 得到的就是`master`的数量`n`。因此节点列表中的前`n`个节点就是`master`，其它节点都是`slave`节点，随机分配到不同`master`
+
+
+
+我们可以通过命令查看集群状态：
+
+```Bash
+redis-cli -p 7001 cluster nodes
+```
+
+
+
+
+
+#### 散列插槽
+
+据要分片存储到不同的Redis节点，肯定需要有分片的依据，这样下次查询的时候才能知道去哪个节点查询。很多数据分片都会采用一致性hash算法。而Redis则是利用散列插槽（**`hash slot`**）的方式实现数据分片。
+
+
+
+在Redis集群中，共有16384个`hash slots`，集群中的每一个master节点都会分配一定数量的`hash slots`。具体的分配在集群创建时就已经指定了
+
+
+
+当我们读写数据时，Redis基于`CRC16` 算法对`key`做`hash`运算，得到的结果与`16384`取余，就计算出了这个`key`的`slot`值。然后到`slot`所在的Redis节点执行读写操作。
+
+> 不过`hash slot`的计算也分两种情况：
+>
+> - 当`key`中包含`{}`时，根据`{}`之间的字符串计算`hash slot`
+> - 当`key`中不包含`{}`时，则根据整个`key`字符串计算`hash slot`
+
+
+
+连接集群时，要加`-c`参数：
+
+```Bash
+# 通过7001连接集群
+redis-cli -c -p 7001
+# 存入数据
+set user jack
+```
+
+
+
+
+
+如何将同一类数据固定的保存在同一个Redis实例？
+
+- Redis计算key的插槽值时会判断key中是否包含`{}`，如果有则基于`{}`内的字符计算插槽
+- 数据的key中可以加入`{类型}`，例如key都以`{typeId}`为前缀，这样同类型数据计算的插槽一定相同
+
+
+
+
+
+### Redis数据结构
+
+我们常用的Redis数据类型有5种，分别是：
+
+- String
+- List
+- Set
+- SortedSet
+- Hash
+
+还有一些高级数据类型，比如Bitmap、HyperLogLog、GEO等，其底层都是基于上述5种基本数据类型。因此在Redis的源码中，其实只有5种数据类型。
+
+
+
+#### RedisObject
+
+不管是任何一种数据类型，最终都会封装为RedisObject格式，它是C语言的结构体
+
+![img](./images/1740650718316-14.png)
+
+> RedisObject的内存开销是很大的,16字节
+
+
+
+
+
+属性中的`encoding`就是当前对象底层采用的**数据结构**或**编码方式**，可选的有11种之多：
+
+| **编号** | **编码方式**            | **说明**               |
+| :------- | :---------------------- | :--------------------- |
+| 0        | OBJ_ENCODING_RAW        | raw编码动态字符串      |
+| 1        | OBJ_ENCODING_INT        | long类型的整数的字符串 |
+| 2        | OBJ_ENCODING_HT         | hash表（也叫dict）     |
+| 3        | OBJ_ENCODING_ZIPMAP     | 已废弃                 |
+| 4        | OBJ_ENCODING_LINKEDLIST | 双端链表               |
+| 5        | OBJ_ENCODING_ZIPLIST    | 压缩列表               |
+| 6        | OBJ_ENCODING_INTSET     | 整数集合               |
+| 7        | OBJ_ENCODING_SKIPLIST   | 跳表                   |
+| 8        | OBJ_ENCODING_EMBSTR     | embstr编码的动态字符串 |
+| 9        | OBJ_ENCODING_QUICKLIST  | 快速列表               |
+| 10       | OBJ_ENCODING_STREAM     | Stream流               |
+| 11       | OBJ_ENCODING_LISTPACK   | 紧凑列表               |
+
+Redis中的5种不同的数据类型采用的底层数据结构和编码方式如下：
+
+| **数据类型** | **编码方式**                                                 |
+| :----------- | :----------------------------------------------------------- |
+| STRING       | `int`、`embstr`、`raw`                                       |
+| LIST         | `LinkedList和ZipList`(3.2以前)、`QuickList`（3.2以后）       |
+| SET          | `intset`、`HT`                                               |
+| ZSET         | `ZipList`（7.0以前）、`Listpack`（7.0以后）、`HT`、`SkipList` |
+| HASH         | `ZipList`（7.0以前）、`Listpack`（7.0以后）、`HT`            |
+
+
+
+#### SkipList
+
+SkipList（跳表）首先是链表，但与传统链表相比有几点差异：
+
+- 元素按照升序排列存储
+- 节点可能包含多个指针，指针跨度不同。
+
+
+
+传统链表只有指向前后元素的指针，因此只能顺序依次访问。如果查找的元素在链表中间，查询的效率会比较低。而SkipList则不同，它内部包含跨度不同的多级指针，可以让我们跳跃查找链表中间的元素，效率非常高。
+
+例如查询14号元素：
+
+![img](./images/1740651177271-17.png)
+
+
+
+#### SortedSet
+
+- [x] **面试题**：Redis的`SortedSet`底层的数据结构是怎样的？
+
+**答**：SortedSet是有序集合，底层的存储的每个数据都包含element和score两个值。score是得分，element则是字符串值。SortedSet会根据每个element的score值排序，形成有序集合。
+
+它支持的操作很多，比如：
+
+- 根据element查询score值
+- 按照score值升序或降序查询element
+
+要实现根据element查询对应的score值，就必须实现element与score之间的键值映射。SortedSet底层是基于**HashTable**来实现的。
+
+要实现对score值排序，并且查询效率还高，就需要有一种高效的有序数据结构，SortedSet是基于**跳表**实现的。
+
+加分项：因为SortedSet底层需要用到两种数据结构，对内存占用比较高。因此Redis底层会对SortedSet中的元素大小做判断。如果**元素大小小于128**且**每个元素都小于64字节**，SortedSet底层会采用**ZipList**，也就是**压缩列**表来代替**HashTable**和**SkipList**
+
+不过，`ZipList`存在连锁更新问题，因此而在Redis7.0版本以后，`ZipList`又被替换为**Listpack**（紧凑列表）。
+
+
+
+
+
+### Redis内存回收
+
+Redis之所以性能强，最主要的原因就是基于内存存储。然而单节点的Redis其内存大小不宜过大，会影响持久化或主从同步性能。
+
+我们可以通过修改redis.conf文件，添加下面的配置来配置Redis的最大内存：
+
+```Properties
+maxmemory 1gb
+```
+
+当内存达到上限，就无法存储更多数据了。因此，Redis内部会有两套内存回收的策略：
+
+- 内存过期策略
+- 内存淘汰策略
+
+
+
+#### 内存过期
+
+Redis不管有多少种数据类型，本质是一个`KEY-VALUE`的键值型数据库，而这种键值映射底层正式基于HashTable来实现的，在Redis中叫做Dict.
+
+来看下RedisDB的底层源码：
+
+```c++
+typedef struct redisDb {
+    dict dict;                 / The keyspace for this DB , 也就是存放KEY和VALUE的哈希表*/
+    dict *expires;              /* 同样是哈希表，但保存的是设置了TTL的KEY，及其到期时间*/
+    dict *blocking_keys;        /* Keys with clients waiting for data (BLPOP)*/
+    dict *ready_keys;           /* Blocked keys that received a PUSH */
+    dict *watched_keys;         /* WATCHED keys for MULTI/EXEC CAS /
+    int id;                     / Database ID, 0 ~ 15 /
+    long long avg_ttl;          / Average TTL, just for stats /
+    unsigned long expires_cursor; / Cursor of the active expire cycle. */
+    list *defrag_later;         /* List of key names to attempt to defrag one by one, gradually. */
+} redisDb;
+```
+
+- [x] **面试题**：Redis如何判断KEY是否过期呢？
+
+**答**：在Redis中会有两个Dict，也就是HashTable，其中一个记录KEY-VALUE键值对，另一个记录KEY和过期时间。要判断一个KEY是否过期，只需要到记录过期时间的Dict中根据KEY查询即可。
+
+
+
+Redis并不会在KEY过期时立刻删除KEY，因为要实现这样的效果就必须给每一个过期的KEY设置时钟，并监控这些KEY的过期状态。无论对CPU还是内存都会带来极大的负担。
+
+Redis的过期KEY删除策略有两种：
+
+- 惰性删除
+- 周期删除
+
+
+
+**惰性删除**
+
+Redis会在每次访问KEY的时候判断当前KEY有没有设置过期时间，如果有，过期时间是否已经到期。
+
+
+
+**周期删除**
+
+通过一个定时任务，周期性的抽样部分过期的key，然后执行删除。
+
+执行周期有两种：
+
+- **SLOW模式：**Redis会设置一个定时任务`serverCron()`，按照`server.hz`的频率来执行过期key清理
+- **FAST模式：**Redis的每个事件循环前执行过期key清理（事件循环就是NIO事件处理的循环）。
+
+
+
+**SLOW**模式规则：
+
+- ① 执行频率受`server.hz`影响，默认为10，即每秒执行10次，每个执行周期100ms。
+- ② 执行清理耗时不超过一次执行周期的25%，即25ms.
+- ③ 逐个遍历db，逐个遍历db中的bucket，抽取20个key判断是否过期
+- ④ 如果没达到时间上限（25ms）并且过期key比例大于10%，再进行一次抽样，否则结束
+
+**FAST**模式规则（过期key比例小于10%不执行）：
+
+- ① 执行频率受`beforeSleep()`调用频率影响，但两次FAST模式间隔不低于2ms
+- ② 执行清理耗时不超过1ms
+- ③ 逐个遍历db，逐个遍历db中的bucket，抽取20个key判断是否过期
+- ④ 如果没达到时间上限（1ms）并且过期key比例大于10%，再进行一次抽样，否则结束
+
+
+
+
+
+#### 内存淘汰
+
+对于某些特别依赖于Redis的项目而言，仅仅依靠过期KEY清理是不够的，内存可能很快就达到上限。因此Redis允许设置内存告警阈值，当内存使用达到阈值时就会主动挑选部分KEY删除以释放更多内存。这叫做**内存淘汰**机制。
+
+Redis每次执行任何命令时，都会判断内存是否达到阈值
+
+
+
+Redis支持8种不同的内存淘汰策略：
+
+- `noeviction`： 不淘汰任何key，但是内存满时不允许写入新数据，默认就是这种策略。
+- `volatile-ttl`： 对设置了TTL的key，比较key的剩余TTL值，TTL越小越先被淘汰
+- `allkeys-random`：对全体key ，随机进行淘汰。也就是直接从db->dict中随机挑选
+- `volatile-random`：对设置了TTL的key ，随机进行淘汰。也就是从db->expires中随机挑选。
+- `allkeys-lru`： 对全体key，基于LRU算法进行淘汰
+- `volatile-lru`： 对设置了TTL的key，基于LRU算法进行淘汰
+- `allkeys-lfu`： 对全体key，基于LFU算法进行淘汰
+- `volatile-lfu`： 对设置了TTL的key，基于LFU算法进行淘汰（**推荐**）
+
+
+
+- [x] **LRU**（**`L`**`east `**`R`**`ecently `**`U`**`sed`），最近最久未使用。用当前时间减去最后一次访问时间，这个值越大则淘汰优先级越高。
+
+- [x] **LFU**（**`L`**`east `**`F`**`requently `**`U`**`sed`），最少频率使用。会统计每个key的访问频率，值越小淘汰优先级越高。
+
+
+
+![img](./images/1740901518053-1.png)
+
+其中的`lru`就是记录最近一次访问时间和访问频率的。选择`LRU`和`LFU`时的记录方式不同：
+
+- **LRU**：以秒为单位记录最近一次访问时间，长度24bit
+- **LFU**：高16位以分钟为单位记录最近一次访问时间，低8位记录逻辑访问次数
+
+
+
+>  **逻辑访问次数**
+>
+> - ① 生成`[0,1)`之间的随机数`R`
+> - ② 计算 `1/(旧次数 * lfu_log_factor + 1)`，记录为`P`， `lfu_log_factor`默认为10
+> - ③ 如果 `R` < `P `，则计数器 `+1`，且最大不超过255
+> - ④ 访问次数会随时间衰减，距离上一次访问时间每隔 `lfu_decay_time` 分钟(默认1) ，计数器`-1`
+>
+> 显然LFU的基于访问频率的统计更符合我们的淘汰目标，因此**官方推荐使用LFU算法。**
+
+
+
+### 缓存问题
+
+#### 缓存一致性
+
+缓存的通用模型有三种：
+
+- `Cache Aside`（常用）：由缓存调用者自己维护数据库与缓存的一致性。即：
+  - 查询时：命中则直接返回，未命中则查询数据库并写入缓存
+  - 更新时：更新数据库并删除缓存，查询时自然会更新缓存
+- `Read/Write Through`：数据库自己维护一份缓存，底层实现对调用者透明。底层实现：
+  - 查询时：命中则直接返回，未命中则查询数据库并写入缓存
+  - 更新时：判断缓存是否存在，不存在直接更新数据库。存在则更新缓存，同步更新数据库
+- `Write Behind Cahing`：读写操作都直接操作缓存，由线程异步地将缓存数据同步到数据库
+
+
+
+`Cache Aside`的写操作是要在更新数据库的同时删除缓存
+
+那到底是先更新数据库再删除缓存，还是先删除缓存再更新数据库呢？
+
+
+
+假设有两个线程，一个来更新数据，一个来查询数据
+
+- 先更新数据库再删除缓存
+
+  **正常情况**
+
+![img](./images/1740902881482-4.png)
+
+**异常情况**
+
+![img](./images/1740902881482-5.png)
+
+> 由于更新数据库的操作本身比较耗时，在期间有线程来查询数据库并更新缓存的概率非常高。因此不推荐这种方案。
+
+
+
+- 先更新数据库再删除缓存
+
+**正常情况**
+
+![img](./images/1740902933735-10.png)
+
+**异常情况**
+
+![img](./images/1740902933735-11.png)
+
+> 异常概率较低，线程1必须是查询数据库已经完成，但是缓存尚未写入之前。线程2要完成更新数据库同时删除缓存的两个操作。
+
+
+
+#### 缓存穿透
+
+如果我访问一个数据库中也不存在的数据，那么缓存中肯定也不存在。因此不管请求该数据多少次，缓存永远不可能建立，请求永远会直达数据库。
+
+假如有不怀好意的人，开启很多线程频繁的访问一个数据库中也不存在的数据。由于缓存不可能生效，那么所有的请求都访问数据库，可能就会导致数据库因过高的压力而宕机。
+
+
+
+解决这个问题有两种思路：
+
+- 缓存空对象
+  - 优点：实现简单，维护方便
+  - 缺点：
+    - 额外的内存消耗
+    - 可能造成短期的不一致
+
+- 布隆过滤
+  - 优点：内存占用较少，没有多余key
+  - 缺点：
+    - 实现复杂
+    - 存在误判可能
+
+![image-20250225172612836](./images/image-20250225172612836.png)
+
+
+
+#### 缓存雪崩
+
+缓存雪崩是指在同一时段大量的缓存key同时失效或者Redis服务宕机，导致大量请求到达数据库，带来巨大压力。
+
+常见的解决方案有：
+
+- 给不同的Key的TTL添加随机值，这样KEY的过期时间不同，不会大量KEY同时过期
+- 利用Redis集群提高服务的可用性，避免缓存服务宕机
+- 给缓存业务添加降级限流策略
+- 给业务添加多级缓存，比如先查询本地缓存，本地缓存未命中再查询Redis，Redis未命中再查询数据库。即便Redis宕机，也还有本地缓存可以抗压力
+
+
+
+#### 缓存击穿
+
+**缓存击穿**问题也叫**热点Key**问题，就是一个被高并发访问并且缓存重建业务较复杂的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。
+
+
+
+常见的解决方案有两种：
+
+- 互斥锁：给重建缓存逻辑加锁，避免多线程同时指向
+- 逻辑过期：热点key不要设置过期时间，在活动结束后手动删除。
+
+
+
+基于互斥锁的方案如图：
+
+![img](./images/1740904419745-17.png)
+
+逻辑过期的思路如图：
+
+![img](./images/1740904419745-18.png)
+
+
+
+## 微服务
+
+### 分布式事务
+
+#### CAP定理和BASE理论
+
+2. **CAP定理**
+
+1998年，加州大学的计算机科学家 Eric Brewer 提出，分布式系统有三个指标：
+
+- **C**onsistency（一致性）
+- **A**vailability（可用性）
+- **P**artition tolerance （分区容错性）
+
+> 它们的第一个字母分别是 `C`、`A`、`P`。Eric Brewer认为任何分布式系统架构方案都不可能同时满足这3个目标，这个结论就叫做 CAP 定理。
+
+
+
+`Consistency`（一致性）：用户访问分布式系统中的任意节点，得到的数据必须一致。
+
+`Availability`（可用性）：用户访问分布式系统时，读或写操作总能成功。
+
+`Partition`（分区）：当分布式系统节点之间出现网络故障导致节点之间无法通信的情况。
+
+`Tolerance`（容错）：即便是系统出现网络分区，整个系统也要持续对外提供服务。
+
+
+
+2. **BASE理论**
+
+- **B**asically **A**vailable **（**基本可用**）**：分布式系统在出现故障时，允许损失部分可用性，即保证核心可用。
+- **S**oft State**（**软状态**）：**在一定时间内，允许出现中间状态，比如临时的不一致状态。
+- **E**ventually Consistent**（**最终一致性**）**：虽然无法保证强一致性，但是在软状态结束后，最终达到数据一致。
+
+以上就是BASE理论。
+
+
+
+简单来说，BASE理论就是一种取舍的方案，不再追求完美，而是最终达成目标。因此解决分布式事务的思想也是这样，有两个方向：
+
+- AP思想：各个子事务分别执行和提交，无需锁定数据。允许出现结果不一致，然后采用弥补措施恢复，实现最终一致即可。例如`AT`模式就是如此
+- CP思想：各个子事务执行后不要提交，而是等待彼此结果，然后同时提交或回滚。在这个过程中锁定资源，不允许其它人访问，数据处于不可用状态，但能保证一致性。例如`XA`模式
+
+
+
+#### AT模式的脏写问题
+
+多线程并发访问AT模式的分布式事务时，有可能出现脏写问题，如图：
+
+![img](./images/1740913700405-23.png)
+
+解决思路就是引入了全局锁的概念。在释放DB锁之前，先拿到全局锁。避免同一时刻有另外一个事务来操作当前数据。
+
+![img](./images/1740913787803-26.png)
+
+
+
+#### TCC模式
+
+TCC模式与AT模式非常相似，每阶段都是独立事务，不同的是TCC通过人工编码来实现数据恢复。需要实现三个方法：
+
+-  `try`：资源的检测和预留； 
+-  `confirm`：完成资源操作业务；要求 `try` 成功 `confirm` 一定要能成功。 
+-  `cancel`：预留资源释放，可以理解为try的反向操作。
+
+
+
+举例，一个扣减用户余额的业务。假设账户A原来余额是100，需要余额扣减30元。
+
+**阶段一（ Try ）**：检查余额是否充足，如果充足则冻结金额增加30元，可用余额扣除30
+
+初始余额：
+
+![img](./images/1740914587529-29.png)
+
+余额充足，可以冻结：
+
+![img](./images/1740914587530-30.png)
+
+此时，总金额 = 冻结金额 + 可用金额，数量依然是100不变。事务直接提交无需等待其它事务。
+
+**阶段二（Confirm)**：假如要提交（Confirm），之前可用金额已经扣减，并转移到冻结金额。因此可用金额不变，直接冻结金额扣减30即可：
+
+![img](./images/1740914587530-31.png)
+
+此时，总金额 = 冻结金额 + 可用金额 = 0 + 70  = 70元
+
+**阶段二(Canncel)**：如果要回滚（Cancel），则释放之前冻结的金额，也就是冻结金额扣减30，可用余额增加30
+
+![img](./images/1740914587530-32.png)
+
+
+
+TCC的优点是什么？
+
+- 一阶段完成直接提交事务，释放数据库资源，性能好
+- 相比AT模型，无需生成快照，无需使用全局锁，性能最强
+- 不依赖数据库事务，而是依赖补偿操作，可以用于非事务型数据库
+
+TCC的缺点是什么？
+
+- 有代码侵入，需要人为编写try、Confirm和Cancel接口，太麻烦
+- 软状态，事务是最终一致
+- 需要考虑Confirm和Cancel的失败情况，做好幂等处理、事务悬挂和空回滚处理
+
+
+
+#### 最大努力通知
+
+![image-20250302192907762](./images/image-20250302192907762.png)
+
+
+
+### 注册中心
+
+#### 环境隔离
+
+企业实际开发中，往往会搭建多个运行环境，例如：
+
+- 开发环境
+- 测试环境
+- 预发布环境
+- 生产环境
+
+这些不同环境之间的服务和数据之间需要隔离。
+
+还有的企业中，会开发多个项目，共享nacos集群。此时，这些项目之间也需要把服务和数据隔离。
+
+因此，Nacos提供了基于`namespace`的环境隔离功能。具体的隔离层次如图所示：
+
+![img](./images/1740915173883-41.png)
+
+说明：
+
+- Nacos中可以配置多个`namespace`，相互之间完全隔离。默认的`namespace`名为`public`
+- `namespace`下还可以继续分组，也就是group ，相互隔离。 默认的group是`DEFAULT_GROUP`
+- `group`之下就是服务和配置了
+
+
+
+指定命名空间：
+
+```yaml
+spring:
+  application:
+    name: item-service # 服务名称
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: localhost # nacos地址
+      discovery: # 服务发现配置
+        namespace: 8c468c63-b650-48da-a632-311c75e6d235 # 设置namespace，必须用id
+```
+
+
+
+#### 分级模型
+
+在一些大型应用中，同一个服务可以部署很多实例。而这些实例可能分布在全国各地的不同机房。由于存在地域差异，网络传输的速度会有很大不同，因此在做服务治理时需要区分不同机房的实例。
+
+
+
+Nacos中提供了集群（`cluster`）的概念，来对应不同机房。也就是说，一个服务（`service`）下可以有很多集群（`cluster`），而一个集群（`cluster`）中下又可以包含很多实例（`instance`）。
+
+![img](./images/1740918840755-44.png)
+
+任何一个微服务的实例在注册到Nacos时，都会生成以下几个信息，用来确认当前实例的身份，从外到内依次是：
+
+- namespace：命名空间
+- group：分组
+- service：服务名
+- cluster：集群
+- instance：实例，包含ip和端口
+
+这就是nacos中的服务分级模型。
+
+
+
+如果我们要修改服务所在集群，只需要修改`bootstrap.yml`即可：
+
+```YAML
+spring:
+  cloud:
+    nacos:
+      discovery:
+        cluster-name: BJ # 集群名称，自定义
+```
+
+
+
+#### Eureka与Nacos
+
+Eureka是Netflix公司开源的一个服务注册中心组件，早期版本的SpringCloud都是使用Eureka作为注册中心。由于Eureka和Nacos的starter中提供的功能都是基于SpringCloudCommon规范，因此两者使用起来差别不大。
+
+
+
+Eureka和Nacos的相似点有：
+
+- 都支持服务注册发现功能
+- 都有基于心跳的健康监测功能
+- 都支持集群，集群间数据同步默认是AP模式，即最全高可用性
+
+Eureka和Nacos的区别有：
+
+- Eureka的心跳是30秒一次，Nacos则是5秒一次
+- Eureka如果90秒未收到心跳，则认为服务疑似故障，可能被剔除。Nacos中则是15秒超时，30秒剔除。
+- Eureka每隔60秒执行一次服务检测和清理任务；Nacos是每隔5秒执行一次。
+- Eureka只能等微服务自己每隔30秒更新一次服务列表；Nacos即有定时更新，也有在服务变更时的广播推送
+- Eureka仅有注册中心功能，而Nacos同时支持注册中心、配置管理
+
+
+
+### 远程调用
+
+#### 负载均衡原理
+
+在SpringCloud的早期版本中，负载均衡都是有Netflix公司开源的Ribbon组件来实现的，甚至Ribbon被直接集成到了Eureka-client和Nacos-Discovery中。
+
+但是自SpringCloud2020版本开始，已经弃用Ribbon，改用Spring自己开源的Spring Cloud LoadBalancer了，我们使用的OpenFeign的也已经与其整合。
+
+
+
+OpenFeign请求流程：
+
+- 从请求的`URI`中找出`serviceId`
+- 利用`loadBalancerClient`，根据`serviceId`做负载均衡，选出一个实例`ServiceInstance`
+- 用选中的`ServiceInstance`的`ip`和`port`替代`serviceId`，重构`URI`
+- 向真正的URI发送请求
+
+
+
+具体的负载均衡则是不是由`OpenFeign`组件负责。而是分成了**负载均衡的接口规范**，以及**负载均衡的具体实现**两部分。
+
+负载均衡的接口规范是定义在`Spring-Cloud-Common`模块中，包含下面的接口：
+
+- `LoadBalancerClient`：负载均衡客户端，职责是根据serviceId最终负载均衡，选出一个服务实例
+- `ReactiveLoadBalancer`：负载均衡器，负责具体的负载均衡算法
+
+OpenFeign的负载均衡是基于`Spring-Cloud-Common`模块中的负载均衡规则接口，并没有写死具体实现。这就意味着以后还可以拓展其它各种负载均衡的实现。
+
+不过目前`SpringCloud`中只有`Spring-Cloud-Loadbalancer`这一种实现。
+
+`Spring-Cloud-Loadbalancer`模块中，实现了`Spring-Cloud-Common`模块的相关接口，具体如下：
+
+- `BlockingLoadBalancerClient`：实现了`LoadBalancerClient`，会根据serviceId选出负载均衡器并调用其算法实现负载均衡。
+- `RoundRobinLoadBalancer`：基于轮询算法实现了`ReactiveLoadBalancer`
+- `RandomLoadBalancer`：基于随机算法实现了`ReactiveLoadBalancer`，
+
+这样一来，整体思路就非常清楚了，流程图如下：
+
+![image-20250303165658313](./images/image-20250303165658313.png)
+
+
+
+#### 更换负载均衡算法
+
+SpringCloud默认采用的负载均衡策略是`RoundRobinLoadBalancer`(即轮询算法)
+
+
+
+`Spring-Cloud-Loadbalancer`模块中有一个自动配置类`LoadBalancerClientConfiguration`，其中定义了默认的负载均衡器：
+
+```java
+    @Bean
+    @ConditionalOnMissingBean
+    public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment, LoadBalancerClientFactory loadBalancerClientFactory) {
+        String name = environment.getProperty("loadbalancer.client.name");
+        return new RoundRobinLoadBalancer(loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class), name);
+    }
+```
+
+> @ConditionalOnMissingBean　Bean不存在才创建该Bean
+
+
+
+自定义了这个类型的bean，则负载均衡的策略就会被改变
+
+```java
+public class OpenFeignConfig {
+
+    @Bean
+    public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(
+            Environment environment, NacosDiscoveryProperties properties,
+            LoadBalancerClientFactory loadBalancerClientFactory) {
+        String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
+        return new NacosLoadBalancer(
+                loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class), name, properties);
+    }
+
+}
+```
+
+> **注意**：
+>
+> 这个配置类千万不要加`@Configuration`注解，也不要被SpringBootApplication扫描到。
+>
+> 
+>
+> `NacosLoadBalancer`采用集群优先，以及加权算法，可以在Nacos中为服务实例配置不同的权重
+
+
+
+由于这个OpenFeignConfig没有加`@Configuration`注解，也就没有被Spring加载，因此是不会生效的。接下来，我们要在启动类上通过注解来声明这个配置。
+
+有两种做法：
+
+- 全局配置：对所有服务生效
+
+```Java
+@LoadBalancerClients(defaultConfiguration = OpenFeignConfig.class)
+```
+
+- 局部配置：只对某个服务生效
+
+```Java
+@LoadBalancerClients({
+        @LoadBalancerClient(value = "item-service", configuration = OpenFeignConfig.class)
+})
+```
+
+
+
+### 服务保护
+
+#### 线程隔离
+
+无论是Hystix还是Sentinel都支持线程隔离。不过其实现方式不同。
+
+线程隔离有两种方式实现：
+
+- **线程池隔离**：给每个服务调用业务分配一个线程池，利用线程池本身实现隔离效果
+- **信号量隔离**：不创建线程池，而是计数器模式，记录业务使用的线程数量，达到信号量上限时，禁止新的请求
+
+
+
+![img](./images/1740993874388-1.png)
+
+
+
+#### 滑动窗口计数法
+
+在熔断功能中，需要统计异常请求或慢请求比例，也就是计数。在限流的时候，要统计每秒钟的QPS，同样是计数。可见计数算法在熔断限流中的应用非常多。sentinel中采用的计数器算法就是滑动窗口计数算法。
+
+
+
+**固定窗口计数算法**
+
+基本原理如图：
+
+![img](./images/1740994117154-4.png)
+
+说明：
+
+- 将时间划分为多个窗口，窗口时间跨度称为`Interval`，本例中为1000ms；
+- 每个窗口维护1个计数器，每有1次请求就将计数器`+1`。限流就是设置计数器阈值，本例为3，图中红线标记
+-  如果计数器超过了限流阈值，则超出阈值的请求都被丢弃。
+
+
+
+如果第5秒的三次请求都是在4.5~5秒之间进来；第6秒的请求是在5~5.5之间进来。那么从第4.5~5.之间就有6次请求！也就是说每秒的QPS达到了6，远超阈值。
+
+这就是固定窗口计数算法的问题，它只能统计当前某1个时间窗的请求数量是否到达阈值，无法结合前后的时间窗的数据做综合统计。
+
+
+
+**滑动窗口计数法**
+
+固定时间窗口算法中窗口有很多，其跨度和位置是与时间区间绑定，因此是很多固定不动的窗口。而滑动时间窗口算法中只包含1个固定跨度的窗口，但窗口是可移动动的，与时间区间无关。
+
+具体规则如下：
+
+- 窗口时间跨度`Interval`大小固定，例如1秒
+- 时间区间跨度为`Interval / n` ，例如n=2，则时间区间跨度为500ms
+- 窗口会随着当前请求所在时间`currentTime`移动，窗口范围从`currentTime-Interval`时刻之后的第一个时区开始，到`currentTime`所在时区结束。
+
+![img](./images/1740994617487-7.png)
+
+> 滑动窗口内划分的时区越多，这种统计就越准确。
+
+
+
+#### 令牌桶算法
+
+限流的另一种常见算法是令牌桶算法。Sentinel中的热点参数限流正是基于令牌桶算法实现的。其基本思路如图：
+
+![img](./images/1740995017634-10.png)
+
+说明：
+
+- 以固定的速率生成令牌，存入令牌桶中，如果令牌桶满了以后，多余令牌丢弃
+- 请求进入后，必须先尝试从桶中获取令牌，获取到令牌后才可以被处理
+- 如果令牌桶中没有令牌，则请求等待或丢弃
+
+
+
+存在的问题：
+
+- 某一秒令牌桶中产生了很多令牌，达到令牌桶上限N，缓存在令牌桶中，但是这一秒没有请求进入。
+- 下一秒的前半秒涌入了超过2N个请求，之前缓存的令牌桶的令牌耗尽，同时这一秒又生成了N个令牌，于是总共放行了2N个请求。超出了我们设定的QPS阈值。
+
+因此，在使用令牌桶算法时，尽量不要将令牌上限设定到服务能承受的QPS上限。而是预留一定的波动空间，这样我们才能应对突发流量。
+
+
+
+#### 漏桶算法
+
+漏桶算法与令牌桶相似，但在设计上更适合应对**并发波动较大**的场景，以解决令牌桶中的问题。
+
+简单来说就是请求到达后不是直接处理，而是先放入一个队列。而后以固定的速率从队列中取出并处理请求。
+
+
+
+说明：
+
+- 将每个请求视作"水滴"放入"漏桶"进行存储；
+- "漏桶"以固定速率向外"漏"出请求来执行，如果"漏桶"空了则停止"漏水”；
+- 如果"漏桶"满了则多余的"水滴"会被直接丢弃。
+
+
+
+漏桶的优势就是**流量整型**，桶就像是一个大坝，请求就是水。并发量不断波动，就如图水流时大时小，但都会被大坝拦住。而后大坝按照固定的速度放水，避免下游被洪水淹没。
+
+因此，不管并发量如何波动，经过漏桶处理后的请求一定是相对平滑的曲线：
+
+![img](./images/1740995437280-17.png)
+
+sentinel中的限流中的排队等待功能正是基于漏桶算法实现的。
+
+
+
+
+
+---
+
+- [x] <font color=red>完结</font>
