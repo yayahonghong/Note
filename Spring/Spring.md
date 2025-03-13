@@ -2202,6 +2202,73 @@ public class SpringConfig {
 
 
 
+
+
+### 事务失效
+
+#### **1. 方法非 `public` 修饰**
+
+- **问题**：Spring 事务基于 AOP 动态代理实现，默认只代理 `public` 方法。
+- **解决**：确保 `@Transactional` 注解的方法为 `public`。
+
+
+
+#### **2. 事务方法被同类内部调用**
+
+- **问题**：事务方法被同类中的其他方法直接调用（绕过代理对象）。
+
+- **解决**：
+
+  - **方式1**：通过代理对象调用（注入自身 Bean）：
+
+    ```java
+    @Service
+    public class UserService {
+      @Autowired
+      private UserService userService; // 注入自身代理对象
+    
+      public void methodA() {
+        userService.methodB(); // 通过代理对象调用
+      }
+    
+      @Transactional
+      public void methodB() {
+        // 业务逻辑
+      }
+    }
+    ```
+
+  - **方式2**：使用 `AopContext` 获取代理对象：
+
+    ```java
+    public void methodA() {
+      ((UserService) AopContext.currentProxy()).methodB();
+    }
+    ```
+
+    **注意**：需在启动类添加 `@EnableAspectJAutoProxy(exposeProxy = true)`。
+
+
+
+#### **3. 异常未被正确抛出**
+
+- **问题**：默认事务仅对 `RuntimeException` 和 `Error` 回滚，其他异常需手动配置。
+- **解决**：
+  - 手动抛出 `RuntimeException`：
+  - 指定回滚异常类型：
+
+
+
+#### **4. 事务传播机制配置错误**
+
+- **问题**：默认传播机制为 `REQUIRED`，若嵌套事务配置不当，可能导致预期外的行为。
+
+- **解决**：根据场景选择传播机制：
+
+  
+
+
+
 ---
 
 # Spring整合Web环境

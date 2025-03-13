@@ -683,3 +683,406 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 | -------- | ------------------------------------------ | ------------------------------------------ |
 | 互斥锁   | 没有额外内存消耗<br>保证一致性<br>实现简单 | 线程需要等待，性能受影响<br>可能有死锁风险 |
 | 逻辑过期 | 线程无需等待，性能较好                     | 不保证一致性<br>有额外内存消耗<br>实现复杂 |
+
+
+
+## 全局唯一ID
+
+全局ID生成器，是一种在**分布式系统**下用来生成全局唯一ID的工具，需要满足以下特性：
+
+- 唯一性
+- 高可用
+- 高性能
+- 递增性
+- 安全性
+
+
+
+常见的实现方式包括UUID、Snowflake算法等。
+
+### 1. UUID（Universally Unique Identifier）
+
+UUID 是一个128位的标识符，通常表示为32个十六进制字符，分为5段（8-4-4-4-12）。UUID 的生成基于时间戳、随机数或硬件地址等，确保全局唯一性。
+
+**示例：**
+
+```
+550e8400-e29b-41d4-a716-446655440000
+```
+
+**优点：**
+
+- 无需中心化服务，分布式生成。
+- 全球唯一性高。
+
+**缺点：**
+
+- 长度较长（36字符）。
+- 无序，不适合作为数据库主键（可能导致索引碎片）。
+
+------
+
+### 2. Snowflake算法
+
+Snowflake 是 Twitter 开源的分布式ID生成算法，生成一个64位的ID，结构如下：
+
+- **1位**：符号位（固定为0）。
+- **41位**：时间戳（毫秒级，可用69年）。
+- **10位**：机器ID（支持1024个节点）。
+- **12位**：序列号（每毫秒可生成4096个ID）。
+
+**示例：**
+
+```
+1234567890123456789
+```
+
+**优点：**
+
+- 短小精悍（64位整数）。
+- 时间有序，适合作为数据库主键。
+- 高性能，支持高并发。
+
+**缺点：**
+
+- 依赖系统时钟，时钟回拨可能导致ID冲突。
+- 需要管理机器ID的分配。
+
+
+
+### 3.Redis自增
+
+```java
+@Component
+@RequiredArgsConstructor
+public class RedisIdWorker {
+
+    private final StringRedisTemplate redisTemplate;
+
+    private final long BEGIN_TIME_STAMP = 1735689600L;
+
+    public long nextId(String prefix) {
+
+        LocalDateTime now = LocalDateTime.now();
+        long epochSecond = now.toEpochSecond(ZoneOffset.UTC);
+        long nowEpochSecond = epochSecond - BEGIN_TIME_STAMP;
+
+        String date = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        long increment = redisTemplate.opsForValue().increment("icr:" + prefix + ":" + date);
+
+        return nowEpochSecond << 32 | increment;
+    }
+
+}
+```
+
+> 时间戳 + 序列号
+
+
+
+## 超卖问题
+
+超卖问题（Overselling）是电商、秒杀、库存管理等场景中常见的核心问题，指系统**实际销售数量超过库存数量**，导致订单无法履约。
+
+**原因**：
+
+1. **并发请求冲突**
+   - 多个用户同时请求购买同一商品，系统未正确处理并发扣减库存。
+2. **数据库更新延迟**
+   - 数据库读写分离时，从库同步延迟导致读取到旧库存数据。
+3. **缓存与数据库不一致**
+   - 缓存层（如 Redis）与数据库的库存数据未同步。
+4. **非原子性操作**
+   - 查询库存、扣减库存分步执行，中间过程被其他请求插入。
+
+
+
+**解决方案**：
+
+#### **1. 数据库层面：锁机制**
+
+- **悲观锁（Pessimistic Lock）**
+  通过 `SELECT ... FOR UPDATE` 锁定记录，确保串行操作。
+
+  ```sql
+  BEGIN;
+  SELECT stock FROM products WHERE id=1 FOR UPDATE;
+  UPDATE products SET stock = stock - 1 WHERE id=1;
+  COMMIT;
+  ```
+
+  **缺点**：高并发下性能差，可能引发死锁。
+
+- **乐观锁（Optimistic Lock）**
+  使用版本号或库存字段本身作为条件更新。
+
+  ```sql
+  UPDATE products 
+  SET stock = stock - 1, version = version + 1 
+  WHERE id=1 AND stock > 0 AND version = {current_version};
+  ```
+
+  **优点**：无锁竞争，适合高并发。
+  **缺点**：需处理更新失败（如重试或提示用户）。
+
+#### **2. 分布式锁**
+
+- **Redis 锁**
+  使用 `SET key value NX EX` 实现原子锁：
+
+  ```python
+  lock = redis.set("product_1_lock", "locked", nx=True, ex=5)
+  if lock:
+      try:
+          # 扣减库存逻辑
+      finally:
+          redis.delete("product_1_lock")
+  ```
+
+  **注意**：需解决锁过期和误删问题（如 Redlock 算法）。
+
+#### **3. 缓存层原子操作**
+
+- **Redis 原子扣减**
+  利用 Redis 的原子命令（如 `DECR` 或 Lua 脚本）：
+
+  ```lua
+  -- Lua 脚本（原子扣减库存）
+  local stock = tonumber(redis.call('GET', KEYS[1]))
+  if stock > 0 then
+      redis.call('DECR', KEYS[1])
+      return 1  -- 成功
+  else
+      return 0  -- 失败
+  end
+  ```
+
+  **优点**：高性能，避免直接穿透到数据库。
+
+- **预扣库存（预占机制）**
+  用户下单时先在 Redis 中扣减库存，异步同步到数据库：
+
+  ```python
+  if redis.decr("product_1_stock") >= 0:
+      # 创建订单，异步更新数据库
+  else:
+      # 恢复库存：redis.incr("product_1_stock")
+  ```
+
+#### **4. 消息队列削峰**
+
+- 将请求放入队列（如 Kafka、RabbitMQ），由消费者顺序处理：
+
+  ```python
+  # 生产者（用户请求入队）
+  producer.send("order_topic", {"user_id": 123, "product_id": 1})
+  
+  # 消费者（顺序扣减库存）
+  consumer.subscribe("order_topic")
+  for message in consumer:
+      process_order(message)
+  ```
+
+  **优点**：流量削峰，保证最终一致性。
+
+
+
+## 一人一单
+
+### 单实例部署
+
+某些业务只允许用户进行一次交易
+
+但当一个用户同一时间发起多个请求时，就有可能发生一人多单问题（多个线程都查询到数据库中并没有订单存在，都可以创建订单）
+
+
+
+可以对数据操作代码加锁同步
+
+```java
+synchronized (userId.toString().intern()) {
+            // 获取代理对象，解决spring事务失效问题
+            IVoucherOrderService proxy =(IVoucherOrderService) AopContext.currentProxy();
+            return proxy.createOrder(id, userId);
+        }
+```
+
+> 注：
+>
+> 以上代码只对同一个用户加锁，避免不同用户被阻塞的性能问题（intern()将字符串加入字符串常量池，避免同一个用户id有多个对象，同步失效）
+>
+> Spring的事务管理基于AOP代理对象实现，如果在类的方法内调用自身的方法，等同于this.xxx()，并没有通过代理对象实现事务增强，解决方案为先获取代理对象，然后再通过代理对象调用该方法
+>
+> 需要引入`aspectjweaver`依赖，并在启动类上加上`@EnableAspectJAutoProxy(exposeProxy = true)`注解
+
+
+
+### 多实例部署
+
+<font color=red>以上方案在多实例集群模式下仍会发生线程安全问题</font>
+
+原因是多个实例各自都有自身的`JVM`去实现同步锁，无法共享
+
+
+
+解决方案：
+
+​	**分布式锁**：满足分布式系统或集群模式下多进程可见并且互斥的锁
+
+- 多进程可见
+- 互斥
+- 高性能
+- 安全性
+- 高可用
+
+
+
+常见实现方式
+
+|        | MySQL              | Redis                    | Zookeeper                  |
+| ------ | ------------------ | ------------------------ | -------------------------- |
+| 互斥   | 利用本身互斥锁机制 | 利用setnx这类互斥命令    | 利用节点唯一性和有序性实现 |
+| 高可用 | 优秀               | 优秀                     | 优秀                       |
+| 高性能 | 一般               | 优秀                     | 一般                       |
+| 安全性 | 断开连接自动释放锁 | 锁到期自动释放，避免死锁 | 临时节点断开连接自动释放   |
+
+
+
+## 基于Redis的分布式锁
+
+### 简单实现
+
+实现分布式锁时需要实现的两个基本方法：
+
+- 获取锁：
+
+```bash
+SET lock thread1 EX 10 NX
+```
+
+> EX参数设置过期时间，NX参数实现与`SETNX`相同的功能
+>
+> 不建议直接使用`SETNX`,因为无法同时设置过期时间，可能发生获得锁后服务宕机，而未设置过期时间，最终导致死锁。
+
+
+
+- 释放锁：
+
+```bash
+DEL lock
+```
+
+![image-20250313212150077](./images/image-20250313212150077.png)
+
+
+
+示例：
+
+```java
+    @Override
+    public boolean tryLock(long timeout) {
+        // 获取当前线程ID
+        long threadId = Thread.currentThread().getId();
+
+        Boolean success = stringRedisTemplate.opsForValue()
+                .setIfAbsent(KEY_PREFIX + name, threadId + "", timeout, TimeUnit.SECONDS);
+
+        return Boolean.TRUE.equals(success);
+    }
+
+    @Override
+    public void unlock() {
+        // 释放锁
+        stringRedisTemplate.delete(KEY_PREFIX + name);
+    }
+```
+
+
+
+### 锁误删问题
+
+主要发生在某个线程阻塞时锁超时释放了，其他线程就可以获得锁，当被阻塞的线程恢复后就会删除不属于自己的锁
+
+![image-20250313214623010](./images/image-20250313214623010.png)
+
+**解决方案**
+
+为线程的锁加入唯一标识，释放前判断锁是否属于自己
+
+> 可使用UUID
+
+
+
+#### 原子性问题
+
+如果查询和删除锁不能原子性执行，就仍然有可能发生锁误删问题
+
+![image-20250313220527221](./images/image-20250313220527221.png)
+
+
+
+**Lua脚本**
+
+Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，确保多条命令执行时的原子性。Lua是一种编程语言，它的基本语法大家可以参考网站：https://www.runoob.com/lua/lua-tutorial.html
+
+
+
+Redis可以通过如下命令执行Lua脚本
+
+```lua
+EVAL "<脚本内容>"
+
+-- 示例
+
+EVAL "return redis.call('set','key','value')" 0
+```
+
+> 参数**0**表示需要的key类型的参数个数
+
+
+
+脚本中的key、value可以作为参数传递。key类型参数会放入`KEYS`数组，其它参数会放入`ARGV`数组，在脚本中可以从KEYS和ARGV数组获取这些参数：
+
+```lua
+EVAL "return redis.call('set',KEYS[1],ARGV[1])" 1 key value
+```
+
+
+
+释放锁脚本示例：
+
+```lua
+-- 获取key
+local key = KEYS[1]
+
+-- 获取线程ID
+local threadId = ARGV[1]
+
+local id = redis.call('get',key)
+
+if(id == threadId)
+then
+    return redis.call('del',key)
+end
+return 0
+```
+
+
+
+```java
+   	private static final DefaultRedisScript<Long> UNLOCK_SCRIPT;
+
+    static {
+        UNLOCK_SCRIPT = new DefaultRedisScript<>();
+        UNLOCK_SCRIPT.setLocation(new ClassPathResource("unlock.lua"));
+        UNLOCK_SCRIPT.setResultType(Long.class);
+    }    
+	
+		// 执行Lua脚本释放锁
+        stringRedisTemplate.execute(
+                UNLOCK_SCRIPT,
+                Collections.singletonList(KEY_PREFIX + name),
+                ID_PREFIX + Thread.currentThread().getId()
+        );
+```
+
