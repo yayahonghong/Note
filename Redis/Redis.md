@@ -1086,3 +1086,284 @@ return 0
         );
 ```
 
+
+
+### Redission
+
+基于`SETNX`实现的分布式锁存在下面的问题
+
+![image-20250314173318992](./images/image-20250314173318992.png)
+
+
+
+**Redisson**是一个在Redis的基础上实现的Java驻内存数据网格（In-Memory Data Grid）。它不仅提供了一系列的分布式的Java常用对象，还提供了许多分布式服务，其中就包含了各种分布式锁的实现。
+
+官网地址： [https://redisson.org](https://redisson.org/)
+
+![image-20250314173449659](./images/image-20250314173449659.png)
+
+
+
+#### 快速入门
+
+引入依赖
+
+```xml
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.36.0</version>
+        </dependency>
+```
+
+
+
+配置Redisson
+
+```java
+@Configuration
+public class RedisConfig {
+    @Bean
+    public RedissonClient redisson() {
+        // 配置Redisson
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://localhost:6379")
+                .setPassword("123456");
+        
+        // 创建Redisson客户端
+        return Redisson.create(config);
+    }
+}
+```
+
+
+
+在业务中注入`RedissonClient`然后获取锁即可
+
+
+
+#### 可重入锁原理
+
+利用hash结构记录线程id和重入次数
+
+![image-20250314181231205](./images/image-20250314181231205.png)
+
+获取锁
+
+```lua
+local key = KEYS[1]; -- 锁的key
+local threadId = ARGV[1]; -- 线程唯一标识
+local releaseTime = ARGV[2]; -- 锁的自动释放时间
+-- 判断是否存在
+if(redis.call('exists', key) == 0) then
+    -- 不存在, 获取锁
+    redis.call('hset', key, threadId, '1'); 
+    -- 设置有效期
+    redis.call('expire', key, releaseTime); 
+    return 1; -- 返回结果
+end;
+-- 锁已经存在，判断threadId是否是自己
+if(redis.call('hexists', key, threadId) == 1) then
+    -- 不存在, 获取锁，重入次数+1
+    redis.call('hincrby', key, threadId, '1'); 
+    -- 设置有效期
+    redis.call('expire', key, releaseTime); 
+    return 1; -- 返回结果
+end;
+return 0; -- 代码走到这里,说明获取锁的不是自己，获取锁失败
+```
+
+释放锁
+
+```lua
+local key = KEYS[1]; -- 锁的key
+local threadId = ARGV[1]; -- 线程唯一标识
+local releaseTime = ARGV[2]; -- 锁的自动释放时间
+-- 判断当前锁是否还是被自己持有
+if (redis.call('HEXISTS', key, threadId) == 0) then
+    return nil; -- 如果已经不是自己，则直接返回
+end;
+-- 是自己的锁，则重入次数-1
+local count = redis.call('HINCRBY', key, threadId, -1);
+-- 判断是否重入次数是否已经为0 
+if (count > 0) then
+    -- 大于0说明不能释放锁，重置有效期然后返回
+    redis.call('EXPIRE', key, releaseTime);
+    return nil;
+else  -- 等于0说明可以释放锁，直接删除
+    redis.call('DEL', key);
+    return nil;
+end;
+```
+
+
+
+#### 重试机制和看门狗
+
+•**可重试**：利用信号量和PubSub功能实现等待、唤醒，获取锁失败的重试机制
+
+•**超时续约**：利用watchDog，每隔一段时间（releaseTime / 3），重置超时时间
+
+
+
+#### 主从一致性
+
+原理：多个独立的Redis节点，必须在所有节点都获取重入锁，才算获取锁成功
+
+缺陷：运维成本高、实现复杂
+
+
+
+
+
+## 基于Redis的消息队列
+
+> 消息队列可参考 [RabbitMQ](./../SpringCloud/SpringCloud微服务.md)
+
+**消息队列**（**M**essage **Q**ueue），字面意思就是存放消息的队列。最简单的消息队列模型包括3个角色：
+
+- 消息队列：存储和管理消息，也被称为消息代理（Message Broker）
+
+- 生产者：发送消息到消息队列
+- 消费者：从消息队列获取消息并处理消息
+
+
+
+Redis提供了三种不同的方式来实现消息队列：
+
+- list结构：基于List结构模拟消息队列
+- PubSub：基本的点对点消息模型
+- Stream：比较完善的消息队列模型
+
+
+
+### 使用list实现
+
+Redis的list数据结构是一个双向链表，很容易模拟出队列效果。队列是入口和出口不在一边，因此我们可以利用：LPUSH 结合 RPOP、或者 RPUSH 结合 LPOP来实现。
+
+不过要注意的是，当队列中没有消息时RPOP或LPOP操作会返回null，并不像JVM的阻塞队列那样会阻塞并等待消息。因此这里应该使用**BRPOP**或者**BLPOP**来实现阻塞效果。
+
+
+
+基于List的消息队列有哪些优缺点？
+
+优点：
+
+- 利用Redis存储，不受限于JVM内存上限
+- 基于Redis的持久化机制，数据安全性有保证
+- 可以满足消息有序性
+
+缺点：
+
+- 无法避免消息丢失
+- 只支持单消费者
+
+
+
+### 使用PubSub实现
+
+**PubSub**（发布订阅）是Redis2.0版本引入的消息传递模型。顾名思义，消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有订阅者都能收到相关消息。
+
+- `SUBSCRIBE channel [channel]` ：订阅一个或多个频道
+- `PUBLISH channel msg` ：向一个频道发送消息
+- `PSUBSCRIBE pattern[pattern]` ：订阅与pattern格式匹配的所有频道
+
+
+
+优点：
+
+- 采用发布订阅模型，支持多生产、多消费
+
+缺点：
+
+- 不支持数据持久化
+- 无法避免消息丢失
+- 消息堆积有上限，超出时数据丢失
+
+
+
+
+
+### 使用Stream实现
+
+`Stream`是Redis5.0引入的一种数据类型，可以实现功能较完善的消息队列
+
+
+
+发送消息
+
+![image-20250316155920428](./images/image-20250316155920428.png)
+
+> `xadd user * name ysh age 22`  
+
+
+
+读取消息
+
+![image-20250316160247412](./images/image-20250316160247412.png)
+
+> `xread cout 1 block 2000 streams user $` 阻塞式读取
+
+<font color=red>注意：</font>当我们指定起始ID为$时，代表读取最新的消息，如果我们处理一条消息的过程中，又有超过1条以上的消息到达队列，则下次获取时也只能获取到最新的一条，会出现漏读消息的问题
+
+
+
+STREAM类型消息队列的XREAD命令特点：
+
+- 消息可回溯
+- 一个消息可以被多个消费者读取
+- 可以阻塞读取
+- 有消息漏读的风险
+
+
+
+**消费者组**
+
+![image-20250316160957819](./images/image-20250316160957819.png)
+
+```bash
+# 创建消费者组
+xgroup create key groupName ID
+
+# 删除消费者组
+xgroup destroy key groupName
+
+# 将消费者添加到消费者组
+xgroup createconsumer key groupName consumerName
+
+# 删除消费者组中的消费者
+xgroup delconsumer key groupName consumerName
+```
+
+![image-20250316161723498](./images/image-20250316161723498.png)
+
+
+
+
+
+## Feed流模式（推流）
+
+Feed流产品有两种常见的模式：
+
+- TimeLine:不做内容筛选，简单的按照内容发布时间排序，常用于好友或关注。例如朋友圈
+  - 优点：信息全面，不会有缺失，并且实现也相对简单
+  - 优点：信息噪音多，用户不一定感兴趣，内容获取效率低
+- 智能排序:利用智能算法屏蔽违规的、用户不感兴趣的内容，推送用户感兴趣的信息来吸引用户
+  - 优点：投喂用户感兴趣的信息，用户黏度很高，容易沉迷
+  - 缺点：算法如果不精准，可能起反作用
+
+推送方式：
+
+- 拉模式：消费端主动拉取（读要求高，不推荐）
+
+- 推模式：生产者主动推送（写要求高，用户量少时推荐）
+
+- 推拉结合：以上两者结合（用户千万以上推荐）
+
+
+
+Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
+
+> 应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
+
