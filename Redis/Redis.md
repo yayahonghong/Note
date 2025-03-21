@@ -1353,6 +1353,8 @@ Feed流产品有两种常见的模式：
   - 优点：投喂用户感兴趣的信息，用户黏度很高，容易沉迷
   - 缺点：算法如果不精准，可能起反作用
 
+
+
 推送方式：
 
 - 拉模式：消费端主动拉取（读要求高，不推荐）
@@ -1361,9 +1363,344 @@ Feed流产品有两种常见的模式：
 
 - 推拉结合：以上两者结合（用户千万以上推荐）
 
+> 实现方式：
+>
+> 创建发件箱和收件箱，按照推送方式将推送内容的标识（通常为ID）发送到对应位置
+
 
 
 Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
 
 > 应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
+>
+> 每次查询时需要的参数为 上次查询最后一条记录的值，与上一条记录值相同的记录数（offset）
 
+
+
+## GEO数据机构（Redis）
+
+GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中加入了对GEO的支持，允许存储地理坐标信息，帮助我们根据经纬度来检索数据。常见的命令有：
+
+[GEOADD](https://redis.io/commands/geoadd)：添加一个地理空间信息，包含：经度（longitude）、纬度（latitude）、值（member）
+
+[GEODIST](https://redis.io/commands/geodist)：计算指定的两个点之间的距离并返回
+
+[GEOHASH](https://redis.io/commands/geohash)：将指定member的坐标转为hash字符串形式并返回
+
+[GEOPOS](https://redis.io/commands/geopos)：返回指定member的坐标
+
+[GEORADIUS](https://redis.io/commands/georadius)：指定圆心、半径，找到该圆内包含的所有member，并按照与圆心之间的距离排序后返回。6.2以后已废弃
+
+[GEOSEARCH](https://redis.io/commands/geosearch)：在指定范围内搜索member，并按照与指定点之间的距离排序后返回。范围可以是圆形或矩形。6.2.新功能
+
+[GEOSEARCHSTORE](https://redis.io/commands/geosearchstore)：与GEOSEARCH功能一致，不过可以把结果存储到一个指定的key。 6.2.新功能
+
+
+
+## BitMap
+
+> 把每一个bit位对应当月的每一天，形成了映射关系。用0和1标示业务状态，这种思路就称为**位图（BitMap**）。
+
+**Redis**中是利用string类型数据结构实现**BitMap**，因此最大上限是512M，转换为bit则是 2^32个bit位。
+
+BitMap的操作命令有：
+
+[SETBIT](https://redis.io/commands/setbit)：向指定位置（offset）存入一个0或1
+
+[GETBIT](https://redis.io/commands/getbit) ：获取指定位置（offset）的bit值
+
+[BITCOUNT](https://redis.io/commands/bitcount) ：统计BitMap中值为1的bit位的数量
+
+[BITFIELD](https://redis.io/commands/bitfield) ：操作（查询、修改、自增）BitMap中bit数组中的指定位置（offset）的值
+
+[BITFIELD_RO](https://redis.io/commands/bitfield_ro) ：获取BitMap中bit数组，并以十进制形式返回
+
+[BITOP](https://redis.io/commands/bitop) ：将多个BitMap的结果做位运算（与 、或、异或）
+
+[BITPOS](https://redis.io/commands/bitpos) ：查找bit数组中指定范围内第一个0或1出现的位置
+
+
+
+该数据结构适用于用户**签到类业务**
+
+**问题1**：什么叫做连续签到天数？
+
+从最后一次签到开始向前统计，直到遇到第一次未签到为止，计算总的签到次数，就是连续签到天数。
+
+
+
+**问题2**：如何得到本月到今天为止的所有签到数据？
+
+ BITFIELD key GET u[dayOfMonth] 0
+
+
+
+**问题3**：如何从后向前遍历每个bit位？
+
+与 1 做（按位）与运算，就能得到最后一个bit位。
+
+随后右移1位，下一个bit位就成为了最后一个bit位。
+
+
+
+## HyperLogLog&&UV统计
+
+- **UV**：全称**U**nique **V**isitor，也叫独立访客量，是指通过互联网访问、浏览这个网页的自然人。1天内同一个用户多次访问该网站，只记录1次。
+
+- **PV**：全称**P**age **V**iew，也叫页面访问量或点击量，用户每访问网站的一个页面，记录1次PV，用户多次打开页面，则记录多次PV。往往用来衡量网站的流量。
+
+
+
+UV统计在服务端做会比较麻烦，因为要判断该用户是否已经统计过了，需要将统计过的用户信息保存。但是如果每个访问的用户都保存到Redis中，数据量会非常恐怖。
+
+
+
+Hyperloglog(HLL)是从Loglog算法派生的概率算法，用于确定非常大的集合的基数，而不需要存储其所有值。相关算法原理可以参考：[https://juejin.cn/post/6844903785744056333#heading-0](https://juejin.cn/post/6844903785744056333)
+
+Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16kb，内存占用低的令人发指！作为代价，其测量结果是概率性的，有小于0.81％的误差。不过对于UV统计来说，这完全可以忽略。
+
+> Redis命令
+>
+> `PFADD`
+>
+> `PFCOUNT`
+
+
+
+```java
+// 测试代码
+    @Test
+    public void testHyperLogLog() {
+        String[] values = new String[10000];
+        int j;
+        for (int i = 0; i < 1000000; i++) {
+            j = i % 10000;
+            values[j] = "user_" + i;
+            if (j == 9999) {
+                stringRedisTemplate.opsForHyperLogLog().add("hll", values);
+            }
+        }
+        Long hll = stringRedisTemplate.opsForHyperLogLog().size("hll");
+        System.out.println("hll = " + hll);
+    }
+```
+
+
+
+---
+
+# 高级篇
+
+## 分布式缓存
+
+单机Redis存在如下问题：
+
+1. 数据丢失问问题
+   - 实现持久化
+
+2. 并发不足问题
+   - 搭建主从集群
+
+3. 存储能力问题
+   - 搭建分片集群
+
+4. 故障恢复问题
+   - 利用哨兵机制
+
+
+
+### Redis持久化
+
+Redis有两种持久化方案：
+
+- RDB持久化
+- AOF持久化
+
+
+
+#### RDB持久化
+
+RDB全称Redis Database Backup file（Redis数据备份文件），也被叫做Redis数据快照。简单来说就是把内存中的所有数据都记录到磁盘中。当Redis实例故障重启后，从磁盘读取快照文件，恢复数据。快照文件称为RDB文件，默认是保存在当前运行目录。
+
+
+
+RDB持久化在四种情况下会执行：
+
+- 执行save命令（会阻塞主进程）
+- 执行bgsave命令（异步执行）
+- Redis停机时
+- 触发RDB条件时
+
+
+
+Redis内部有触发RDB的机制，可以在redis.conf文件中找到，格式如下：
+
+```properties
+# 900秒内，如果至少有1个key被修改，则执行bgsave ， 如果是save "" 则表示禁用RDB
+save 900 1  
+save 300 10  
+save 60 10000 
+```
+
+
+
+RDB的其它配置也可以在redis.conf文件中设置：
+
+```properties
+# 是否压缩 ,建议不开启，压缩也会消耗cpu，磁盘的话不值钱
+rdbcompression yes
+
+# RDB文件名称
+dbfilename dump.rdb  
+
+# 文件保存的路径目录
+dir ./ 
+```
+
+
+
+bgsave开始时会fork主进程得到子进程，子进程共享主进程的内存数据。完成fork后读取内存数据并写入 RDB 文件。
+
+fork采用的是copy-on-write技术（写时复制）：
+
+- 当主进程执行读操作时，访问共享内存；
+- 当主进程执行写操作时，则会拷贝一份数据，执行写操作。
+
+![image-20210725151319695](./images/image-20210725151319695-1742480998175-1.png)
+
+RDB方式bgsave的基本流程？
+
+- fork主进程得到一个子进程，共享内存空间
+- 子进程读取内存数据并写入新的RDB文件
+- 用新RDB文件替换旧的RDB文件
+
+RDB会在什么时候执行？save 60 1000代表什么含义？
+
+- 默认是服务停止时
+- 代表60秒内至少执行1000次修改则触发RDB
+
+RDB的缺点？
+
+- RDB执行间隔时间长，两次RDB之间写入数据有丢失的风险
+- fork子进程、压缩、写出RDB文件都比较耗时
+
+
+
+#### AOF持久化
+
+AOF全称为Append Only File（追加文件）。Redis处理的每一个写命令都会记录在AOF文件，可以看做是命令日志文件。
+
+
+
+AOF**默认是关闭的**，需要修改redis.conf配置文件来开启AOF：
+
+```properties
+# 是否开启AOF功能，默认是no
+appendonly yes
+# AOF文件的名称
+appendfilename "appendonly.aof"
+```
+
+
+
+AOF的命令记录的频率也可以通过redis.conf文件来配置：
+
+```properties
+# 表示每执行一次写命令，立即记录到AOF文件
+appendfsync always 
+# 写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案
+appendfsync everysec 
+# 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘
+appendfsync no
+```
+
+对比：
+
+| 配置项   | 存盘机制     | 优点     | 缺点            |
+| -------- | ------------ | -------- | --------------- |
+| Always   | 同步         | 可靠性高 | 性能影响大      |
+| everysec | 每秒         | 性能适中 | 可能丢失1秒数据 |
+| no       | 操作系统控制 | 性能最好 | 可靠性差        |
+
+
+
+**AOF文件重写**
+
+因为是记录命令，AOF文件会比RDB文件大的多。而且AOF会记录对同一个key的多次写操作，但只有最后一次写操作才有意义。通过执行`bgrewriteaof`命令，**可以让AOF文件执行重写功能，用最少的命令达到相同效果**。
+
+Redis也会在触发阈值时自动去重写AOF文件。阈值也可以在redis.conf中配置：
+
+```properties
+# AOF文件比上次文件 增长超过多少百分比则触发重写
+auto-aof-rewrite-percentage 100
+# AOF文件体积最小多大以上才触发重写 
+auto-aof-rewrite-min-size 64mb 
+```
+
+
+
+对比
+
+|                | RDB                      | AOF                                           |
+| -------------- | ------------------------ | --------------------------------------------- |
+| 持久化方式     | 定时做内存快照           | 记录写命令                                    |
+| 数据完整性     | 不完整，为备份的数据丢失 | 相对完整，取决于存盘策略                      |
+| 文件大小       | 有压缩机制，体积小       | 记录命令，体积大                              |
+| 宕机恢复速度   | 很快                     | 慢                                            |
+| 数据恢复优先级 | 低                       | 高（因为完整性更高）                          |
+| 系统资源占用   | 高，大量CPU和内存消耗    | 低，主要占用磁盘IO（文件重写时占用CPU和内存） |
+| 使用场景       | 可以容忍部分数据丢失     | 对数据完整性要求高                            |
+
+
+
+### 主从集群
+
+### 哨兵
+
+### 分片集群
+
+以上内容详见笔记[SpringCloud-Redis](./../SpringCloud/SpringCloud微服务.md)
+
+
+
+
+
+## 多级缓存
+
+传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库
+
+存在下面的问题：
+
+- 请求要经过Tomcat处理，Tomcat的性能成为整个系统的瓶颈
+
+- Redis缓存失效时，会对数据库产生冲击
+
+
+
+**多级缓存**就是充分利用请求处理的每个环节，分别添加缓存，减轻Tomcat压力，提升服务性能：
+
+- 浏览器访问静态资源时，优先读取浏览器本地缓存
+- 访问非静态资源（ajax查询数据）时，访问服务端
+- 请求到达Nginx后，优先读取Nginx本地缓存
+- 如果Nginx本地缓存未命中，则去直接查询Redis（不经过Tomcat）
+- 如果Redis查询未命中，则查询Tomcat
+- 请求进入Tomcat后，优先查询JVM进程缓存
+- 如果JVM进程缓存未命中，则查询数据库
+
+![image-20210821075558137](./images/image-20210821075558137.png)
+
+在多级缓存架构中，Nginx内部需要编写本地缓存查询、Redis查询、Tomcat查询的业务逻辑，因此这样的nginx服务不再是一个**反向代理服务器**，而是一个编写**业务的Web服务器了**。
+
+
+
+![image-20250321232906119](./images/image-20250321232906119.png)
+
+> nginx和tomcat都可以采用集群模式
+
+
+
+### JVM进程缓存
+
+
+
+### Lua入门
