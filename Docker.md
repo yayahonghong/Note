@@ -96,6 +96,9 @@ Docker 是一个用于开发、发布和运行应用程序的开放平台。Dock
    docker run -d \
        --name mysql \
        -p 3306:3306 \
+       -v $PWD/conf:/etc/mysql/conf.d \
+       -v $PWD/logs:/logs \
+       -v $PWD/data:/var/lib/mysql \
        -e TZ=Asia/Shanghai \
        -e MYSQL_ROOT_PASSWORD=123456 \
        mysql
