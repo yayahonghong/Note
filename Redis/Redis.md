@@ -109,6 +109,8 @@ docker run -d \
 --requirepass 123456 #密码
 ```
 
+> [!NOTE]
+>
 > -v /home/ysh/redis/conf/redis.conf:/etc/redis/redis.conf  \	#挂载配置文件
 > -v /home/ysh/redis/data:/data \	#挂载数据卷
 
@@ -136,6 +138,8 @@ ping
 - EXPIRE：给一个key设置有效期（单位秒），有效期到期时该key会被自动删除，不设置有效期时默认为-1（永久有效）
 - TTL：查看一个KEY的剩余有效期
 
+> [!TIP]
+>
 > 通过help [command] 可以查看一个命令的具体用法
 
 
@@ -299,7 +303,9 @@ SortedSet的常见命令有：
 - ZRANGEBYSCORE key min max：按照score排序后，获取指定score范围内的元素
 - ZDIFF、ZINTER、ZUNION：求差集、交集、并集
 
-> 注意：所有的排名默认都是升序，如果要降序则在命令的Z后面添加REV即可
+> [!CAUTION]
+>
+> 所有的排名默认都是升序，如果要降序则在命令的Z后面添加REV即可
 
 
 
@@ -362,6 +368,8 @@ SortedSet的常见命令有：
 
 ```
 
+> [!TIP]
+>
 > API与Redis官方指令一致
 
 
@@ -432,6 +440,8 @@ SpringData是Spring中数据操作的模块，包含对各种数据库的集成�
         </dependency>
 ```
 
+> [!WARNING]
+>
 > 注意`commons-pool2`版本的兼容性问题
 
 
@@ -455,6 +465,8 @@ spring:
       database: 0
 ```
 
+> [!WARNING]
+>
 > SpringBoot2.x  配置redis的配置项为spring.redis
 
 
@@ -512,6 +524,8 @@ RedisTemplate可以接收任意Object作为值写入Redis，只不过写入前�
     }
 ```
 
+> [!TIP]
+>
 > 需要引入Jackson依赖
 
 
@@ -552,6 +566,8 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
     }
 ```
 
+> [!TIP]
+>
 > 可以使用其它序列化工具如FastJson、hutool
 
 
@@ -776,6 +792,8 @@ public class RedisIdWorker {
 }
 ```
 
+> [!TIP]
+>
 > 时间戳 + 序列号
 
 
@@ -907,7 +925,7 @@ synchronized (userId.toString().intern()) {
         }
 ```
 
-> 注：
+> [!TIP]
 >
 > 以上代码只对同一个用户加锁，避免不同用户被阻塞的性能问题（intern()将字符串加入字符串常量池，避免同一个用户id有多个对象，同步失效）
 >
@@ -919,7 +937,11 @@ synchronized (userId.toString().intern()) {
 
 ### 多实例部署
 
-<font color=red>以上方案在多实例集群模式下仍会发生线程安全问题</font>
+> [!CAUTION]
+>
+> 以上方案在多实例集群模式下仍会发生线程安全问题
+
+
 
 原因是多个实例各自都有自身的`JVM`去实现同步锁，无法共享
 
@@ -960,6 +982,8 @@ synchronized (userId.toString().intern()) {
 SET lock thread1 EX 10 NX
 ```
 
+> [!CAUTION]
+>
 > EX参数设置过期时间，NX参数实现与`SETNX`相同的功能
 >
 > 不建议直接使用`SETNX`,因为无法同时设置过期时间，可能发生获得锁后服务宕机，而未设置过期时间，最终导致死锁。
@@ -1009,6 +1033,8 @@ DEL lock
 
 为线程的锁加入唯一标识，释放前判断锁是否属于自己
 
+> [!TIP]
+>
 > 可使用UUID
 
 
@@ -1037,6 +1063,8 @@ EVAL "<脚本内容>"
 EVAL "return redis.call('set','key','value')" 0
 ```
 
+> [!TIP]
+>
 > 参数**0**表示需要的key类型的参数个数
 
 
@@ -1219,6 +1247,8 @@ end;
 
 ## 基于Redis的消息队列
 
+> [!TIP]
+>
 > 消息队列可参考 [RabbitMQ](./../SpringCloud/SpringCloud微服务.md)
 
 **消息队列**（**M**essage **Q**ueue），字面意思就是存放消息的队列。最简单的消息队列模型包括3个角色：
@@ -1295,6 +1325,8 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 ![image-20250316155920428](./images/image-20250316155920428.png)
 
+> [!NOTE]
+>
 > `xadd user * name ysh age 22`  
 
 
@@ -1303,6 +1335,8 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 ![image-20250316160247412](./images/image-20250316160247412.png)
 
+> [!NOTE]
+>
 > `xread cout 1 block 2000 streams user $` 阻塞式读取
 
 <font color=red>注意：</font>当我们指定起始ID为$时，代表读取最新的消息，如果我们处理一条消息的过程中，又有超过1条以上的消息到达队列，则下次获取时也只能获取到最新的一条，会出现漏读消息的问题
@@ -1363,6 +1397,8 @@ Feed流产品有两种常见的模式：
 
 - 推拉结合：以上两者结合（用户千万以上推荐）
 
+> [!TIP]
+>
 > 实现方式：
 >
 > 创建发件箱和收件箱，按照推送方式将推送内容的标识（通常为ID）发送到对应位置
@@ -1371,6 +1407,8 @@ Feed流产品有两种常见的模式：
 
 Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
 
+> [!NOTE]
+>
 > 应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
 >
 > 每次查询时需要的参数为 上次查询最后一条记录的值，与上一条记录值相同的记录数（offset）
@@ -1399,6 +1437,8 @@ GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中�
 
 ## BitMap
 
+> [!NOTE]
+>
 > 把每一个bit位对应当月的每一天，形成了映射关系。用0和1标示业务状态，这种思路就称为**位图（BitMap**）。
 
 **Redis**中是利用string类型数据结构实现**BitMap**，因此最大上限是512M，转换为bit则是 2^32个bit位。
@@ -1459,6 +1499,8 @@ Hyperloglog(HLL)是从Loglog算法派生的概率算法，用于确定非常大�
 
 Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16kb，内存占用低的令人发指！作为代价，其测量结果是概率性的，有小于0.81％的误差。不过对于UV统计来说，这完全可以忽略。
 
+> [!NOTE]
+>
 > Redis命令
 >
 > `PFADD`
@@ -1693,8 +1735,10 @@ auto-aof-rewrite-min-size 64mb
 
 
 
-![image-20250321232906119](./images/image-20250321232906119.png)
+![](./images/image-20250321232906119.png)
 
+> [!TIP]
+>
 > nginx和tomcat都可以采用集群模式
 
 
@@ -1780,7 +1824,9 @@ Caffeine提供了三种缓存清除策略：
 
 - **基于引用**：设置缓存为软引用或弱引用，利用GC来回收缓存数据。性能较差，不建议使用。
 
-> **注意**：在默认情况下，当一个缓存元素过期的时候，Caffeine不会自动立即将其清理和驱逐。而是在一次读或写操作后，或者在空闲时间完成对失效数据的驱逐。
+> [!CAUTION]
+>
+> 在默认情况下，当一个缓存元素过期的时候，Caffeine不会自动立即将其清理和驱逐。而是在一次读或写操作后，或者在空闲时间完成对失效数据的驱逐。
 
 
 
@@ -1830,6 +1876,8 @@ public class ItemController {
 
 `Nginx`编程需要用到Lua语言，Lua 是一种轻量小巧的脚本语言，用标准C语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。官网：https://www.lua.org/
 
+> [!NOTE]
+>
 > Lua经常嵌入到C语言开发的程序中，例如游戏开发、游戏插件等。
 >
 > Nginx本身也是C语言开发，因此也允许基于Lua做拓展。
@@ -1842,6 +1890,8 @@ Lua中支持的常见数据类型包括：
 
 ![image-20250322210359714](./images/image-20250322210359714.png)
 
+> [!TIP]
+>
 > Lua提供了type()函数来判断一个变量的数据类型
 >
 > print(type('hello world')) --------> string
@@ -2077,6 +2127,8 @@ local _M = {
 return _M
 ```
 
+> [!TIP]
+>
 > 这个工具将read_http函数封装到_M这个table类型的变量中，并且返回，这类似于导出。
 >
 > 使用的时候，可以利用`require('common')`来导入该函数库，这里的common是函数库的文件名。
@@ -2127,6 +2179,8 @@ print(obj.name)
 - 第二次会访问8082端口的tomcat服务，该服务内部没有JVM缓存（因为JVM缓存无法共享），会查询数据库
 - ...
 
+> [!WARNING]
+>
 > 该情况下缓存并没有产生效果
 
 
@@ -2135,6 +2189,8 @@ ginx提供了基于请求路径做负载均衡的算法：
 
 nginx根据请求路径做hash运算，把得到的数值对tomcat服务的数量取余，余数是几，就访问第几个服务，实现负载均衡。
 
+> [!TIP]
+>
 > 例如：
 >
 > - 我们的请求路径是 /item/10001
@@ -2188,6 +2244,8 @@ Redis缓存会面临冷启动问题：
 
 **缓存预热**：在实际开发中，我们可以利用**大数据统计**用户访问的热点数据，在项目启动时将这些**热点数据**提前查询并保存到Redis中。
 
+> [!TIP]
+>
 > 可以利用`InitializingBean`接口来实现，因为`InitializingBean`中的方法`afterPropertiesSet`可以在对象被Spring创建并且成员变量全部注入后执行。
 
 
@@ -2335,6 +2393,8 @@ end
 
 ### 缓存同步
 
+> [!NOTE]
+>
 > 大多数情况下，浏览器查询到的都是缓存数据，如果缓存数据与数据库数据存在较大差异，可能会产生比较严重的后果。
 >
 > 所以我们必须保证数据库数据、缓存数据的一致性，这就是缓存与数据库的同步。
@@ -2512,6 +2572,12 @@ public class ItemHandler implements EntryHandler<Item> {
 
 ## Redis最佳实践
 
+> [!NOTE]
+>
+> Redis使用经验总结
+
+
+
 ### Redis键值设计
 
 #### 优雅的key结构
@@ -2541,6 +2607,8 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 - Key中的成员数过多：一个ZSET类型的Key，它的成员数量为10,000个
 - Key中成员的数据量过大：一个Hash类型的Key，它的成员数量虽然只有1,000个但这些成员的Value（值）总大小为100 MB
 
+> [!TIP]
+>
 > redis中可使用命令`MEMORY USAGE key`查看Key占用内存
 
 
@@ -2569,6 +2637,8 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
 1. `redis-cli --bigkeys` 命令
 
+> [!NOTE]
+>
 > 利用redis-cli提供的--bigkeys参数，可以遍历分析所有key，并返回Key的整体统计信息与每个数据的Top1的key（不一定是BigKey）
 
 
@@ -2583,7 +2653,9 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
 利用第三方工具，如 Redis-Rdb-Tools 分析RDB快照文件，全面分析内存使用情况
 
-> https://github.com/sripathikrishnan/redis-rdb-tools
+> [!TIP] 
+>
+> 官网 https://github.com/sripathikrishnan/redis-rdb-tools
 
 
 
@@ -2602,11 +2674,179 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
   - 如果是集合类型，则遍历BigKey的元素，先逐个删除子元素，最后删除BigKey
 
 - Redis 4.0以后
-  - Redis在4.0后提供了异步删除的命令：unlink
+  - Redis在4.0后提供了异步删除的命令：`unlink`
 
 
 
 #### 恰当的数据类型
+
+1. **例1：比如存储一个User对象，我们有三种存储方式：**
+
+##### ①方式一：json字符串
+
+| user:1 | {"name": "Jack", "age": 21} |
+| :----: | :-------------------------: |
+
+优点：实现简单粗暴
+
+缺点：数据耦合，不够灵活
+
+##### ②方式二：字段打散
+
+| user:1:name | Jack |
+| :---------: | :--: |
+| user:1:age  |  21  |
+
+优点：可以灵活访问对象任意字段
+
+缺点：占用空间大、没办法做统一控制
+
+##### ③方式三：hash（推荐）
+
+<table>
+	<tr>
+		<td rowspan="2">user:1</td>
+        <td>name</td>
+        <td>jack</td>
+	</tr>
+	<tr>
+		<td>age</td>
+		<td>21</td>
+	</tr>
+</table>
+
+
+优点：底层使用ziplist，空间占用小，可以灵活访问对象的任意字段
+
+缺点：代码相对复杂
+
+
+
+2. **例2：假如有hash类型的key，其中有100万对field和value，field是自增id，这个key存在什么问题？如何优化？**
+
+<table>
+	<tr style="color:red">
+		<td>key</td>
+        <td>field</td>
+        <td>value</td>
+	</tr>
+	<tr>
+		<td rowspan="3">someKey</td>
+		<td>id:0</td>
+        <td>value0</td>
+	</tr>
+    <tr>
+		<td>.....</td>
+        <td>.....</td>
+	</tr>
+    <tr>
+        <td>id:999999</td>
+        <td>value999999</td>
+    </tr>
+</table>
+
+> [!WARNING]
+>
+> 存在的问题：
+>
+> - hash的entry数量超过500时，会使用哈希表而不是ZipList，内存占用较多
+> - 可以通过hash-max-ziplist-entries配置entry上限。但是如果entry过多就会导致BigKey问题
+>
+
+
+
+##### 方案一
+
+拆分为string类型
+
+<table>
+	<tr style="color:red">
+		<td>key</td>
+        <td>value</td>
+	</tr>
+	<tr>
+		<td>id:0</td>
+        <td>value0</td>
+	</tr>
+    <tr>
+		<td>.....</td>
+        <td>.....</td>
+	</tr>
+    <tr>
+        <td>id:999999</td>
+        <td>value999999</td>
+    </tr>
+</table>
+
+> [!WARNING]
+>
+> 存在的问题：
+>
+> - string结构底层没有太多内存优化，内存占用较多
+>
+> - 想要批量获取这些数据比较麻烦
+>
+
+
+
+##### 方案二（推荐）
+
+拆分为小的hash，将 `id / 100` 作为key， 将 `id % 100` 作为field，这样每100个元素为一个Hash
+
+> [!TIP]
+>
+> `100` 可按实际选择例如 `500` 同样可行
+
+<table>
+	<tr style="color:red">
+		<td>key</td>
+        <td>field</td>
+        <td>value</td>
+	</tr>
+	<tr>
+        <td rowspan="3">key:0</td>
+		<td>id:00</td>
+        <td>value0</td>
+	</tr>
+    <tr>
+		<td>.....</td>
+        <td>.....</td>
+	</tr>
+    <tr>
+        <td>id:99</td>
+        <td>value99</td>
+    </tr>
+    <tr>
+        <td rowspan="3">key:1</td>
+		<td>id:00</td>
+        <td>value100</td>
+	</tr>
+    <tr>
+		<td>.....</td>
+        <td>.....</td>
+	</tr>
+    <tr>
+        <td>id:99</td>
+        <td>value199</td>
+    </tr>
+    <tr>
+    	<td colspan="3">....</td>
+    </tr>
+    <tr>
+        <td rowspan="3">key:9999</td>
+		<td>id:00</td>
+        <td>value999900</td>
+	</tr>
+    <tr>
+		<td>.....</td>
+        <td>.....</td>
+	</tr>
+    <tr>
+        <td>id:99</td>
+        <td>value999999</td>
+    </tr>
+</table>
+
 
 
 
@@ -2614,8 +2854,806 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 ### 批处理优化
 
+#### MSET
+
+redis处理指令是很快的，主要花费的时候在于网络传输。于是乎很容易想到将多条指令批量的传输给redis
+
+
+
+Redis提供了很多Mxxx这样的命令，可以实现批量插入数据，例如：
+
+- mset
+- hmset
+
+
+
+插入10万条数据
+
+```java
+void testMxx() {
+    String[] arr = new String[2000];
+    int j;
+    long b = System.currentTimeMillis();
+    for (int i = 1; i <= 100000; i++) {
+        j = (i % 1000) << 1;
+        arr[j] = "test:key_" + i;
+        arr[j + 1] = "value_" + i;
+        if (j == 0) {
+            jedis.mset(arr);
+        }
+    }
+    long e = System.currentTimeMillis();
+    System.out.println("time: " + (e - b));
+}
+```
+
+> [!WARNING]
+>
+> 不要在一次批处理中传输太多数据，否则单次命令占用带宽过多，导致网络阻塞
+
+
+
+#### Pipline（管道）
+
+MSET虽然可以批处理，但是却只能操作部分数据类型，因此如果有对复杂数据类型的批处理需要，建议使用Pipeline
+
+```java
+@Test
+void testPipeline() {
+    // 创建管道
+    Pipeline pipeline = jedis.pipelined();
+    long b = System.currentTimeMillis();
+    for (int i = 1; i <= 100000; i++) {
+        // 放入命令到管道
+        pipeline.set("test:key_" + i, "value_" + i);
+        if (i % 1000 == 0) {
+            // 每放入1000条命令，批量执行
+            pipeline.sync();
+        }
+    }
+    long e = System.currentTimeMillis();
+    System.out.println("time: " + (e - b));
+}
+```
+
+
+
+#### 集群下的批处理
+
+如MSET或Pipeline这样的批处理需要在一次请求中携带多条命令，而此时如果Redis是一个集群，那批处理命令的多个key必须落在**同一个插槽**中，否则就会导致执行失败。
+
+
+
+**解决方案**
+
+1. 第一种方案：
+   - 串行执行，所以这种方式没有什么意义，当然，执行起来就很简单了，缺点就是耗时过久。
+
+2. 第二种方案：
+   - 串行slot，简单来说，就是执行前，客户端先计算一下对应的key的slot，一样slot的key就放到一个组里边，不同的，就放到不同的组里边，然后对每个组执行pipeline的批处理，他就能串行执行各个组的命令，这种做法比第一种方法耗时要少，但是缺点呢，相对来说复杂一点，所以这种方案还需要优化一下
+
+3. 第三种方案：
+   - 并行slot，相较于第二种方案，在分组完成后串行执行，第三种方案，就变成了并行执行各个命令，所以他的耗时就非常短，但是实现呢，也更加复杂。
+
+4. 第四种：
+   - hash_tag，redis计算key的slot的时候，其实是根据key的有效部分来计算的，通过这种方式就能一次处理所有的key，这种方式耗时最短，实现也简单，但是如果通过操作key的有效部分，那么就会导致所有的key都落在一个节点上，产生数据倾斜的问题，所以我们推荐使用第三种方式。
+
+
+
+- Jedis代码实现
+
+```java
+    @Test
+    void testMSet2() {
+        Map<String, String> map = new HashMap<>(3);
+        map.put("name", "Jack");
+        map.put("age", "21");
+        map.put("sex", "Male");
+        //对Map数据进行分组。根据相同的slot放在一个分组
+        //key就是slot，value就是一个组
+        Map<Integer, List<Map.Entry<String, String>>> result = map.entrySet()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        entry -> ClusterSlotHashUtil.calculateSlot(entry.getKey()))
+                );
+        //串行的去执行mset的逻辑
+        for (List<Map.Entry<String, String>> list : result.values()) {
+            String[] arr = new String[list.size() * 2];
+            int j = 0;
+            for (int i = 0; i < list.size(); i++) {
+                j = i<<2;
+                Map.Entry<String, String> e = list.get(0);
+                arr[j] = e.getKey();
+                arr[j + 1] = e.getValue();
+            }
+            jedisCluster.mset(arr);
+        }
+    }
+```
+
+
+
+- Srping下的实现
+
+```java
+   @Test
+    void testMSetInCluster() {
+        Map<String, String> map = new HashMap<>(3);
+        map.put("name", "Rose");
+        map.put("age", "21");
+        map.put("sex", "Female");
+        stringRedisTemplate.opsForValue().multiSet(map);
+
+
+        List<String> strings = stringRedisTemplate.opsForValue().multiGet(Arrays.asList("name", "age", "sex"));
+        strings.forEach(System.out::println);
+
+    }
+```
 
 
 
 
-### 服务器优化
+
+### 服务器端优化
+
+#### 持久化配置
+
+几点建议：
+
+* 用来做缓存的Redis实例尽量不要开启持久化功能
+* 建议关闭RDB持久化功能，使用AOF持久化
+* 利用脚本定期在slave节点做RDB，实现数据备份
+* 设置合理的rewrite阈值，避免频繁的bgrewrite
+* 配置no-appendfsync-on-rewrite = yes，禁止在rewrite期间做aof，避免因AOF引起的阻塞
+* 部署有关建议：
+  * Redis实例的物理机要预留足够内存，应对fork和rewrite
+  * 单个Redis实例内存上限不要太大，例如4G或8G。可以加快fork的速度、减少主从同步、数据迁移压力
+  * 不要与CPU密集型应用部署在一起
+  * 不要与高硬盘负载应用一起部署。例如：数据库、消息队列
+
+
+
+#### 慢查询
+
+在Redis执行时耗时超过某个阈值的命令，称为慢查询。
+
+
+
+慢查询的危害：
+
+- 由于Redis是单线程的，所以当客户端发出指令后，他们都会进入到redis底层的queue来执行，如果此时有一些慢查询的数据，就会导致大量请求阻塞，从而引起报错
+
+
+
+慢查询的阈值可以通过配置指定：
+
+- `slowlog-log-slower-than`：慢查询阈值，单位是微秒。默认是10000，建议1000
+
+慢查询会被放入慢查询日志中，日志的长度有上限，可以通过配置指定：
+
+- `slowlog-max-len`：慢查询日志（本质是一个队列）的长度。默认是128，建议1000
+
+
+
+查看慢查询日志列表：
+
+* `slowlog len`：查询慢查询日志长度
+* `slowlog get [n]`：读取n条慢查询日志
+* `slowlog reset`：清空慢查询列表
+
+
+
+#### 命令及安全配置
+
+Redis会绑定在0.0.0.0:6379，这样将会将Redis服务暴露到公网上，而Redis如果没有做身份认证，会出现严重的安全漏洞.
+漏洞重现方式：https://cloud.tencent.com/developer/article/1039000
+
+
+
+漏洞出现的核心的原因有以下几点：
+
+* Redis未设置密码
+* 利用了Redis的config set命令动态修改Redis配置
+* 使用了Root账号权限启动Redis
+
+
+
+> [!TIP]
+
+一些建议：
+
+* Redis一定要设置密码
+* 禁止线上使用下面命令：keys、flushall、flushdb、config set等命令。可以利用rename-command禁用。
+* bind：限制网卡，禁止外网网卡访问
+* 开启防火墙
+* 不要使用Root账户启动Redis
+* 尽量不是有默认的端口
+
+
+
+#### 内存配置
+
+当Redis内存不足时，可能导致Key频繁被删除、响应时间变长、QPS不稳定等问题。当内存使用率达到90%以上时就需要我们警惕，并快速定位到内存占用的原因。
+
+
+
+| **内存占用** | **说明**                                                     |
+| ------------ | ------------------------------------------------------------ |
+| 数据内存     | 是Redis最主要的部分，存储Redis的键值信息。主要问题是BigKey问题、内存碎片问题 |
+| 进程内存     | Redis主进程本身运行肯定需要占用内存，如代码、常量池等等；这部分内存大约几兆，在⼤多数生产环境中与Redis数据占用的内存相比可以忽略。 |
+| 缓冲区内存   | 一般包括客户端缓冲区、AOF缓冲区、复制缓冲区等。客户端缓冲区又包括输入缓冲区和输出缓冲区两种。这部分内存占用波动较大，不当使用BigKey，可能导致内存溢出。 |
+
+
+
+查看Redis目前的内存分配状态：
+
+* `info memory`：查看内存分配的情况
+
+* `memory xxx`：查看key的主要占用情况
+
+
+
+内存缓冲区常见的有三种：
+
+* 复制缓冲区：主从复制的 `repl_backlog_buf`，如果太小可能导致频繁的全量复制，影响性能。通过 `replbacklog-size` 来设置，默认1mb
+* AOF缓冲区：AOF刷盘之前的缓存区域，AOF执行rewrite的缓冲区。无法设置容量上限
+* 客户端缓冲区：分为输入缓冲区和输出缓冲区，输入缓冲区最大1G且不能设置。输出缓冲区可以设置
+
+> [!CAUTION]
+>
+> 最可能发生问题的就是客户端输出缓冲区
+
+
+
+
+
+#### 服务器端集群优化
+
+集群虽然具备高可用特性，能实现自动故障恢复，但是如果使用不当，也会存在一些问题：
+
+* 集群完整性问题
+* 集群带宽问题
+* 数据倾斜问题
+* 客户端性能问题
+* 命令的集群兼容性问题
+* lua和事务问题
+
+
+
+ **问题1、在Redis的默认配置中，如果发现任意一个插槽不可用，则整个集群都会停止对外服务：** 
+
+大家可以设想一下，如果有几个slot不能使用，那么此时整个集群都不能用了，我们在开发中，其实最重要的是可用性，所以需要把如下配置修改成no，即有slot不能使用时，我们的redis集群还是可以对外提供服务
+
+```properties
+cluster-require-full-coverage no
+```
+
+
+
+**问题2、集群带宽问题**
+
+集群节点之间会不断的互相Ping来确定集群中其它节点的状态。每次Ping携带的信息至少包括：
+
+* 插槽信息
+* 集群状态信息
+
+集群中节点越多，集群状态信息数据量也越大，10个节点的相关信息可能达到1kb，此时每次集群互通需要的带宽会非常高，这样会导致集群中大量的带宽都会被ping信息所占用，这是一个非常可怕的问题，所以我们需要去解决这样的问题
+
+**解决途径：**
+
+* 避免大集群，集群节点数不要太多，最好少于1000，如果业务庞大，则建立多个集群。
+* 避免在单个物理机中运行太多Redis实例
+* 配置合适的 `cluster-node-timeout` 值
+
+
+
+**问题3、命令的集群兼容性问题**
+
+有关这个问题咱们已经探讨过了，当我们使用批处理的命令时，redis要求我们的key必须落在相同的slot上，然后大量的key同时操作时，是无法完成的，所以客户端必须要对这样的数据进行处理，这些方案我们之前已经探讨过了，所以不再这个地方赘述了。
+
+
+
+**问题4、lua和事务的问题**
+
+lua和事务都是要保证原子性问题，如果key不在一个节点，那么是无法保证lua的执行和事务的特性的，所以在集群模式是没有办法执行lua和事务的
+
+
+
+> [!IMPORTANT]
+>
+> **集群还是主从**
+>
+> 单体Redis（主从Redis）已经能达到万级别的QPS，并且也具备很强的高可用特性。如果主从能满足业务需求的情况下，所以如果不是在万不得已的情况下，尽量不搭建Redis集群
+
+
+
+---
+
+# 原理篇
+
+> [!IMPORTANT]
+>
+> 深入 `Redis` 底层
+
+## 数据结构
+
+> [!NOTE]
+>
+> `Redis` 底层基于 C语言 实现
+
+### 动态字符串SDS
+
+字符串是Redis中最常用的一种数据结构。不过Redis没有直接使用C语言中的字符串，因为C语言字符串存在很多问题：
+
+- 获取字符串长度的需要通过运算
+- 非二进制安全
+- 不可修改
+
+> [!TIP]
+>
+> 二进制安全：
+>
+> ​	C 字符串依赖 `\0` 判断结尾，若字符串中包含 `\0`（如图片、音频等二进制数据），会被截断。
+
+
+
+因此，Redis构建了一种新的字符串结构，称为简单动态字符串（Simple Dynamic String），简称**SDS**。
+
+![image-20250325215817647](./images/image-20250325215817647.png)
+
+> [!TIP]
+>
+> `Redis` 定义了多种大小不同的 SDS 结构，以上只是一个示例
+
+
+
+SDS之所以叫做动态字符串，是因为它具备动态扩容的能力
+
+1. 假如我们要给SDS追加一段字符串，首先会申请新内存空间：
+
+2. 如果新字符串小于1MB，则新空间为扩展后字符串长度的两倍+1；
+
+3. 如果新字符串大于1MB，则新空间为扩展后字符串长度+1M+1。称为内存预分配。
+
+
+
+> [!NOTE]
+>
+> SDS优点
+>
+> - 获取字符串长度的时间复杂度为 O(1)
+> - 支持动态扩容
+> - 减少内存分配次数（分配内存有一定性能开销）
+> - 二进制安全
+
+
+
+### IntSet
+
+IntSet是Redis中set集合的一种实现方式，基于整数数组来实现，并且具备长度可变、有序等特征。
+
+![image-20250326220025396](./images/image-20250326220025396.png)
+
+其中的encoding包含三种模式，表示存储的整数大小不同：
+
+![image-20250326220204018](./images/image-20250326220204018.png)
+
+
+
+为了方便查找，Redis会将intset中所有的整数按照升序依次保存在contents数组中，结构如图：
+
+![image-20250326220423297](./images/image-20250326220423297.png)
+
+
+
+如果新插入的数字超出了int16_t的范围，intset会自动升级编码方式到合适的大小。
+以当前案例来说流程如下：
+
+* 升级编码为INTSET_ENC_INT32, 每个整数占4字节，并按照新的编码方式及元素个数扩容数组
+* 倒序依次将数组中的元素拷贝到扩容后的正确位置
+* 将待添加的元素放入数组末尾
+* 最后，将inset的encoding属性改为INTSET_ENC_INT32，将length属性加1
+
+
+
+Intset可以看做是特殊的整数数组，具备一些特点：
+
+* Redis会确保Intset中的元素唯一、有序
+* 具备类型升级机制，可以节省内存空间
+* 底层采用二分查找方式来查询
+
+
+
+### Dict
+
+Redis是一个键值型（Key-Value Pair）的数据库，我们可以根据键实现快速的增删改查。而键与值的映射关系正是通过Dict来实现的。
+
+
+
+Dict由三部分组成，分别是：哈希表（DictHashTable）、哈希节点（DictEntry）、字典（Dict）
+
+![image-20250326222028090](./images/image-20250326222028090.png)
+
+当我们向Dict添加键值对时，Redis首先根据key计算出hash值（h），然后利用 `(h & sizemask)` 来计算元素应该存储到数组中的哪个索引位置。
+
+
+
+![image-20250326223004013](./images/image-20250326223004013.png)
+![image-20250326225251078](./images/image-20250326225251078.png)
+
+#### **Dict扩容**
+
+Dict中的HashTable就是数组结合单向链表的实现，当集合中元素较多时，必然导致哈希冲突增多，链表过长，则查询效率会大大降低。可采取扩容解决。
+
+Dict在每次新增键值对时都会检查负载因子（**LoadFactor = used/size**） ，满足以下两种情况时会触发哈希表扩容：
+
+- 哈希表的 LoadFactor >= 1，并且服务器没有执行 BGSAVE 或者 BGREWRITEAOF 等后台进程
+- 哈希表的 LoadFactor > 5 
+- 删除元素后如果 LoadFactor < 0.1，会触发哈希表收缩
+
+
+
+#### **Dict的rehash**
+
+不管是扩容还是收缩，必定会创建新的哈希表，导致哈希表的size和sizemask变化，而key的查询与sizemask有关。
+
+因此必须对哈希表中的每一个key重新计算索引，插入新的哈希表，这个过程称为rehash。过程是这样的：
+
+* 计算新hash表的realeSize，值取决于当前要做的是扩容还是收缩：
+  * 如果是扩容，则新size为第一个大于等于dict.ht[0].used + 1的2^n
+  * 如果是收缩，则新size为第一个大于等于dict.ht[0].used的2^n （不得小于4）
+
+* 按照新的realeSize申请内存空间，创建dictht，并赋值给dict.ht[1]
+* 设置dict.rehashidx = 0，标示开始rehash
+* ~~将dict.ht[0]中的每一个dictEntry都rehash到dict.ht[1]~~
+* 每次新增、查询、修改、删除操作时，都检查dict.rehashidx是否大于-1,如果大于则将dict.ht[0].table[rehashidx]的entry链表rehash到dict.ht[1]，并且将rehashidx++。直至所有数据迁移。
+
+> [!NOTE]
+>
+> 以上过程称为 **渐进式rehash**
+
+* 将dict.ht[1]赋值给dict.ht[0]，给dict.ht[1]初始化为空哈希表，释放原来的dict.ht[0]的内存
+* 在rehash过程中，新增操作，则直接写入ht[1]，查询、修改和删除则会在dict.ht[0]和dict.ht[1]依次查找并执行。这样可以确保ht[0]的数据只减不增，随着rehash最终为空
+
+
+
+### ZipList
+
+ZipList 是一种特殊的“双端队列” ，由一系列特殊编码的**连续内存**块组成。可以在任意一端进行压入/弹出操作, 并且该操作的时间复杂度为 O(1)。
+
+![image-20250326231804615](./images/image-20250326231804615.png)
+
+| **属性** | **类型** | **长度** | **用途**                                                     |
+| -------- | -------- | -------- | ------------------------------------------------------------ |
+| zlbytes  | uint32_t | 4 字节   | 记录整个压缩列表占用的内存字节数                             |
+| zltail   | uint32_t | 4 字节   | 记录压缩列表表尾节点距离压缩列表的起始地址有多少字节，通过这个偏移量，可以确定表尾节点的地址。 |
+| zllen    | uint16_t | 2 字节   | 记录了压缩列表包含的节点数量。 最大值为UINT16_MAX （65534），如果超过这个值，此处会记录为65535，但节点的真实数量需要遍历整个压缩列表才能计算得出。 |
+| entry    | 列表节点 | 不定     | 压缩列表包含的各个节点，节点的长度由节点保存的内容决定。     |
+| zlend    | uint8_t  | 1 字节   | 特殊值 0xFF （十进制 255 ），用于标记压缩列表的末端。        |
+
+
+
+#### **ZipListEntry**
+
+ZipList 中的Entry并不像普通链表那样记录前后节点的指针，因为记录两个指针要占用16个字节，浪费内存。而是采用了下面的结构：
+
+![1653986055253](./images/1653986055253.png)
+
+* previous_entry_length：前一节点的长度，占1个或5个字节。
+  * 如果前一节点的长度小于254字节，则采用1个字节来保存这个长度值
+  * 如果前一节点的长度大于254字节，则采用5个字节来保存这个长度值，第一个字节为0xfe，后四个字节才是真实长度数据
+
+* encoding：编码属性，记录content的数据类型（字符串还是整数）以及长度，占用1个、2个或5个字节
+* contents：负责保存节点的数据，可以是字符串或整数
+
+
+
+#### **Encoding编码**
+
+encoding编码分为字符串和整数两种
+
+- 如果encoding是以“00”、“01”或者“10”开头，则证明content是字符串
+
+| **编码**                                             | **编码长度** | **字符串大小**      |
+| ---------------------------------------------------- | ------------ | ------------------- |
+| \|00pppppp\|                                         | 1 bytes      | <= 63 bytes         |
+| \|01pppppp\|qqqqqqqq\|                               | 2 bytes      | <= 16383 bytes      |
+| \|10000000\|qqqqqqqq\|rrrrrrrr\|ssssssss\|tttttttt\| | 5 bytes      | <= 4294967295 bytes |
+
+
+
+* 如果encoding是以“11”开始，则证明content是整数，且encoding固定只占用1个字节
+
+| **编码** | **编码长度** | **整数类型**                                                 |
+| -------- | ------------ | ------------------------------------------------------------ |
+| 11000000 | 1            | int16_t（2 bytes）                                           |
+| 11010000 | 1            | int32_t（4 bytes）                                           |
+| 11100000 | 1            | int64_t（8 bytes）                                           |
+| 11110000 | 1            | 24位有符整数(3 bytes)                                        |
+| 11111110 | 1            | 8位有符整数(1 bytes)                                         |
+| 1111xxxx | 1            | 直接在xxxx位置保存数值，范围从0001~1101，减1后结果为实际值（0 ~ 12） |
+
+
+
+
+
+#### **ZipList的连锁更新问题**
+
+ZipList的每个Entry都包含previous_entry_length来记录上一个节点的大小，长度是1个或5个字节：
+如果前一节点的长度小于254字节，则采用1个字节来保存这个长度值
+如果前一节点的长度大于等于254字节，则采用5个字节来保存这个长度值，第一个字节为0xfe，后四个字节才是真实长度数据
+现在，假设我们有N个连续的、长度为250~253字节之间的entry，因此entry的previous_entry_length属性用1个字节即可表示，如图所示：
+
+![image-20250327184310693](./images/image-20250327184310693.png)
+
+如果在头部新加入一个entry且大小大于254字节，则之后的entry都要进行扩容更新
+
+ZipList这种特殊情况下产生的连续多次空间扩展操作称之为连锁更新（Cascade Update）。新增、删除都可能导致连锁更新的发生。
+
+
+
+### QuickList
+
+- 问题1：ZipList虽然节省内存，但申请内存必须是连续空间，如果内存占用较多，申请内存效率很低。怎么办？
+  - 答：为了缓解这个问题，我们必须限制ZipList的长度和entry大小。
+
+- 问题2：但是我们要存储大量数据，超出了ZipList最佳的上限该怎么办？
+  - 答：我们可以创建多个ZipList来分片存储数据。
+
+- 问题3：数据拆分后比较分散，不方便管理和查找，这多个ZipList如何建立联系？
+  - 答：Redis在3.2版本引入了新的数据结构QuickList，它是一个双端链表，只不过链表中的每个节点都是一个ZipList。
+
+![image-20250327185143238](./images/image-20250327185143238.png)
+
+为了避免QuickList中的每个ZipList中entry过多，Redis提供了一个配置项：list-max-ziplist-size来限制。
+如果值为正，则代表ZipList的允许的entry个数的最大值
+如果值为负，则代表ZipList的最大内存大小，分5种情况：
+
+* -1：每个ZipList的内存占用不能超过4kb
+* -2：每个ZipList的内存占用不能超过8kb
+* -3：每个ZipList的内存占用不能超过16kb
+* -4：每个ZipList的内存占用不能超过32kb
+* -5：每个ZipList的内存占用不能超过64kb
+
+其默认值为 -2：
+
+![image-20250327185543276](./images/image-20250327185543276.png)
+
+
+
+### SkipList
+
+SkipList（跳表）首先是**链表**，但与传统链表相比有几点差异：
+
+- 元素按照**升序排列**存储
+- 节点可能包含多个指针，指针跨度不同。
+
+![image-20250327190207833](./images/image-20250327190207833.png)
+
+![image-20250327190306070](./images/image-20250327190306070.png)
+
+
+
+SkipList的特点：
+
+* 跳跃表是一个双向链表，每个节点都包含score和ele值
+* 节点按照score值排序，score值一样则按照ele字典排序
+* 每个节点都可以包含多层指针，层数是1到32之间的随机数
+* 不同层指针到下一个节点的跨度不同，层级越高，跨度越大
+* 增删改查效率与红黑树基本一致，实现却更简单
+
+
+
+### RedisObject
+
+Redis中的任意数据类型的键和值都会被封装为一个RedisObject，也叫做Redis对象，源码如下：
+
+![image-20250327195218203](./images/image-20250327195218203.png)
+
+11种编码方式如下：
+
+| **编号** | **编码方式**            | **说明**               |
+| -------- | ----------------------- | ---------------------- |
+| 0        | OBJ_ENCODING_RAW        | raw编码动态字符串      |
+| 1        | OBJ_ENCODING_INT        | long类型的整数的字符串 |
+| 2        | OBJ_ENCODING_HT         | hash表（字典dict）     |
+| 3        | OBJ_ENCODING_ZIPMAP     | 已废弃                 |
+| 4        | OBJ_ENCODING_LINKEDLIST | 双端链表               |
+| 5        | OBJ_ENCODING_ZIPLIST    | 压缩列表               |
+| 6        | OBJ_ENCODING_INTSET     | 整数集合               |
+| 7        | OBJ_ENCODING_SKIPLIST   | 跳表                   |
+| 8        | OBJ_ENCODING_EMBSTR     | embstr的动态字符串     |
+| 9        | OBJ_ENCODING_QUICKLIST  | 快速列表               |
+| 10       | OBJ_ENCODING_STREAM     | Stream流               |
+
+
+
+Redis中会根据存储的数据类型不同，选择不同的编码方式。每种数据类型的使用的编码方式如下：
+
+| **数据类型** | **编码方式**                                       |
+| ------------ | -------------------------------------------------- |
+| OBJ_STRING   | int、embstr、raw                                   |
+| OBJ_LIST     | LinkedList和ZipList(3.2以前)、QuickList（3.2以后） |
+| OBJ_SET      | intset、HT                                         |
+| OBJ_ZSET     | ZipList、HT、SkipList                              |
+| OBJ_HASH     | ZipList、HT                                        |
+
+
+
+### 五种数据结构
+
+#### String(❁´◡`❁)
+
+String是Redis中最常见的数据存储类型
+
+其基本编码方式是RAW，基于简单动态字符串（SDS）实现，存储上限为512mb。
+
+
+
+如果存储的SDS长度小于44字节，则会采用EMBSTR编码，此时object head与SDS是一段**连续空间**。申请内存时只需要调用一次内存分配函数，效率更高。
+
+> [!TIP]
+>
+> 建议使用Redis存储字符串时尽量不超过44字节
+
+
+
+- 如果⼀个String类型的value的值是数字，那么Redis内部会把它转成long类型来存储，从而减少内存的使用。
+- 如果存储的字符串是整数值，并且大小在LONG_MAX范围内，则会采用INT编码：直接将数据保存在RedisObject的**ptr指针位置**（刚好8字节），不再需要SDS了。
+
+
+
+#### List(●'◡'●)
+
+Redis的List类型可以从首、尾操作列表中的元素
+
+可考虑的实现方式如下：
+
+* LinkedList ：普通链表，可以从双端访问，内存占用较高，内存碎片较多
+* ZipList ：压缩列表，可以从双端访问，内存占用低，存储上限低
+* QuickList：LinkedList + ZipList，可以从双端访问，内存占用较低，包含多个ZipList，存储上限高
+
+> [!TIP]
+>
+> 在3.2版本之前，Redis采用ZipList和LinkedList来实现List，当元素数量小于512并且元素大小小于64字节时采用ZipList编码，超过则采用LinkedList编码。
+>
+> 在3.2版本之后，Redis统一采用QuickList来实现List
+
+
+
+#### Set╰(*°▽°*)╯
+
+set是Redis中的单列集合，满足下列特点：
+
+* 元素无序性
+* 元素唯一性
+* 支持求交集、并集、差集
+
+> [!TIP]
+>
+> - 为了查询效率和唯一性，set采用HT编码（Dict）。Dict中的key用来存储元素，value统一为null。
+>
+> - 当存储的所有数据都是整数，并且元素数量不超过 `set-max-intset-entries` 时，Set会采用IntSet编码，以节省内存
+
+
+
+
+
+#### Zset o(≧▽≦)o 
+
+ZSet也就是SortedSet，其中每一个元素都需要指定一个score值和member值，具有以下特征：
+
+* 可以根据score值排序后
+* member必须唯一
+* 可以根据member查询分数
+
+
+
+> [!TIP]
+>
+> Redis采用如下两种数据结构实现zset
+>
+> * SkipList：可以排序，并且可以同时存储score和ele值（member）
+> * HT（Dict）：可以键值存储，并且可以根据key找value
+
+![image-20250327203535214](./images/image-20250327203535214.png)
+
+![image-20250327203551855](./images/image-20250327203551855.png)
+
+当元素数量不多时，HT和SkipList的优势不明显，而且更耗内存。因此zset还会采用ZipList结构来节省内存，不过需要同时满足两个条件：
+
+* 元素数量小于zset_max_ziplist_entries，默认值128
+* 每个元素都小于zset_max_ziplist_value字节，默认值64
+
+> [!TIP]
+>
+> ziplist本身没有排序功能，而且没有键值对的概念，因此需要通过编码实现：
+>
+> * ZipList是连续内存，因此score和element是紧挨在一起的两个entry， element在前，score在后
+> * score越小越接近队首，score越大越接近队尾，按照score值升序排列
+
+
+
+#### Hash༼ つ ◕_◕ ༽つ
+
+Hash结构与Redis中的Zset非常类似：
+
+* 都是键值存储
+* 都需求根据键获取值
+* 键必须唯一
+
+区别如下：
+
+* zset的键是member，值是score；hash的键和值都是任意值
+* zset要根据score排序；hash则无需排序
+
+
+
+> [!TIP]
+>
+> 当Hash中数据项比较少的情况下，Hash底层使用压缩列表ziplist进行存储数据，随着数据的增加，底层的ziplist就可能会转成dict
+>
+> 转换阈值：
+>
+> `hash-max-ziplist-entries 512`
+>
+> `hash-max-ziplist-value 64`
+
+
+
+
+
+## 网络模型
+
+### 用户空间和内核空间
+
+![image-20250327210753668](./images/image-20250327210753668.png)
+
+为了让用户应用访问计算机硬件资源，计算机就必须要通过对外暴露的一些接口，才能访问到，从而简介的实现对内核的操控，但是内核本身上来说也是一个应用，所以他本身也需要计算机资源
+
+因此需要把用户和**内核隔离开**，分为用户空间和内核空间
+
+
+
+Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓冲区：
+
+- 写数据时，要把用户缓冲数据拷贝到内核缓冲区，然后写入设备
+
+- 读数据时，要从设备读取数据到内核缓冲区，然后拷贝到用户缓冲区
+
+针对这个操作：我们的用户在写读数据时，会去向内核态申请，想要读取内核的数据，而内核数据要去等待驱动程序从硬件上读取数据，当从磁盘上加载到数据之后，内核会将数据写入到内核的缓冲区中，然后再将数据拷贝到用户态的buffer中，然后再返回给应用程序，整体而言，速度慢，就是这个原因，为了加速，我们希望read也好，还是wait for data也最好都不要等待，或者时间尽量的短。
+
+
+
+### 阻塞IO
+
+
+
+### 非阻塞IO
+
+
+
+### IO多路复用
+
+
+
+### 信号驱动IO
+
+
+
+### 异步IO
+
+
+
+### Redis网络模型
+
+
+
+
+
+## 通信协议
+
+
+
+## 内存策略
