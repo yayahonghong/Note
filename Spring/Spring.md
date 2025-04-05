@@ -1,5 +1,9 @@
 # Spring概述
 
+> [!Tip]
+>
+> 官网
+>
 > www.spring.io
 
 ---
@@ -16,15 +20,17 @@
 
 IoC思想： Inversion of Control，翻译为“**控制反转**”或“反转控制”，强调的是原来在程序中**创建Bean的权利**反转给**第三方**。
 
-> 例如：原来在程序中手动的去new UserServiceImpl()，手动的去new UserDaoImpl()，而根据IoC思想的指导，寻求一个第三方去创建UserServiceImpl对象和UserDaoImpl对象。这样程序与具体对象就失去的直接联系。
+> [!Tip]
+>
+> 例如：原来在程序中手动new UserServiceImpl()，手动new UserDaoImpl()，而根据IoC思想的指导，寻求一个第三方去创建UserServiceImpl对象和UserDaoImpl对象。这样程序与具体对象就失去的直接联系。
 
 
 
-谁去充当第三方角色呢？
+1. 谁去充当第三方角色呢？
 
 > 工厂设计模式，BeanFactory来充当第三方的角色，来产生Bean实例
 
-BeanFactory怎么知道产生哪些Bean实例呢？
+2. BeanFactory怎么知道产生哪些Bean实例呢？
 
 > 可以使用配置文件配置Bean的基本信息，BeanFactory根据配置文件来生产Bean实例
 
@@ -32,7 +38,7 @@ BeanFactory怎么知道产生哪些Bean实例呢？
 
 ### DI
 
-[^]: 上面使用BeanFactory的方式已经实现的"控制反转"，将Bean的创建权交给了BeanFactory，如果我们想将UserDao的创建权也反转给BeanFactory，与此同时UserService内部还需要用到UserDao实例对象，那应该怎样操作呢？
+上面使用BeanFactory的方式已经实现的"控制反转"，将Bean的创建权交给了BeanFactory，如果我们想将UserDao的创建权也反转给BeanFactory，与此同时UserService内部还需要用到UserDao实例对象，那应该怎样操作呢？
 
 1. 在程序中，通过BeanFactory获得UserService 
 
@@ -50,16 +56,18 @@ BeanFactory怎么知道产生哪些Bean实例呢？
 
 - IoC 和DI 的关系？
 
+> [!Note]
+>
 > 首先，先回答IoC和DI的是什么：
-> 
+>
 >     IoC： Inversion of Control，控制反转，将Bean的创建权由原来程序反转给第三方
-> 
+>
 >     DI：Dependency Injection，依赖注入，某个Bean的完整创建依赖于其他Bean（或普通参数）的注入
-> 
+>
 > 其次，再回答IoC和DI的关系：
-> 
+>
 >     第一种观点：IoC强调的是Bean创建权的反转，而DI强调的是Bean的依赖关系，认为不是一回事
-> 
+>
 >     第二种观点：IoC强调的是Bean创建权的反转，而DI强调的是通过注入的方式反转Bean的创建权，认为DI是IoC的其中一种实现方式
 
 
@@ -1194,19 +1202,20 @@ jdbc.password=root
 步骤分析：
 
 1. 确定命名空间名称、schema虚拟路径、标签名称；
+2. 编写schema约束文件`xxx-annotation.xsd`
+3. 在类加载路径下创建META目录，编写约束映射文件`spring.schemas`和处理器映射文件`spring.handlers` 
+4. 编写命名空间处理器`XXXNamespaceHandler`，在`init`方法中注册`XXXBeanDefinitionParser`
+5.  编写标签的解析器`XXXBeanDefinitionParser`，在parse方法中注册`XXXBeanPostProcessor` 
+6. 编写`XXXBeanPostProcessor` 
 
-2. 编写schema约束文件haohao-annotation.xsd 
 
-3. 在类加载路径下创建META目录，编写约束映射文件spring.schemas和处理器映射文件spring.handlers 
 
-4. 编写命名空间处理器HaohaoNamespaceHandler，在init方法中注册HaohaoBeanDefinitionParser
+​	==========以上五步是框架开发者写的，以下是框架使用者写的=========== 
 
-5. 编写标签的解析器HaohaoBeanDefinitionParser，在parse方法中注册HaohaoBeanPostProcessor 
+1. 在`applicationContext.xml`配置文件中引入命名空间
 
-6. 编写HaohaoBeanPostProcessor 
-   ==========以上五步是框架开发者写的，以下是框架使用者写的=========== 
-   7.在applicationContext.xml配置文件中引入命名空间2. 在applicationContext.xml配置文件中使用自定义的标签
-   
+2. 在`applicationContext.xml`配置文件中使用自定义的标签
+
    
 
 ---
@@ -1215,7 +1224,7 @@ jdbc.password=root
 
 ## Bean的基本注解开发
 
-使用注解对需要被Spring实例化的Bean进行标注，但是需要告诉Spring去哪找这些Bean，要配置组件扫描路径：
+使用注解对需要被Spring实例化的Bean进行标注，需要告诉Spring去哪找这些Bean，要配置组件扫描路径：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1297,12 +1306,12 @@ Bean依赖注入的注解，主要是使用注解的方式替代xml的 标签完
 
 Spring主要提供如下注解，用于在Bean内部进行属性注入的：
 
-| 注解          | 描述                             |
-| ----------- | ------------------------------ |
-| @Value      | 使用在字段或方法上，用于注入普通数据             |
-| @Autowired  | 使用在字段或方法上，用于根据类型（byType）注入引用数据 |
-| @Qualifiero | 使用在字段或方法上，结合@Autowired，根据名称注入  |
-| @Resource   | 使用在字段或方法上，根据类型或名称进行注入          |
+| 注解         | 描述                                                   |
+| ------------ | ------------------------------------------------------ |
+| `@Value`     | 使用在字段或方法上，用于注入普通数据                   |
+| `@Autowired` | 使用在字段或方法上，用于根据类型（byType）注入引用数据 |
+| `@Qualifier` | 使用在字段或方法上，结合@Autowired，根据名称注入       |
+| `@Resource`  | 使用在字段或方法上，根据类型或名称进行注入             |
 
  
 
@@ -1334,17 +1343,22 @@ public void setUsername(String username){
 }
 ```
 
-    加载properties文件:
+   
 
-```xml
-<context:property-placeholder location="classpath:jdbc.properties"/>
-```
+> [!TIP]
+>
+>  `applicationContext.xml`中加载properties文件:
+>
+> ```xml
+> <context:property-placeholder location="classpath:jdbc.properties"/>
+> ```
+>
 
 
 
 ### @Autowired注入
 
-用于根据**类型**进行注入
+用于根据 **类型** 进行注入
 
 ```java
 //使用在属性上直接注入
@@ -1358,16 +1372,18 @@ public void setUserDao(UserDao userDao){
 }
 ```
 
+> [!TIP]
+>
 > 当容器中同一类型的Bean实例有多个时，会尝试自动根据名字进行匹配
-> 
+>
 > 当容器中同一类型的Bean实例有多个时，且名字与被注入Bean名称不匹配时会报错
-
+>
 > 可注入**集合**，从容器中找多个同类型的对象
-> 
+>
 > ```java
 > @Autowired
 > public void test(List<UserDao> list){
->     //
+>  //
 > }
 > ```
 
@@ -1375,7 +1391,7 @@ public void setUserDao(UserDao userDao){
 
 ### @Qualifier注入
 
-@Qualifier配合@Autowired可以完成根据名称注入Bean实例，使用@Qualifier指定名称:
+`@Qualifier`配合`@Autowired`可以完成**根据名称**注入Bean实例，使用`@Qualifier`指定名称:
 
 ```java
 @Autowired
@@ -1405,7 +1421,9 @@ public void setUserDao(UserDao userDao){
 }
 ```
 
-> PS：@Resource注解存在与 javax.annotation 包中，Spring对其进行了解析
+> [!TIP]
+>
+> `@Resource`注解在 javax.annotation 包中（该注解来自JDK），Spring对其进行了解析
 
 
 
@@ -1446,18 +1464,23 @@ public DataSource dataSource(){
 
 ## Bean配置类的注解开发
 
-@Component等注解替代了<bean>标签，但是其他标签怎样去使用注解替代呢？
+> [!Note]
+>
+> 问：@Component等注解替代了`<bean>`标签，但是其他标签怎样使用注解替代呢？
+>
+> 答：定义一个配置类替代原有的xml配置文件，标签以外的标签，一般都是在配置类上使用注解完成的
+>
 
-：定义一个配置类替代原有的xml配置文件，标签以外的标签，一般都是在配置类上使用注解完成的
 
 
-
-`@Configuration`注解标识的类为配置类，替代原有xml配置文件，该注解第一个作用是标识该类是一个配置类，第二个作用是具备@Component作用
+`@Configuration`注解标识的类为配置类，替代原有xml配置文件，该注解第一个作用是标识该类是一个配置类，第二个作用是具备`@Component`的作用
 
 ```java
 @Configuration
  public class ApplicationContextConfig {}
 ```
+
+
 
 `@ComponentScan`组件扫描配置
 
@@ -1467,8 +1490,10 @@ public DataSource dataSource(){
  public class ApplicationContextConfig {}
 ```
 
+> [!Tip]
+>
 > - 指定一个或多个包名：扫描指定包及其子包下使用注解的类
-> 
+>
 > - 不配置包名：扫描当前@componentScan注解配置类所在包及其子包下的类
 
 
@@ -1482,6 +1507,8 @@ public DataSource dataSource(){
  public class ApplicationContextConfig {}
 ```
 
+
+
 `@Import` 用于加载其他配置类
 
 ```java
@@ -1494,7 +1521,7 @@ public DataSource dataSource(){
 
 
 
-`AnnotationConfigApplicationContext`替代以xml方式加载的Spring容器
+使用`AnnotationConfigApplicationContext`替代以xml方式加载的Spring容器
 
 ```java
 ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
@@ -1504,18 +1531,20 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
 
 ## Spring配置其他注解
 
-`@Primary`注解用于标注相同类型的Bean**优先使用权**，@Primary 是Spring3.0引入的，与@Component和@Bean一起使用，标注该Bean的优先级更高，则在通过类型获取Bean或通过@Autowired根据类型进行注入时，会选用优先级更高的
+`@Primary`注解用于标注相同类型的Bean**优先使用权**，@Primary 是Spring3.0引入的，与@Component和@Bean一起使用，标注Bean的优先级更高，则在通过类型获取Bean或通过@Autowired根据类型进行注入时，会选用优先级更高的
 
 
 
 `@Profile` 注解的作用同于xml配置时学习profile属性，是进行环境切换使用的
 
-> 注解@Profile 标注在类或方法上，标注当前产生的Bean从属于哪个环境，只有激活了当前环境，被标注的Bean才能被注册到Spring容器里，不指定环境的Bean，任何环境下都能注册到Spring容器里
-> 
+> [!Tip]
+>
+> 注解@Profile 标注在**类或方法**上，标注当前产生的Bean从属于哪个环境，只有激活了当前环境，被标注的Bean才能被注册到Spring容器里，不指定环境的Bean，任何环境下都能注册到Spring容器里
+>
 > 可以使用以下两种方式指定被激活的环境：
-> 
+>
 > - 使用命令行动态参数，虚拟机参数位置加载`-Dspring.profiles.active=test` 
-> 
+>
 > - 使用代码的方式设置环境变量`System.setProperty("spring.profiles.active","test")`
 
 
@@ -1534,7 +1563,7 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
 
 第三方框架整合，依然使用MyBatis作为整合对象
 
-导入依赖：
+1. 导入依赖：
 
 ```xml
         <dependency>
@@ -1569,7 +1598,9 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
         </dependency>
 ```
 
-配置第三方Bean
+
+
+2. 配置第三方Bean
 
 ```java
 @ComponentScan
@@ -1610,9 +1641,9 @@ public class SpringConfiguration {
 
 - 普通的配置类
 
-- 实现ImportSelector接口的类
+- 实现`ImportSelector`接口的类
 
-- 实现ImportBeanDefinitionRegistrar接口的类
+- 实现`ImportBeanDefinitionRegistrar`接口的类
   
   
   
@@ -1762,7 +1793,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, ApplicationConte
 
 切点表达式是配置要对哪些连接点（哪些类的哪些方法）进行通知的增强，语法如下：
 
-```php
+```java
 execution([访问修饰符] 返回值类型 包名.类名.方法名(参数))
 ```
 
@@ -1840,6 +1871,8 @@ public void afterThrowing(JoinPoint joinPoint,Throwable th){
 <aop:after-throwing method="afterThrowing" pointcut-ref="myPointcut" throwing="th"/>
 ```
 
+> [!Caution]
+>
 > 需在配置时指定throwing
 
 
@@ -1884,15 +1917,12 @@ xml解析器向Spring容器中注册了一个BeanPostProcessor，该BeanPostProc
 
 
 
+动态代理的实现的选择，在调用getProxy() 方法时，我们可选用的AopProxy接口有两个实现类，一种就是基于JDK，一种是基于Cglib
 
-
-动态代理的实现的选择，在调用getProxy() 方法时，我们可选用的AopProxy接口有两个实现类，如上图，这两种都是动态生成代理对象的方式，一种就是基于JDK的，一种是基于Cglib的
-
-| 代理技术                             | 使用条件                                    | 配置方式                                          |
-| -------------------------------- | --------------------------------------- | --------------------------------------------- |
-| JDK动态代理技术                        | 目标类有接口，是基于接口动态生成实现类的代理对象                | 目标类有接口的情况下，默认方式                               |
-| Cglib动态代理技术                      | 目标类无接口且不能使用final修饰，是基于被代理对象动态生成子对象为代理对象 | 目标类无接口时，默认使用该方式；目标类有接口时，手动配置`<aop:configproxy |
-| target-class=“true”>`强制使用Cglib方式 |                                         |                                               |
+| 代理技术          | 使用条件                                                     | 配置方式                                                     |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| JDK动态代理技术   | 目标类有接口，是基于接口动态生成实现类的代理对象             | 目标类有接口的情况下，默认方式                               |
+| Cglib动态代理技术 | 目标类无接口且不能使用final修饰，是基于被代理对象动态生成子对象为代理对象 | 目标类无接口时，默认使用该方式；目标类有接口时，手动配置`<aop:configproxytarget-class=“true”>`强制使用Cglib方式 |
 
 ![3700c7c5-022f-42c8-9410-eb0ee57a2223](./images/3700c7c5-022f-42c8-9410-eb0ee57a2223.png)
 
@@ -1952,7 +1982,9 @@ public class MyAdvice {
     <aop:aspectj-autoproxy/>
 ```
 
-> 注解方式为    @EnableAspectJAutoProxy
+> [!Tip]
+>
+> 注解方式配置为    @EnableAspectJAutoProxy
 
 
 
@@ -2076,17 +2108,19 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
     </aop:config>
 ```
 
+> [!Note]
+>
 > 平台事务管理器PlatformTransactionManager是Spring提供的封装事务具体操作的规范接口，封装了事务的提交和回滚方法
-> 
+>
 > 不同的持久层框架事务操作的方式有可能不同，所以不同的持久层框架有可能会有不同的平台事务管理器实现，例如:
-> 
+>
 >     MyBatis作为持久层框架时，使用的平台事务管理器实现是DataSourceTransactionManager。
-> 
+>
 >     Hibernate作为持久层框架时，使用的平台事务管理器是HibernateTransactionManager。
 
 
 
-**事务定义信息配置**，每个事务有很多特性，例如：隔离级别、只读状态、超时时间等，这些信息在开发时可以通过connection进行指定，而此处要通过配置文件进行配置
+**事务定义信息配置**，每个事务有很多特性，例如：**隔离级别、只读状态、超时时间**等，这些信息在开发时可以通过connection进行指定，而此处要通过配置文件进行配置
 
 ```xml
     <tx:attributes>
@@ -2100,13 +2134,13 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 
 
 
-**name属性**：指定哪个方法要进行哪些事务的属性配置
+- **name属性**：指定哪个方法要进行哪些事务的属性配置
 
 > 方法名在配置时，也可以使用* 进行模糊匹配
 
 
 
-**isolation属性**：指定事务的隔离级别，事务并发存在三大问题：脏读、不可重复读、幻读/虚读。可以通过设置事务的隔离级别来保证并发问题的出现，常用的是READ_COMMITTED 和REPEATABLE_READ
+- **isolation属性**：指定事务的隔离级别，事务并发存在三大问题：脏读、不可重复读、幻读/虚读。可以通过设置事务的隔离级别来保证并发问题的出现，常用的是READ_COMMITTED 和REPEATABLE_READ
 
 | 属性               | 说明                                                      |
 | ---------------- | ------------------------------------------------------- |
@@ -2118,7 +2152,7 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 
 
 
-**read-only属性**：设置当前的只读状态，如果是查询则设置为true，可以**提高查询性能**，如果是更新（增删改）操作则设置为false
+- **read-only属性**：设置当前的只读状态，如果是查询则设置为true，可以**提高查询性能**，如果是更新（增删改）操作则设置为false
 
 ```xml
 <!-- 一般查询相关的业务操作都会设置为只读模式-->
@@ -2128,11 +2162,11 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 
 
 
-**timeout属性**：设置事务执行的超时时间，单位是秒，如果超过该时间限制但事务还没有完成，则自动回滚事务，不在继续执行。默认值是-1，即没有超时时间限制
+- **timeout属性**：设置事务执行的超时时间，单位是秒，如果超过该时间限制但事务还没有完成，则自动回滚事务，不在继续执行。默认值是-1，即没有超时时间限制
 
 
 
-**propagation属性**：设置事务的传播行为，主要解决是A方法调用B方法时，事务的传播方式问题的，例如：使用单方的事务，还是A和B都使用自己的事务等。事务的传播行为有如下七种属性值可配置
+- **propagation属性**：设置事务的传播行为，主要解决是A方法调用B方法时，事务的传播方式问题的，例如：使用单方的事务，还是A和B都使用自己的事务等。事务的传播行为有如下七种属性值可配置
 
 | 属性            | 说明                                            |
 | ------------- | --------------------------------------------- |
@@ -2403,7 +2437,7 @@ public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWeb
 
 ## web层MVC框架思想与设计思路
 
-原始Javaweb开发中，Servlet充当Controller的角色，Jsp充当View角色，JavaBean充当模型角色，后期Ajax异步流行后，在加上现在前后端分离开发模式成熟后，View就被原始Html+Vue替代。原始Javaweb开发中，Service充当Controller有很多弊端，显而易见的有如下几个：
+原始Javaweb开发中，Servlet充当Controller的角色，Jsp充当View角色，JavaBean充当模型角色，后期Ajax异步流行后，在加上现在前后端分离开发模式成熟后，View就被原始Html+Vue替代。原始Javaweb开发中，Servlet充当Controller有很多弊端，显而易见的有如下几个：
 
 | Servlet作为Controller的问题                   | 解决思路和方案                                       |
 | ---------------------------------------- | --------------------------------------------- |
@@ -2441,7 +2475,7 @@ public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWeb
 
 ### SpringMVC概述
 
-    SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布的组件，SpringMVC和Spring可以无缝整合，使用DispatcherServlet作为前端控制器，且内部提供了处理器映射器、处理器适配器、视图解析器等组件，可以简化JavaBean封装，Json转化、文件上传等操作。
+SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布的组件，SpringMVC和Spring可以无缝整合，使用DispatcherServlet作为前端控制器，且内部提供了处理器映射器、处理器适配器、视图解析器等组件，可以简化JavaBean封装，Json转化、文件上传等操作。
 
 ![31277af6-97bb-4697-9eeb-ae0190205738](./images/31277af6-97bb-4697-9eeb-ae0190205738.png)
 
@@ -2660,6 +2694,8 @@ public enum RequestMethod {
     // 控制台输出 lisi
 ```
 
+> [!Tip]
+>
 > 当请求参数的名称与方法参数名不一致时，可以使用@RequestParam注解进行标注
 
 请求：`http://localhost/mvc/hello?username=lisi`
@@ -3097,7 +3133,7 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 ### 拦截器 Interceptor 简介
 
-ingMVC的拦截器Interceptor规范，主要是对Controller资源访问时进行拦截操作的技术，当然拦截后可以进行权限控制，功能增强等都是可以的。拦截器有点类似 Javaweb开发中的Filter，拦截器与Filter的区别如下图
+SpringMVC的拦截器Interceptor规范，主要是对Controller资源访问时进行拦截操作的技术，拦截后可以进行权限控制、功能增强等。拦截器有点类似 Javaweb开发中的Filter，但二者并不相同：
 
 ![084cf638-dfd0-47f0-946d-eac5a67a97b7](./images/084cf638-dfd0-47f0-946d-eac5a67a97b7.png)
 
@@ -3441,7 +3477,7 @@ protected void initStrategies(ApplicationContext context) {
 
 ### SpringMVC 异常的处理流程
 
-异常分为编译时异常和运行时异常，编译时异常我们 try-cache 进行捕获，捕获后自行处理，而运行时异常是不可预期的，就需要规范编码来避免，在SpringMVC中，不管是编译异常还是运行时异常，都可以最终由SpringMVC提供的异常处理器进行统一处理，这样就避免了随时随地捕获处理的繁琐性。
+异常分为编译时异常和运行时异常，编译时异常我们 try-catch 进行捕获，捕获后自行处理，而运行时异常是不可预期的，就需要规范编码来避免，在SpringMVC中，不管是编译异常还是运行时异常，都可以最终由SpringMVC提供的异常处理器进行统一处理，这样就避免了随时随地捕获处理的繁琐性。
 
 
 

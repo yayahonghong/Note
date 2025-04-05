@@ -16,6 +16,10 @@ Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发
 
 
 
+---
+
+
+
 # MyBatis-Plus
 
 ## 快速入门
@@ -31,6 +35,8 @@ Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发
         <!-- springBoot3依赖 -->
 ```
 
+> [!TIP]
+>
 > 以上为Spring Boot3.x.x版本依赖，3.x.x以下版本略有不同
 
 
@@ -45,6 +51,8 @@ public interface UserMapper extends BaseMapper<User> {}
 
 ### 常见注解
 
+> [!TIP]
+>
 > MyBatisPlus通过扫描实体类，并基于反射获取实体类信息作为数据库表信息。
 
 约定大于配置：
@@ -99,7 +107,7 @@ IdType枚举（建议指定）：
 
 - 成员变量名<font color=red>以is开头，且是布尔值</font>
 
-- 成员变量名与数据库**关键字冲突**    如@TableField("\`order\`")  反引号
+- 成员变量名与数据库**关键字冲突**    如@TableField("\`order\`")  使用反引号括起来
 
 - 成员变量不是数据库字段
   
@@ -241,6 +249,8 @@ WHERE id in (1, 2, 4)
 void updateBalanceByIds(@Param("ew") LambdaQueryWrapper<User> wrapper, @Param("amount") int amount);
 ```
 
+> [!CAUTION]
+>
 > Wrapper参数必须指定为“ew”
 
 3. 自定义SQL，并使用Wrapper条件
@@ -361,6 +371,8 @@ void testSaveBatch() {
 }
 ```
 
+> [!TIP]
+>
 > 比逐条新增效率提高了10倍左右
 
 
@@ -391,6 +403,8 @@ VALUES
 
 **MySQL**的客户端连接参数中有这样的一个参数：`rewriteBatchedStatements`。顾名思义，就是重写批处理的`statement`语句。
 
+> [!TIP]
+>
 > 这个参数的默认值是false，我们需要修改连接参数，将其配置为true
 
 修改项目中的application.yml文件，在jdbc的url后面添加参数`&rewriteBatchedStatements=true`
@@ -463,12 +477,16 @@ void testDbUpdate() {
 
 * 查询时过滤掉标记为true的数据
   
+  > [!WARNING]
+  >
   > 一旦采用了逻辑删除，所有的查询和删除逻辑都要跟着变化，非常麻烦。
-  
-  
 
+  
+  
   为了解决这个问题，MybatisPlus就添加了对逻辑删除的支持。
 
+> [!CAUTION]
+>
 > **注意**，只有MybatisPlus生成的SQL语句才支持自动的逻辑删除，自定义SQL需要自己手动处理逻辑删除。
 
 
@@ -500,21 +518,28 @@ mybatis-plus:
 
 
 
-方法与普通删除一模一样，但是底层的SQL逻辑变了：
+执行删除方法，与普通删除一模一样，但是底层的SQL逻辑变了：
 
-![](https://b11et3un53m.feishu.cn/space/api/box/stream/download/asynccode/?code=NzFkMGFjMGU5MGFkYmZlYWY4MWUxMDkyMDdjYjc2ZDNfNEd4NTQzY1UxRTJ2SnN6NHRlU2t3V0ZHNGlJUDR1UTlfVG9rZW46VHdXaWJOTUlrb1BkNnl4WGYxbWNvamRqbnNiXzE3MzM1Nzk0MjE6MTczMzU4MzAyMV9WNA)
+![image-20250329234647841](./images/image-20250329234647841.png)
+
+> [!TIP]
+>
+> 查询也会自动筛选逻辑删除数据
 
 
 
 综上， 开启了逻辑删除功能以后，我们就可以像普通删除一样做CRUD，基本不用考虑代码逻辑问题。还是非常方便的。
 
-**注意**：逻辑删除本身也有自己的问题，比如：
-
-* 会导致数据库表垃圾数据越来越多，从而影响查询效率
-
-* SQL中全都需要对逻辑删除字段做判断，影响查询效率
-
-因此，我不太推荐采用逻辑删除功能，如果数据不能删除，可以采用把**数据迁移到其它表**的办法。
+> [!CAUTION]
+>
+> **注意**：逻辑删除本身也有自己的问题，比如：
+>
+> * 会导致数据库表垃圾数据越来越多，从而影响查询效率
+>
+> * SQL中全都需要对逻辑删除字段做判断，影响查询效率
+>
+> 因此，不太推荐采用逻辑删除功能，如果数据不能删除，可以采用把**数据迁移到其它表**的办法。
+>
 
 
 
@@ -532,10 +557,10 @@ private Integer status;//使用状态（1正常 2冻结）
 
 
 
-
-
 定义枚举类：
 
+> [!TIP]
+>
 > 要让`MybatisPlus`处理枚举与数据库类型自动转换，我们必须告诉`MybatisPlus`，枚举中的哪个字段的值作为数据库值。 `MybatisPlus`提供了`@EnumValue`注解来标记枚举属性
 
 ```java
@@ -545,8 +570,8 @@ import lombok.Getter;
 @Getter
 public enum UserStatus {
     NORMAL(1, "正常"),
-    FREEZE(2, "冻结")
-    ;
+    FREEZE(2, "冻结");
+    
     @EnumValue
     private final int value;
     private final String desc;
@@ -1381,16 +1406,18 @@ public interface ItemClient {
 
 ```
 
+> [!TIP]
+>
 > 这里只需要声明接口，无需实现方法。接口中的几个关键信息：
-> 
+>
 > * `@FeignClient("item-service")` ：声明服务名称
-> 
+>
 > * `@GetMapping` ：声明请求方式
-> 
+>
 > * `@GetMapping("/items")` ：声明请求路径
-> 
+>
 > * `@RequestParam("ids") Collection<Long> ids` ：声明请求参数
-> 
+>
 > * `List<ItemDTO>` ：返回值类型
 
 
@@ -3140,11 +3167,13 @@ Work queues，任务模型。简单来说就是**让多个消费者绑定到一�
 
 此时就可以使用work 模型，**多个消费者共同处理消息处理，消息处理的速度就能大大提高**了。
 
+> [!Tip]
+>
 > 部署多个实例或者监听同一队列即可实现
 
 
 
-消息是**平均分配**给每个消费者，并没有考虑到消费者的处理能力。导致1个消费者空闲，另一个消费者忙的不可开交。没有充分利用每一个消费者的能力，这样显然是有问题的。
+消息默认是**平均分配**给每个消费者，并没有考虑到消费者的处理能力。导致1个消费者空闲，另一个消费者忙的不可开交。没有充分利用每一个消费者的能力，这样显然是有问题的。
 
 
 
