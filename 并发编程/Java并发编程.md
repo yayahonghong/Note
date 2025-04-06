@@ -1583,12 +1583,310 @@ class Message {
 
 
 
+## park/unpark
+
+它们是 LockSupport 类中的方法
+
+```java
+// 暂停当前线程
+LockSupport.park();
+// 恢复某个线程的运行
+LockSupport.unpark(暂停线程对象);
+```
+
+
+
+与 Object 的 wait & notify 相比
+
+- wait，notify 和 notifyAll 必须配合 Object Monitor 一起使用，而 park，unpark 不需要
+- park & unpark 是以线程为单位来【阻塞】和【唤醒】线程，而 notify 只能随机唤醒一个等待线程，notifyAll  是唤醒所有等待线程，就不那么【精确】
+- park & unpark 可以先 unpark，而 wait & notify 不能先 notify
+
+
+
+### 原理
+
+每个线程都有自己的一个 Parker 对象（非Java语言实现），由三部分组成  _counter ， _cond 和  _mutex
+
+![image-20250406153207446](./images/image-20250406153207446.png)
+
+1. 当前线程调用 Unsafe.park() 方法
+2. 检查 _counter ，本情况为 0，这时，获得 _mutex 互斥锁 
+3. 线程进入 _cond 条件变量阻塞
+4. 设置 _counter = 0
+
+
+
+
+
+![image-20250406153242632](./images/image-20250406153242632.png)
+
+1. 调用 Unsafe.unpark(Thread_0) 方法，设置 _counter 为 1 
+2. 唤醒 _cond 条件变量中的 Thread_0 
+3. Thread_0 恢复运行
+4. 设置 _counter 为 0
+
+
+
+
+
+![image-20250406153410586](./images/image-20250406153410586.png)
+
+1. 调用 Unsafe.unpark(Thread_0) 方法，设置 _counter 为 1 
+2. 当前线程调用 Unsafe.park() 方法 
+3. 检查 _counter ，本情况为 1，这时线程无需阻塞，继续运行 
+4. 设置 _counter 为 0
+
+
+
 ## 线程状态转换
+
+![image-20250406153811336](./images/image-20250406153811336.png)
+
+### 情况 1  NEW --> RUNNABLE  
+
+当调用  t.start() 方法时，由  NEW --> RUNNABLE 
+
+
+
+### 情况 2  RUNNABLE <--> WAITING
+
+t 线程用  `synchronized(obj)`  获取了对象锁后 
+
+- 调用 `obj.wait()` 方法时，t 线程从 RUNNABLE --> WAITING
+- 调用 `obj.notify()` ， `obj.notifyAll()` ，` t.interrupt()` 时
+  - 竞争锁成功，t 线程从   WAITING --> RUNNABLE  
+  - 竞争锁失败，t 线程从   WAITING --> BLOCKED 
+
+
+
+### 情况 3  RUNNABLE <--> WAITING
+
+- 当前线程调用  `t.join()` 方法时，当前线程从  RUNNABLE --> WAITING 
+  - 注意是当前线程在t 线程对象的监视器上等待
+
+- t 线程运行结束，或调用了当前线程的  `interrupt()` 时，当前线程从 WAITING --> RUNNABLE
+
+
+
+### 情况 4  RUNNABLE <--> WAITING
+
+- 当前线程调用 `LockSupport.park()` 方法会让当前线程从  RUNNABLE --> WAITING
+- 调用  `LockSupport.unpark(目标线程)` 或调用了线程 的  `interrupt()` ，会让目标线程从  WAITING -->RUNNABLE
+
+
+
+### 情况 5  RUNNABLE <--> TIMED_WAITING
+
+t 线程用  `synchronized(obj)` 获取了对象锁后 
+
+- 调用  `obj.wait(long n)` 方法时，t 线程从  RUNNABLE --> TIMED_WAITING
+- t 线程等待时间超过了 n 毫秒，或调用  `obj.notify()` ， `obj.notifyAll()` ,`t.interrupt()` 时
+  - 竞争锁成功，t 线程从   TIMED_WAITING --> RUNNABLE  
+  - 竞争锁失败，t 线程从   TIMED_WAITING --> BLOCKED
+
+
+
+### 情况 6  RUNNABLE <--> TIMED_WAITING
+
+- 当前线程调用 `t.join(long n)` 方法时，当前线程从  RUNNABLE --> TIMED_WAITING
+
+- 当前线程等待时间超过了 n 毫秒，或t 线程运行结束，或调用了当前线程的  `interrupt()` 时，当前线程从 TIMED_WAITING --> RUNNABLE
+
+
+
+### 情况 7  RUNNABLE <--> TIMED_WAITING
+
+- 当前线程调用  Thread.sleep(long n) ，当前线程从  RUNNABLE --> TIMED_WAITING  
+- 当前线程等待时间超过了 n 毫秒，当前线程从   TIMED_WAITING --> RUNNABLE
+
+
+
+### 情况 8  RUNNABLE <--> TIMED_WAITING
+
+- 当前线程调用  `LockSupport.parkNanos(long nanos)` 或  程 调用  `LockSupport.parkUntil(long millis) `时，当前线程从  RUNNABLE --> TIMED_WAITING
+- 调用 `LockSupport.unpark(目标线程)` 或调用了线程 的 ` interrupt()` ，或是等待超时，会让目标线程从  TIMED_WAITING--> RUNNABLE
+
+
+
+### 情况 9  RUNNABLE <--> BLOCKED
+
+- t 线程用   `synchronized(obj) `获取了对象锁时如果竞争失败，从   RUNNABLE --> BLOCKED  
+- 持 obj 锁线程的同步代码块执行完毕，会唤醒该对象上所有  BLOCKED  的线程重新竞争，如果其中 t 线程竞争 成功，从  BLOCKED --> RUNNABLE ，其它失败的线程仍然   BLOCKED 
+
+
+
+### 情况 10  RUNNABLE <--> TERMINATED
+
+当前线程所有代码运行完毕，进入 TERMINATED
+
+
+
+## 多把锁
+
+> [!Tip]
+>
+> 引例：
+>
+> 一间大屋子有两个功能：睡觉、学习，互不相干。 
+>
+> 现在小南要学习，小女要睡觉，但如果只用一间屋子（一个对象锁）的话，那么并发度很低 
+>
+> 解决方法是准备多个房间（多个对象锁）
+
+```java
+class BigRoom {
+    private final Object studyRoom = new Object();
+    private final Object bedRoom = new Object();
+    
+    public void sleep() {
+        synchronized (bedRoom) {
+        	log.debug("sleeping 2 小时");
+        	Sleeper.sleep(2);
+    	}
+    }
+    
+    public void study() {
+        synchronized (studyRoom) {
+            log.debug("study 1 小时");
+            Sleeper.sleep(1);
+        }
+    }
+}
+```
+
+
+
+将锁的粒度细分 
+
+- 好处，是可以增强并发度 
+- 坏处，如果一个线程需要同时获得多把锁，就容易发生死锁
 
 
 
 ## 活跃性
 
+### 死锁
+
+> [!Tip]
+>
+> 死锁四要素
+
+一个线程需要同时获取多把锁，这时就容易发生死锁
+
+- t1 线程 先获得  A对象 锁，接下来想获取 B对象 的锁  
+
+- t2 线程 先获得  B对象 锁，接下来想获取  A对象 的锁 
 
 
-## Lock
+
+### 定位死锁
+
+检测死锁可以使用 jconsole工具，或者使用 jps 定位进程 id，再用 jstack 定位死锁
+
+
+
+检测到死锁输出：
+
+```java
+Found one Java-level deadlock:
+...
+```
+
+> [!Tip]
+>
+> 破坏死锁四要素中任意一个即可解决死锁
+
+
+
+### 哲学家就餐问题
+
+问题场景设定如下：
+
+- 五位哲学家围坐在一张圆桌周围
+- 每位哲学家面前有一盘食物
+- 每两位哲学家之间放有一根筷子(共五根)
+- 哲学家只有同时拿到左右两边的筷子才能进餐
+- 进餐结束后会放下筷子继续思考
+
+
+
+问题的关键在于如何设计一个算法，使得：
+
+1. 不会发生死锁(所有哲学家都拿着一根筷子等待另一根)
+2. 不会发生饥饿(某些哲学家永远无法进餐)
+3. 允许最大程度的并行(尽可能多的哲学家同时进餐)
+
+
+
+### 活锁
+
+活锁是多线程或分布式系统中的一种现象，与死锁类似但又有重要区别。在活锁情况下，线程或进程并没有被阻塞，而是在不断地尝试解决冲突，但由于彼此之间的相互让步或协调不当，导致系统无法继续向前推进。
+
+**活锁与死锁的区别**
+
+| 特性     | 死锁(Deadlock)             | 活锁(Livelock)           |
+| :------- | :------------------------- | :----------------------- |
+| 线程状态 | 线程被阻塞，不执行任何操作 | 线程仍在执行，但没有进展 |
+| 资源占用 | 资源被永久占用             | 资源可能被不断获取和释放 |
+| CPU使用  | 低                         | 高(因为线程仍在忙碌)     |
+| 表现形式 | 完全停止                   | 看似忙碌但无实际进展     |
+
+
+
+**活锁的典型场景**
+
+1. **过度礼貌的哲学家**：在哲学家就餐问题中，如果所有哲学家同时拿起左边的筷子，发现右边的筷子不可用，然后同时放下左边的筷子，等待一段时间后再次尝试，如此循环。
+2. **消息重试机制**：两个进程互相发送消息，消息丢失后都重试，但重试时间同步导致持续冲突。
+3. **资源分配策略**：多个线程在检测到冲突时都主动释放资源并重试，导致持续的资源竞争循环。
+
+
+
+### 饥饿
+
+饥饿（Starvation）是多线程或资源分配系统中一种现象，指的是某些线程或进程由于**长期无法获取所需资源**而无法执行，而其他线程却能正常执行。饥饿不同于死锁（Deadlock）和活锁（Livelock），因为饥饿的线程**没有被阻塞**，而是**一直处于就绪状态但得不到调度**。
+
+
+
+**饥饿 vs. 死锁 vs. 活锁**
+
+| 特性         | **死锁 (Deadlock)** | **活锁 (Livelock)**      | **饥饿 (Starvation)**   |
+| :----------- | :------------------ | :----------------------- | :---------------------- |
+| **线程状态** | 完全阻塞（不执行）  | 持续执行但无进展         | 可运行但得不到资源      |
+| **资源占用** | 资源被永久占用      | 资源可能被反复获取和释放 | 资源被高优先级线程抢占  |
+| **CPU使用**  | 低（线程阻塞）      | 高（线程忙碌但无进展）   | 可能高（线程在等待）    |
+| **解决方案** | 破坏死锁条件        | 引入随机性/优先级        | 公平调度/避免优先级反转 |
+
+
+
+**1. 公平调度（Fairness）**
+
+- 使用公平锁（`ReentrantLock(true)`）：
+
+  ```java
+  ReentrantLock fairLock = new ReentrantLock(true); // 公平锁
+  ```
+
+- 线程池使用公平队列（如`newFixedThreadPool` + `LinkedBlockingQueue`）。
+
+**2. 避免优先级反转（Priority Inversion）**
+
+- 在实时系统中（如RTOS），确保低优先级任务不会被无限抢占。
+- 使用优先级继承（Priority Inheritance）或优先级天花板（Priority Ceiling）协议。
+
+**3. 时间片轮转（Round-Robin Scheduling）**
+
+- 操作系统/线程调度器可以强制让每个线程都能获得执行机会（如Linux的CFS调度器）。
+
+**4. 资源分配超时**
+
+
+
+## ReentrantLock
+
+相对于 synchronized 它具备如下特点 
+
+- 可中断 
+- 可以设置超时时间 
+- 可以设置为公平锁 
+- 支持多个条件变量

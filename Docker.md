@@ -307,3 +307,277 @@ services:
    netstat -tuln | grep [port]
    ```
 
+
+
+# 常用部署脚本
+
+## MySQl
+
+```bash
+docker run -d \
+    --name mysql \
+    -p 3306:3306 \
+    -v $PWD/conf:/etc/mysql/conf.d \
+    -v $PWD/logs:/logs \
+    -v $PWD/data:/var/lib/mysql \
+    -v $PWD/config:/etc/mysql/conf.d \
+    -e TZ=Asia/Shanghai \
+    -e MYSQL_ROOT_PASSWORD=123456 \
+    mysql \
+    --character-set-server=utf8mb4 \
+    --collation-server=utf8mb4_unicode_ci
+```
+
+
+
+## Redis
+
+```bash
+docker run -d \
+    --name redis \
+    -p 6379:6379 \
+    --log-opt max-size=100m \
+    --log-opt max-file=2 \
+    -v /docker/redis/conf/redis.conf:/etc/redis/redis.conf \
+    -v /docker/redis/data:/data \
+    -v /docker/redis/logs:/logs \
+    redis \
+    --requirepass 123456 \
+    redis-server /etc/redis/redis.conf
+```
+
+> [!Tip]
+>
+> **密码设置**：
+>
+> - 建议在配置文件中设置密码，而不是命令行参数
+> - 在`redis.conf`中添加：`requirepass 强密码`
+
+
+
+配置文件示例
+
+```properties
+bind 0.0.0.0
+port 6379
+protected-mode no
+daemonize no
+requirepass 你的强密码
+appendonly yes
+dir /data
+logfile "/logs/redis.log"
+```
+
+
+
+## RabbitMQ
+
+```bash
+docker run -d \
+  --name rabbitmq \
+  --hostname my-rabbit \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  -p 25672:25672 \
+  -v /docker/rabbitmq/data:/var/lib/rabbitmq \
+  -v /docker/rabbitmq/conf:/etc/rabbitmq \
+  -v /docker/rabbitmq/logs:/var/log/rabbitmq \
+  -v /docker/rabbitmq/plugins:/plugins \
+  -e RABBITMQ_DEFAULT_USER=admin \
+  -e RABBITMQ_DEFAULT_PASS=123456 \
+  --restart unless-stopped \
+  rabbitmq
+```
+
+> [!Tip]
+>
+> 5672                  # AMQP 协议端口
+>
+> 15672                # 管理界面端口
+>
+> 25672                # 集群通信端口
+>
+> `-e RABBITMQ_ERLANG_COOKIE='secret_cookie' \`  # 集群需要
+
+
+
+配置文件
+
+```properties
+# 基础配置
+loopback_users.guest = false
+listeners.tcp.default = 5672
+
+# 内存和磁盘设置
+vm_memory_high_watermark.relative = 0.6
+disk_free_limit.absolute = 2GB
+
+# 集群配置
+# cluster_formation.peer_discovery_backend = rabbit_peer_discovery_classic_config
+# cluster_formation.classic_config.nodes.1 = rabbit@rabbit1
+# cluster_formation.classic_config.nodes.2 = rabbit@rabbit2
+
+# 日志设置
+log.file.level = info
+log.file.rotation.date = $D0
+log.file.rotation.size = 50MB
+```
+
+
+
+## Nginx
+
+```bash
+docker run -d \
+  --name nginx \
+  -p 80:80 \
+  -p 443:443 \
+  -v /docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro \
+  -v /docker/nginx/conf.d:/etc/nginx/conf.d:ro \
+  -v /docker/nginx/html:/usr/share/nginx/html \
+  -v /docker/nginx/logs:/var/log/nginx \
+  -v /docker/nginx/certs:/etc/nginx/certs:ro \
+  --restart unless-stopped \
+  nginx:latest
+```
+
+
+
+主配置文件 `/docker/nginx/conf/nginx.conf`
+
+```nginx
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+```
+
+站点配置 `/docker/nginx/conf.d/default.conf`
+
+```nginx
+server {
+    listen       80;
+    server_name  localhost;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+```
+
+
+
+## Nacos
+
+```bash
+mkdir -p /docker/nacos/standalone/{logs,conf,data}
+
+docker run -d \
+  --name nacos-standalone \
+  -p 8848:8848 \
+  -e MODE=standalone \
+  -e SPRING_DATASOURCE_PLATFORM=mysql \
+  -e MYSQL_SERVICE_HOST=localhost \
+  -e MYSQL_SERVICE_PORT=3306 \
+  -e MYSQL_SERVICE_USER=root \
+  -e MYSQL_SERVICE_PASSWORD=123 \
+  -e MYSQL_SERVICE_DB_NAME=nacos_config \
+  -v /docker/nacos/standalone/logs:/home/nacos/logs \
+  -v /docker/nacos/standalone/conf:/home/nacos/conf \
+  --restart unless-stopped \
+  nacos/nacos-server:latest
+```
+
+> [!Tip]
+>
+> MySQL数据库脚本
+>
+> [nacos/distribution/conf/mysql-schema.sql at master · alibaba/nacos](https://github.com/alibaba/nacos/blob/master/distribution/conf/mysql-schema.sql?spm=5238cd80.2ef5001f.0.0.3f613b7chnlORI&file=mysql-schema.sql)
+
+
+
+## ElasticSearch
+
+```bash
+mkdir -p /docker/elasticsearch/{data,config,logs}
+chmod -R 1000:1000 /docker/elasticsearch  # Elasticsearch使用uid 1000
+
+docker run -d \
+  --name elasticsearch \
+  -p 9200:9200 \
+  -p 9300:9300 \
+  -e "discovery.type=single-node" \
+  -e "ES_JAVA_OPTS=-Xms1g -Xmx1g" \
+  -v /docker/elasticsearch/data:/usr/share/elasticsearch/data \
+  -v /docker/elasticsearch/config:/usr/share/elasticsearch/config \
+  -v /docker/elasticsearch/logs:/usr/share/elasticsearch/logs \
+  --ulimit nofile=65536:65536 \
+  --ulimit memlock=-1:-1 \
+  --restart unless-stopped \
+  elasticsearch
+```
+
+> [!Tip]
+>
+>  ` -e "xpack.security.enabled=false" \`  # 开发环境可关闭安全认证
+
+
+
+## PostgreSQL
+
+```bash
+docker run -d \
+  --name postgres \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=mysecretpassword \
+  -e POSTGRES_USER=myuser \
+  -e POSTGRES_DB=mydb \
+  -v /docker/postgres/data:/var/lib/postgresql/data \
+  -v /docker/postgres/config:/etc/postgresql \
+  --restart unless-stopped \
+  postgres
+```
+
+
+
+## MongoDB
+
+```bash
+docker run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=example \
+  -v /docker/mongodb/data:/data/db \
+  -v /docker/mongodb/config:/data/configdb \
+  --restart unless-stopped \
+  mongo:6
+```
+

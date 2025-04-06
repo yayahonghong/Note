@@ -165,7 +165,7 @@ where和having的区别：
 select sex, avg(math) from tb group by sex;
 
 -- 查询男生和女生各自的数学平均分，以及各自人数（分数低于70的不参与分组）
-select sex, avg(math), count(*) from tb where math > 70 group by sex;
+select sex, avg(math), count(*) from tb where math >= 70 group by sex;
 ```
 
 

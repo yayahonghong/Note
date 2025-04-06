@@ -269,7 +269,7 @@ clinit指令在特定情况下不会出现：
 
 ![ecdc350d-bbbd-4d55-9f58-f7f1dac577a8](./images/ecdc350d-bbbd-4d55-9f58-f7f1dac577a8.png)
 
-![3f492ade-8565-4bce-ab58-1b16bb64b7f4](./images/3f492ade-8565-4bce-ab58-1b16bb64b7f4.png)
+![ ](./images/3f492ade-8565-4bce-ab58-1b16bb64b7f4.png)
 
 ![9261cba9-fa0f-4a2b-980f-e7728c50885b](./images/9261cba9-fa0f-4a2b-980f-e7728c50885b.png)
 
@@ -337,6 +337,8 @@ clinit指令在特定情况下不会出现：
 
 ![ab087fbc-bf89-4930-a72f-fa0031ea4be0](./images/ab087fbc-bf89-4930-a72f-fa0031ea4be0.png)
 
+> [!Warning]
+>
 > 注意：软引用对象也需要被强引用，否则也会被回收
 
 
@@ -478,6 +480,14 @@ public class WeakReferenceDemo {
 ![3e66eb26-77b3-489e-9a50-202e58906ffb](./images/3e66eb26-77b3-489e-9a50-202e58906ffb.png)
 
 ![856e1c23-0d86-4d48-a724-3e0da80e7dc4](./images/856e1c23-0d86-4d48-a724-3e0da80e7dc4.png)
+
+> [!Caution]
+>
+> “Hotspot 遍历所有对象时，按照年龄从小到大对其所占用的大小进行累积，当累积的某个年龄大小超过了 survivor 区的 50% 时（默认值是 50%，可以通过 `-XX:TargetSurvivorRatio=percent` 来设置，参见 [issue1199](https://github.com/Snailclimb/JavaGuide/issues/1199) ），取这个年龄和 MaxTenuringThreshold 中更小的一个值，作为新的晋升年龄阈值”。
+>
+> ------
+>
+> 著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：https://javaguide.cn/java/jvm/jvm-garbage-collection.html
 
 
 
