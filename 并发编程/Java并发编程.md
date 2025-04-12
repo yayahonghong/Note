@@ -574,6 +574,10 @@ private static void test1() throws InterruptedException {
 >
 > 由于线程可能在slepp时被打断，而此时打断标记会被置为false，所以需要重新设置打断标记
 
+> [!Tip]
+>
+> 可以使用`volatile`关键字修饰的boolean变量作为线程停止标志
+
 
 
 #### 打断park线程
@@ -676,7 +680,7 @@ public void stop() {
 
 
 
-# 共享模型
+# 共享模型-管程
 
 ## 线程安全问题
 
@@ -1890,3 +1894,1629 @@ Found one Java-level deadlock:
 - 可以设置超时时间 
 - 可以设置为公平锁 
 - 支持多个条件变量
+
+与`synchronized`一样都是**可重入锁**
+
+> [!Tip]
+>
+> 可重入是指同一个线程如果首次获得了这把锁，那么因为它是这把锁的拥有者，因此有权利再次获取这把锁
+
+
+
+基本语法
+
+```java
+reentrantLock.lock();
+try {
+    // 临界区
+} finally {
+    reentrantLock.unlock();
+}
+```
+
+
+
+### 可重入
+
+示例代码
+
+```java
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    public static void main(String[] args) {
+        lock.lock();
+        try {
+            log.info("lock acquired");
+            method();
+        } finally {
+            log.info("lock released");
+            lock.unlock();
+        }
+    }
+
+    public static void method() {
+        lock.lock();
+        try {
+            log.info("reentrant lock acquired");
+        } finally {
+            log.info("reentrant lock released");
+            lock.unlock();
+        }
+    }
+```
+
+
+
+### 可打断
+
+示例代码
+
+```java
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread( () -> {
+            try {
+                log.info("尝试获得锁");
+                lock.lockInterruptibly();// 
+            } catch (InterruptedException e) {
+                log.error("获取锁失败", e);
+                throw new RuntimeException(e);
+            }
+            try {
+                lock.lock();
+                log.info("已获得锁");
+            } finally {
+                lock.unlock();
+            }
+        });
+        lock.lock();
+        t1.start();
+        t1.interrupt();
+        lock.unlock();
+    }
+```
+
+
+
+### 锁超时
+
+```java
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread( () -> {
+            log.info("尝试获得锁");
+            try {
+                if (!lock.tryLock(1, TimeUnit.SECONDS)) {
+                    log.info("尝试获得锁失败");
+                    return;
+                }
+            } catch (InterruptedException e) {
+                log.error("获取锁失败", e);
+                return;
+            }
+            try {
+                log.info("已获得锁");
+            } finally {
+                lock.unlock();
+            }
+        });
+        lock.lock();
+        t1.start();
+//        lock.unlock();
+    }
+```
+
+> [!Tip]
+>
+> `lock.tryLock()`返回布尔值
+>
+> `lock.tryLock()`不带参数，无法获得锁会立刻失败
+
+
+
+### 公平锁
+
+`ReentrantLock`默认是不公平的，可通过
+
+```java
+ReentrantLock lock = new ReentrantLock(true);
+```
+
+将其设置为公平锁
+
+
+
+### 条件变量
+
+`Condition` 是 `ReentrantLock` 提供的一种**线程等待/唤醒机制**，类似于 `Object.wait()` 和 `Object.notify()`，但更强大：
+
+- 一个 `ReentrantLock` 可以创建多个 `Condition`，实现**不同条件的等待队列**。
+- 适用于**生产者-消费者模型**、**线程池任务调度**等场景。
+
+
+
+| 方法                              | 说明                                   |
+| :-------------------------------- | :------------------------------------- |
+| `await()`                         | 释放锁并进入等待（类似 `wait()`）      |
+| `awaitUninterruptibly()`          | 不可中断的等待                         |
+| `awaitNanos(long nanos)`          | 超时等待（纳秒级）                     |
+| `await(long time, TimeUnit unit)` | 超时等待                               |
+| `signal()`                        | 唤醒一个等待线程（类似 `notify()`）    |
+| `signalAll()`                     | 唤醒所有等待线程（类似 `notifyAll()`） |
+
+> [!Caution]
+>
+> `await`前需要获得锁，且`await`会释放锁
+
+
+
+```java
+ReentrantLock lock = new ReentrantLock();
+Condition readCondition = lock.newCondition();
+Condition writeCondition = lock.newCondition();
+
+boolean canRead = true;
+boolean canWrite = false;
+
+// 读操作
+lock.lock();
+try {
+    while (!canRead) {
+        readCondition.await();
+    }
+    canRead = false;
+    // 执行读操作
+    canWrite = true;
+    writeCondition.signalAll();  // 唤醒所有写线程
+} finally {
+    lock.unlock();
+}
+
+// 写操作
+lock.lock();
+try {
+    while (!canWrite) {
+        writeCondition.await();
+    }
+    canWrite = false;
+    // 执行写操作
+    canRead = true;
+    readCondition.signalAll();  // 唤醒所有读线程
+} finally {
+    lock.unlock();
+}
+```
+
+
+
+# 共享模型-内存
+
+
+
+## 可见性
+
+退不出的循环
+
+```java
+    static boolean run = true;
+
+    public static void main(String[] args) {
+
+        new Thread(() -> {
+            while (run) {
+                // do something
+            }
+        }).start();
+
+        log.info("stop thread");
+        run = false;
+
+    }
+```
+
+>[!Caution]
+>
+>以上线程并不会在`run`的值改变后退出
+
+
+
+原因如下：
+
+![image-20250409150006920](./images/image-20250409150006920.png)
+
+1. **JMM的可见性问题**：
+   - 在Java内存模型中，每个线程有自己的工作内存(缓存)
+   - `run`变量是普通变量(非volatile)，修改可能不会立即对其他线程可见
+   - 主线程修改`run=false`后，子线程可能仍然读取的是自己工作内存中的旧值`true`
+2. **编译器/JIT优化**：
+   - JIT编译器可能会将`while(run)`优化为`while(true)`，因为循环体内没有操作
+   - 这种优化称为"循环提升"(Loop Hoisting)
+
+
+
+**解决方案**
+
+1. 使用volatile关键字(推荐)
+
+```java
+static volatile boolean run = true;
+```
+
+`volatile`保证：
+
+- 可见性：修改立即对其他线程可见
+- 有序性：禁止指令重排序
+
+
+
+2. 使用synchronized同步
+
+```java
+static boolean run = true;
+static final Object lock = new Object();
+
+// 写操作
+synchronized(lock) {
+    run = false;
+}
+
+// 读操作
+synchronized(lock) {
+    while(run) { ... }
+}
+```
+
+
+
+### 两阶段终止模式
+
+可以使用`volatile`实现该模式
+
+
+
+### Balking模式
+
+Balking模式是一种**多线程设计模式**，用于在对象处于不适当状态时立即放弃当前操作，而不是等待状态变为可用状态。
+
+
+
+典型场景
+
+1. 文件自动保存功能（如果已经保存过则不再重复保存）
+2. 服务初始化（只初始化一次）
+3. 网络请求取消（如果已经开始处理则不接受取消）
+4. 线程启动检查（如果线程已在运行则不重复启动）
+
+
+
+```java
+class VolatileBalking {
+    private volatile boolean initialized = false;
+    
+    public void init() {
+        if (initialized) {
+            return;
+        }
+        synchronized (this) {
+            if (initialized) { // 双重检查
+                return;
+            }
+            doInit();
+            initialized = true;
+        }
+    }
+    
+    private void doInit() {
+        // 初始化逻辑
+    }
+}
+```
+
+
+
+例：线程安全的单例模式
+
+```java
+public class Singleton {
+    private static volatile Singleton instance;
+    
+    private Singleton() {}
+    
+    public static Singleton getInstance() {
+        if (instance == null) {                  // 第一次检查：Balking，直接返回避免同步，优化性能
+            synchronized (Singleton.class) {      // 同步
+                if (instance == null) {          // 第二次检查：线程安全
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+
+
+
+## 有序性
+
+**指令重排**：在**不改变单线程程序语义**的前提下，编译器、运行时或处理器可能会改变代码的执行顺序
+
+> 指令重排，这个现象需要通过**大量**测试才能复现（ java 并发压测工具 jcstress）
+
+ 
+
+示例
+
+```java
+    boolean ready = false;
+	int num = 0;
+    // 线程1 执行此方法
+    public void actor1(I_Result r) {
+        if(ready) {
+            r.r1 = num + num;
+        }
+        else {
+            r.r1 = 1;
+        }
+    }
+    // 线程2 执行此方法
+    public void actor2(I_Result r) {
+        num = 2;
+        ready = true;
+    }
+```
+
+> [!Tip]
+>
+> 以上代码，`r.r1`的值可能是1，4，**0**
+>
+> 其中0是指令重排序的结果
+
+
+
+- 禁止重排序：
+  - 在volatile写之前的所有操作不会被重排序到写之后
+  - 在volatile读之后的所有操作不会被重排序到读之前
+
+
+
+> [!Caution]
+>
+> `synchronized` 是不能阻止指令重排的
+
+
+
+### volatile
+
+内存屏障是处理器提供的一组特殊指令，用于控制指令执行顺序和内存可见性，在多线程编程中至关重要。读屏障和写屏障是两种基本的内存屏障类型。
+
+#### 读屏障
+
+- 确保屏障后的**读操作**不会重排序到屏障前
+- 强制从主内存（而非缓存）重新加载数据
+
+#### 写屏障
+
+- 确保屏障前的**写操作**不会重排序到屏障后
+- 强制将写缓冲区内容刷入主内存
+
+
+
+####  double-checked locking 问题
+
+```java
+public final class Singleton {
+    private Singleton() { }
+    private static Singleton INSTANCE = null;
+    public static Singleton getInstance() {
+        // 实例没创建，才会进入内部的 synchronized代码块
+        if (INSTANCE == null) {
+            synchronized (Singleton.class) { // t2
+                // 也许有其它线程已经创建实例，所以再判断一次
+                if (INSTANCE == null) { // t1
+                    INSTANCE = new Singleton();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+}
+```
+
+字节码
+
+```java
+0: getstatic     #2                  // Field INSTANCE:Lcn/itcast/n5/Singleton;
+3: ifnonnull     37
+6: ldc           #3                  // class cn/itcast/n5/Singleton
+8: dup
+9: astore_0
+10: monitorenter
+11: getstatic     #2                  // Field INSTANCE:Lcn/itcast/n5/Singleton;
+14: ifnonnull     27
+17: new           #3                  // class cn/itcast/n5/Singleton
+20: dup
+21: invokespecial #4                  // Method "<init>":()V
+24: putstatic     #2                  // Field INSTANCE:Lcn/itcast/n5/Singleton;
+27: aload_0
+28: monitorexit
+29: goto          37
+32: astore_1
+33: aload_0
+34: monitorexit
+35: aload_1
+36: athrow
+37: getstatic     #2                  // Field INSTANCE:Lcn/itcast/n5/Singleton;
+40: areturn
+```
+
+其中 
+
+17 表示创建对象，将对象引用入栈  // new Singleton 
+
+20 表示复制一份对象引用  // 引用地址 
+
+21 表示利用一个对象引用，调用构造方法  
+
+24 表示利用一个对象引用，赋值给 static INSTANCE 
+
+也许 jvm 会优化为：先执行 24，再执行 21。如果两个线程 t1，t2 按如下时间序列执行：
+
+![image-20250409164312112](./images/image-20250409164312112.png)
+
+关键在于 
+
+0: getstatic 这行代码在 monitor 控制之外，它就像之前举例中不守规则的人，可以越过 monitor 读取 INSTANCE 变量的值 
+
+这时 t1 还未完全将构造方法执行完毕，如果在构造方法中要执行很多初始化操作，那么 t2 拿到的是将是一个未初 始化完毕的单例 
+
+**对 INSTANCE 使用 volatile 修饰即可**，可以禁用指令重排，但要注意在 JDK 5 以上的版本的 volatile 才会真正有效
+
+
+
+读写 volatile 变量时会加入内存屏障（Memory Barrier（Memory Fence））
+
+- 可见性
+  - 写屏障（sfence）保证在该屏障之前的 t1 对共享变量的改动，都同步到主存当中 
+  - 而读屏障（lfence）保证在该屏障之后 t2 对共享变量的读取，加载的是主存中最新数据 
+- 有序性
+  - 写屏障会确保指令重排序时，不会将写屏障之前的代码排在写屏障之后 
+  - 读屏障会确保指令重排序时，不会将读屏障之后的代码排在读屏障之前
+
+- 更底层是读写变量时使用 lock 指令来多核 CPU 之间的可见性与有序性
+
+
+
+### happens-before
+
+happens-before 规定了对共享变量的写操作对其它线程的读操作可见，它是可见性与有序性的一套规则总结，抛 开以下 happens-before 规则，JMM 并不能保证一个线程对共享变量的写，对于其它线程对该共享变量的读可见
+
+1. 线程解锁 m 之前对变量的写，对于接下来对 m 加锁的其它线程对该变量的读可见
+
+```java
+        static int x;
+        static Object m = new Object();
+        new Thread(() -> {
+            synchronized (m) {
+                x = 10;
+            }
+        }, "t1").start();
+        new Thread(() -> {
+            synchronized (m) {
+                System.out.println(x);
+            }
+        }, "t2").start();
+```
+
+2. 线程对 volatile 变量的写，对接下来其它线程对该变量的读可见
+
+```java
+        volatile static int x;
+        new Thread(()->{
+            x = 10;
+        },"t1").start();
+        new Thread(()->{
+            System.out.println(x);
+        },"t2").start();
+```
+
+3. 线程 start 前对变量的写，对该线程开始后对该变量的读可见
+
+```java
+        static int x;
+        x = 10;
+        new Thread(()->{
+            System.out.println(x);
+        },"t2").start();
+```
+
+4. 线程结束前对变量的写，对其它线程得知它结束后的读可见（比如其它线程调用 t1.isAlive() 或 t1.join()等待 它结束）
+
+```java
+        static int x;
+        Thread t1 = new Thread(()->{
+            x = 10;
+        },"t1");
+        t1.start();
+        t1.join();
+        System.out.println(x);
+```
+
+5. 线程 t1 打断 t2（interrupt）前对变量的写，对于其他线程得知 t2 被打断后对变量的读可见（通过 t2.interrupted 或 t2.isInterrupted）
+
+```java
+        static int x;
+
+        Thread t2 = new Thread(()->{
+            while(true) {
+                if(Thread.currentThread().isInterrupted()) {
+                    System.out.println(x);
+                    break;
+                }
+            }
+        },"t2");
+        t2.start();
+        new Thread(()->{
+            sleep(1);
+            x = 10;
+            t2.interrupt();
+        },"t1").start();
+
+        while(!t2.isInterrupted()) {
+            Thread.yield();
+        }
+        System.out.println(x);
+```
+
+6. 对变量默认值（0，false，null）的写，对其它线程对该变量的读可见
+7. 具有传递性，如果  x hb-> y 并且  y hb-> z 那么有  x hb-> z ，配合 volatile 的防指令重排
+
+```java
+        volatile static int x;
+        static int y;
+        new Thread(()->{
+            y = 10;
+            x = 20;
+        },"t1").start();
+        new Thread(()->{
+            // x=20 对 t2 可见, 同时 y=10 也对 t2 可见
+            System.out.println(x);
+        },"t2").start();
+```
+
+
+
+## 单例模式实现
+
+> [!Tip]
+>
+> 线程安全
+
+- 饿汉式
+
+```java
+public final class Singleton {
+    private Singleton(){}
+    private static final Singleton INSTANCE = new Singleton();
+    public static Singleton getInstance() {
+        return INSTANCE;
+    }
+}
+```
+
+
+
+- 双重检查
+
+```java
+public final class Singleton implements Serializable {
+    private Singleton() {
+        
+    }
+    private volatile static Singleton INSTANCE = null;
+    public static Singleton getInstance() {
+        // 实例没创建，才会进入内部的 synchronized代码块
+        if (INSTANCE == null) {
+            synchronized (Singleton.class) { // t2
+                // 也许有其它线程已经创建实例，所以再判断一次
+                if (INSTANCE == null) { // t1
+                    INSTANCE = new Singleton();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+    
+    // 防止反序列化重新创建对象
+    public Object readResolve() {
+        return INSTANCE;
+    }
+}
+```
+
+
+
+- 枚举
+
+```java
+enum Singleton {
+    INSTANCE;
+}
+```
+
+
+
+- 静态内部类
+
+```java
+final class Singleton {
+    // 私有构造函数，防止外部实例化
+    private Singleton() {
+        
+    }
+    
+    // 内部静态类，用于延迟初始化单例实例
+    private static class SingletonHolder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+    
+    // 提供全局访问点，返回单例实例
+    public static Singleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}
+```
+
+
+
+# 共享模型-无锁
+
+## 无锁引例
+
+```java
+class AccountWithoutLock {
+    private final AtomicInteger balance;
+
+    public AccountWithoutLock(int balance) {
+        this.balance = new AtomicInteger(balance);
+    }
+
+    public int getBalance() {
+        return balance.get();
+    }
+
+    public void withdraw(int amount) {
+        while (true) {
+            int prev = balance.get();
+            int next = prev - amount;
+            if (balance.compareAndSet(prev, next)) {
+                break;
+            }
+        }
+    }
+}
+```
+
+> [!Note]
+>
+> 该类并没有使用**锁**技术
+>
+> 但是该类是线程安全的
+
+
+
+其中的关键是 compareAndSet，它的简称就是 CAS （也有 Compare And Swap 的说法），它必须是原子操作。
+
+![image-20250410163930267](./images/image-20250410163930267.png)
+
+
+
+## CAS 和 volatile
+
+获取共享变量时，为了保证该变量的可见性，需要使用 volatile 修饰。
+
+```java
+    private volatile int value;
+
+    public final int get() {
+        return value;
+    }
+```
+
+> [!Important]
+>
+> CAS 必须借助 volatile 才能读取到共享变量的最新值来实现【比较并交换】的效果
+
+
+
+### 无锁效率更高
+
+- 无锁情况下，即使重试失败，线程始终在高速运行，不会阻塞，而 synchronized 会让线程在没有获得锁的时 候，发生**上下文切换**，进入**阻塞**。
+
+
+
+- 但无锁情况下，因为线程要保持运行，需要额外 CPU 的支持，虽然不会进入阻塞，但由于没有分到时间片，仍然会进入可运行状态，还是会导致上下文切换。
+
+
+
+> [!Caution]
+>
+> **高竞争情况**：CAS可能因持续重试导致CPU资源浪费，此时锁可能更合适
+
+
+
+### CAS 特点
+
+结合 CAS 和 volatile 可以实现无锁并发，适用于线程数少、多核 CPU 的场景下。
+
+- CAS 是基于**乐观锁**的思想：最乐观的估计，不怕别的线程来修改共享变量，就算改了也没关系，自己再重试
+- synchronized 是基于悲观锁的思想：最悲观的估计，得防着其它线程来修改共享变量
+
+
+
+## 原子整数
+
+> [!Note]
+>
+> `AtomicBoolean`
+>
+> `AtomicInteger`
+>
+> `AtomicLong`
+
+
+
+相关API
+
+```java
+        AtomicInteger i = new AtomicInteger(0);
+
+        // CAS操作
+        i.compareAndSet(0, 1);
+
+
+        i.incrementAndGet();// 自增1再获取
+        i.getAndIncrement();// 获取再自增1
+
+        // 自减1类似
+        ...
+
+        i.addAndGet(10);// 自增指定值再获取
+
+        i.updateAndGet(x -> x * 100);// 函数式接口，更加灵活
+```
+
+> [!Tip]
+>
+> 这些API都是基于`compareAndSet`来实现的
+
+
+
+## 原子引用
+
+> [!Note]
+>
+> Java提供了一系列原子引用类，用于在多线程环境下安全地更新对象引用。这些类基于 **CAS（Compare-And-Swap）** 机制，保证原子性操作，避免使用锁带来的性能开销。
+>
+> `AtomicReference`
+>
+> `AtomicMarkableReference`
+>
+> `AtomicStampedReference`
+
+---
+
+Java中的原子引用类位于 `java.util.concurrent.atomic` 包，主要包括：
+
+| 类                           | 说明                                                         |
+| :--------------------------- | :----------------------------------------------------------- |
+| `AtomicReference<V>`         | 普通原子引用，可原子更新对象引用                             |
+| `AtomicStampedReference<V>`  | 带版本号的原子引用，解决 **ABA问题**                         |
+| `AtomicMarkableReference<V>` | 带标记位的原子引用（类似 `AtomicStampedReference`，但用布尔值标记） |
+
+---
+
+```java
+class DecimalAccount {
+    private final AtomicReference<BigDecimal> balance;
+
+    DecimalAccount(BigDecimal balance) {
+        this.balance = new AtomicReference<>(balance);
+    }
+
+    public BigDecimal getBalance() {
+        return balance.get();
+    }
+
+    public void withdraw(BigDecimal amount) {
+        BigDecimal prev, next;
+        do {
+            prev = balance.get();
+            next = prev.subtract(amount);
+        } while (!balance.compareAndSet(prev, next));
+    }
+}
+```
+
+
+
+### ABA 问题
+
+> [!Tip]
+>
+> ABA问题是 **CAS（Compare-And-Swap）** 操作中的一个经典并发问题，它可能导致程序逻辑错误，即使CAS操作成功，但实际数据可能已经被其他线程修改过多次。
+
+ABA问题是指：
+
+- 线程 **A** 读取共享变量的值为 **A**。
+- 线程 **B** 在此期间修改该变量的值 **A → B → A**（即先改成B，又改回A）。
+- 线程 **A** 执行CAS操作时，发现值仍然是 **A**，于是认为没有被修改过，从而CAS成功。但实际上，变量已经被修改过（B→A），可能导致逻辑错误。
+
+
+
+**解决方案：版本号/时间戳（Stamped Reference）**
+
+- 每次修改共享变量时，**增加一个版本号**（或时间戳）。
+- CAS不仅要比较**值**，还要比较**版本号**。
+- Java中的 `AtomicStampedReference` 就是基于此实现。
+
+```java
+AtomicStampedReference<Integer> atomicRef = new AtomicStampedReference<>(100, 0); // 初始值=100，版本号=0
+
+int stampHolder = atomicRef.getStamp();
+int currentValue = atomicRef.getReference; // 获取值和版本号
+int newValue = currentValue + 1;
+boolean success = atomicRef.compareAndSet(currentValue, newValue, stampHolder, stampHolder + 1);
+```
+
+
+
+## 原子数组
+
+> [!Note]
+>
+> Java提供了一系列原子数组类，用于在多线程环境下安全地操作数组元素，而无需使用显式锁。这些类基于 **CAS（Compare-And-Swap）** 机制，保证对数组元素的原子性操作。
+
+---
+
+| 类                        | 说明                                 |
+| :------------------------ | :----------------------------------- |
+| `AtomicIntegerArray`      | 原子整型数组，可原子更新 `int[]`     |
+| `AtomicLongArray`         | 原子长整型数组，可原子更新 `long[]`  |
+| `AtomicReferenceArray<E>` | 原子引用数组，可原子更新对象引用数组 |
+
+---
+
+```java
+// 初始化一个长度为 5 的原子整型数组
+        AtomicIntegerArray atomicArray = new AtomicIntegerArray(5);
+
+        // 多个线程并发修改数组
+        Runnable task = () -> {
+            for (int i = 0; i < atomicArray.length(); i++) {
+                atomicArray.incrementAndGet(i); // 原子递增
+            }
+        };
+
+        Thread thread1 = new Thread(task);
+        Thread thread2 = new Thread(task);
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // 输出最终数组
+        for (int i = 0; i < atomicArray.length(); i++) {
+            System.out.println("Index " + i + ": " + atomicArray.get(i));
+        }
+```
+
+
+
+## 原子更新器
+
+> [!Note]
+>
+> 原子更新器是Java提供的一种高效的无锁原子操作方式，它允许对 **已有的普通类** 的 `volatile` 字段进行原子更新，而无需将整个类改为原子类。适用于当某个类的某个字段需要原子操作，但又不希望使用 `AtomicInteger`、`AtomicReference` 等包装类时。
+
+---
+
+| 类                                 | 说明                     |
+| :--------------------------------- | :----------------------- |
+| `AtomicIntegerFieldUpdater<T>`     | 原子更新 `int` 类型字段  |
+| `AtomicLongFieldUpdater<T>`        | 原子更新 `long` 类型字段 |
+| `AtomicReferenceFieldUpdater<T,V>` | 原子更新对象引用字段     |
+
+---
+
+```java
+class Student {
+    volatile String name;
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+
+Student student = new Student();
+student.name = "Tom";
+AtomicReferenceFieldUpdater<Student, String> updater = AtomicReferenceFieldUpdater.newUpdater(Student.class, String.class, "name");
+updater.compareAndSet(student, "Tom", "六六");
+System.out.println(student);
+```
+
+
+
+## 原子累加器
+
+> [!Note]
+>
+> 原子累加器（`LongAdder`、`DoubleAdder`）是Java 8引入的高性能原子计数器，适用于**高并发写多读少**的场景，比`AtomicLong`和`AtomicDouble`具有更高的吞吐量。
+
+---
+
+| 类                  | 说明                 | 适用场景     |
+| :------------------ | :------------------- | :----------- |
+| `LongAdder`         | 高性能`long`累加器   | 计数器、统计 |
+| `DoubleAdder`       | 高性能`double`累加器 | 浮点数统计   |
+| `LongAccumulator`   | 支持自定义运算规则   | 更灵活的操作 |
+| `DoubleAccumulator` | 支持自定义浮点运算   | 浮点运算     |
+
+---
+
+```java
+    static void testAtomicLong() {
+        AtomicLong counter = new AtomicLong();
+        long start = System.currentTimeMillis();
+
+        IntStream.range(0, 1000).parallel().forEach(i -> {
+            for (int j = 0; j < 10_000; j++) {
+                counter.incrementAndGet();
+            }
+        });
+
+        System.out.println("AtomicLong: " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    static void testLongAdder() {
+        LongAdder adder = new LongAdder();
+        long start = System.currentTimeMillis();
+
+        IntStream.range(0, 1000).parallel().forEach(i -> {
+            for (int j = 0; j < 10_000; j++) {
+                adder.increment();
+            }
+        });
+
+        System.out.println("LongAdder: " + (System.currentTimeMillis() - start) + "ms");
+    }
+```
+
+```
+AtomicLong: 209ms
+LongAdder: 38ms
+```
+
+
+
+> [!Tip]
+>
+> 累加器原理：
+>
+> **1. 无竞争**：直接CAS修改`base`（类似AtomicLong）
+>
+> **2. 有竞争**：
+>
+> - 初始化`Cell[]`数组（默认CPU核数）
+> - 线程**哈希映射**到不同Cell，减少冲突
+> - 最终结果 = `base + ∑cells[i]`
+
+
+
+### 伪共享
+
+> [!Note]
+>
+> 伪共享是**多线程编程中的一个隐藏性能杀手**，它会导致多核CPU的缓存系统失效，严重影响并发程序的性能。理解并解决伪共享问题对编写高性能并发代码至关重要。
+
+伪共享（False Sharing）是指：
+
+- 多个线程**同时修改**位于**同一缓存行（Cache Line）**中的**不同变量**
+- 由于CPU缓存以缓存行为单位操作，导致本无关联的变量互相影响
+- 造成**不必要的缓存失效**，引发严重的性能下降
+
+**缓存行（Cache Line）**
+
+- CPU缓存的最小单位（通常64字节）
+- 当缓存行中任一数据被修改，整个行在所有CPU核心都会失效
+
+![image-20250411225428084](./images/image-20250411225428084.png)
+
+
+
+**解决方案**：
+
+**使用`@Contended`注解（JDK8+）**
+
+```java
+class Data {
+    @sun.misc.Contended  // 自动填充缓存行
+    volatile long x;
+    
+    @sun.misc.Contended
+    volatile long y;
+}
+```
+
+> [!Caution]
+>
+> **注意**：需添加JVM参数`-XX:-RestrictContended`
+
+
+
+## Unsafe
+
+> [!Note]
+>
+> Unsafe 是 Java 中的一个特殊工具类，提供了一系列**直接操作内存、绕过JVM安全机制**的底层方法。它得名"Unsafe"正是因为它的操作**不受JVM安全管理器约束**，使用不当可能导致JVM崩溃。
+
+
+
+### **内存操作**
+
+- **直接内存分配/释放**
+
+  ```java
+  long address = unsafe.allocateMemory(1024); // 分配1KB堆外内存
+  unsafe.setMemory(address, 1024, (byte) 0); // 内存置零
+  unsafe.freeMemory(address); // 释放内存
+  ```
+
+- **内存读写**
+
+  ```java
+  unsafe.putInt(address, 123);  // 在指定地址写入int
+  int value = unsafe.getInt(address); // 读取int
+  ```
+
+### **对象操作**
+
+- **绕过构造器创建对象**
+
+  ```java
+  MyClass obj = (MyClass) unsafe.allocateInstance(MyClass.class);
+  ```
+
+- **字段偏移量操作**
+
+  ```java
+  long offset = unsafe.objectFieldOffset(MyClass.class.getDeclaredField("value"));
+  unsafe.putInt(obj, offset, 100); // 直接修改字段值
+  ```
+
+### **线程调度**
+
+- **线程挂起/恢复**
+
+  ```java
+  unsafe.park(false, 0); // 挂起当前线程
+  unsafe.unpark(thread); // 恢复指定线程
+  ```
+
+- **CAS操作**
+
+  ```java
+  boolean success = unsafe.compareAndSwapInt(obj, offset, expect, update);
+  ```
+
+### **数组操作**
+
+- **获取数组元素偏移**
+
+  ```java
+  int base = unsafe.arrayBaseOffset(int[].class);
+  int scale = unsafe.arrayIndexScale(int[].class);
+  ```
+
+
+
+> [!Tip]
+>
+> 由于安全性考虑，Unsafe 被设计为**限制获取**：
+>
+> **反射获取（最常用）**
+>
+> ```java
+> Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+> theUnsafe.setAccessible(true);
+> Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+> ```
+>
+> **从`TrustedFinalizer`获取（JDK内部）**
+>
+> ```java
+> // 仅供了解，实际不推荐
+> Unsafe unsafe = sun.misc.Unsafe.getUnsafe();
+> ```
+
+
+
+# 共享模型-不可变
+
+
+
+## 不可变类
+
+> [!Note]
+>
+> 不可变类是**一旦创建后其状态就不能被修改**的类，这种设计在多线程环境下具有**线程安全、无需同步**等优势，是函数式编程和并发编程的重要基础。
+
+---
+
+一个严格的不可变类需要满足以下条件：
+
+| 特征                 | 说明                   |
+| :------------------- | :--------------------- |
+| **所有字段final**    | 防止字段被重新赋值     |
+| **类本身final**      | 防止子类破坏不可变性   |
+| **无setter方法**     | 不提供修改状态的途径   |
+| **防御性拷贝**       | 返回可变对象时创建副本 |
+| **构造器完全初始化** | 对象创建后状态即确定   |
+
+---
+
+实现不可变类的关键技术:**防御性拷贝（Defensive Copy）**
+
+当类包含**可变对象字段**时：
+
+```java
+public final class ImmutableData {
+    private final Date createDate;
+
+    public ImmutableData(Date date) {
+        this.createDate = new Date(date.getTime()); // 拷贝而非直接引用
+    }
+
+    public Date getCreateDate() {
+        return (Date) createDate.clone(); // 返回拷贝
+    }
+}
+```
+
+
+
+## 享元模式
+
+> [!Note]
+>
+> 享元模式是一种**结构型设计模式**，它通过共享对象来最小化内存使用和提高性能，特别适合处理大量细粒度对象的情况。
+
+---
+
+| 核心概念                  | 说明                                        |
+| :------------------------ | :------------------------------------------ |
+| **内在状态（Intrinsic）** | 可共享的、不变的部分（如字符的Unicode值）   |
+| **外在状态（Extrinsic）** | 不可共享的、变化的部分（如字符的位置/颜色） |
+| **享元工厂**              | 管理共享对象的创建和复用                    |
+
+---
+
+### 连接池
+
+```java
+// 模拟连接池
+class Pool {
+    private final int SIZE;
+
+    private final Connection[] connections;
+
+    private final AtomicIntegerArray states;
+
+    public Pool(int SIZE) {
+        this.SIZE = SIZE;
+        connections = new Connection[SIZE];
+        states = new AtomicIntegerArray(new int[SIZE]);
+        for (int i = 0; i < SIZE; i++) {
+            connections[i] = new MockConnection();
+            states.set(i, 0);
+        }
+    }
+
+    public Connection getConnection() {
+        while (true) {
+            for (int i = 0; i < SIZE; i++) {
+                if (states.get(i) == 0 && states.compareAndSet(i, 0, 1)) {
+                    log.info("获取连接: {}", i);
+                    return connections[i];
+                }
+            }
+            // 无可用连接，等待
+            synchronized (this) {
+                try {
+                    log.info("{}-->无可用连接，等待", Thread.currentThread().getName());
+                    this.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    public void releaseConnection(Connection connection) {
+        for (int i = 0; i < SIZE; i++) {
+            if (connections[i] == connection) {
+                log.info("释放连接: {}", i);
+                states.set(i, 0);
+                synchronized (this) {
+                    this.notifyAll();
+                }
+                break;
+            }
+        }
+    }
+
+}
+```
+
+
+
+# 共享模型-工具
+
+## 自定义线程池
+
+![image-20250412175201187](./images/image-20250412175201187.png)
+
+demo
+
+```java
+        ThreadPool threadPoolExecutor = ThreadPool.builder()
+                .coreSize(2)
+                .timeout(10, TimeUnit.SECONDS)
+                .capacity(10)
+                .rejectPolicy((queue, task) -> {
+                    log.info("任务 {} 被拒绝", task);
+                }).build();
+
+        for (int i = 0; i < 15; i++) {
+            int k = i;
+            threadPoolExecutor.execute(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                log.info("执行任务 {}", k);
+            });
+        }
+```
+
+
+
+### 拒绝策略（函数式接口）
+
+```java
+/**
+ * 拒绝策略接口
+ *
+ * @param <T>
+ */
+@FunctionalInterface
+interface RejectPolicy<T> {
+    void reject(BlockingQueue<T> queue, T task);
+}
+```
+
+
+
+### 阻塞式任务队列
+
+```java
+@Slf4j
+class BlockingQueue<T> {
+    /**
+     * 任务队列
+     */
+    private final Deque<T> queue = new ArrayDeque<>();
+
+    /**
+     * 队列锁
+     */
+    public ReentrantLock lock = new ReentrantLock();
+
+    /**
+     * 生产者条件变量
+     */
+    private final Condition fullWaitSet = lock.newCondition();
+
+    /**
+     * 消费者条件变量
+     */
+    private final Condition emptyWaitSet = lock.newCondition();
+
+    /**
+     * 队列容量
+     */
+    private final int capacity;
+
+    public BlockingQueue(int capacity) {
+        this.capacity = capacity;
+    }
+
+    /**
+     * 阻塞超时获取
+     */
+    public T poll(long timeout, TimeUnit unit) {
+        lock.lock();
+        try {
+            long nanos = unit.toNanos(timeout);
+            while (queue.isEmpty()) {
+                try {
+                    // 超时返回
+                    if (nanos <= 0) {
+                        return null;
+                    }
+                    // awaitNanos 返回剩余时间
+                    nanos = emptyWaitSet.awaitNanos(nanos);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            fullWaitSet.signal();
+            log.info("取出任务 {}", queue.peek());
+            return queue.removeFirst();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 阻塞获取
+     */
+    public T take() {
+        lock.lock();
+        try {
+            while (queue.isEmpty()) {
+                try {
+                    emptyWaitSet.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            fullWaitSet.signal();
+            log.info("取出任务 {}", queue.peek());
+            return queue.removeFirst();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 尝试添加任务
+     *
+     * @param rejectPolicy 拒绝策略
+     * @param task         任务
+     */
+    public void tryPut(RejectPolicy<T> rejectPolicy, T task) {
+        lock.lock();
+        try {
+            if (queue.size() == capacity) {
+                rejectPolicy.reject(this, task);
+            } else {
+                queue.addLast(task);
+                emptyWaitSet.signal();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 阻塞添加
+     */
+    public void put(T task) {
+        lock.lock();
+        try {
+            while (queue.size() == capacity) {
+                try {
+                    log.info("队列已满，等待消费者消费");
+                    fullWaitSet.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.info("添加任务 {}", task);
+            queue.addLast(task);
+            emptyWaitSet.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 超时阻塞添加
+     *
+     * @return true 成功 false 超时失败
+     */
+    public boolean offer(T task, long timeout, TimeUnit unit) {
+        lock.lock();
+        try {
+            long nanos = unit.toNanos(timeout);
+            while (queue.size() == capacity) {
+                try {
+                    log.info("队列已满，等待消费者消费");
+                    if (nanos <= 0) {
+                        log.info("添加任务超时");
+                        return false;
+                    }
+                    nanos = fullWaitSet.awaitNanos(nanos);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.info("添加任务 {}", task);
+            queue.addLast(task);
+            emptyWaitSet.signal();
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public int size() {
+        lock.lock();
+        try {
+            return queue.size();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+
+
+
+### 线程池
+
+```java
+@Slf4j
+class ThreadPool {
+    /**
+     * 任务队列
+     */
+    private final BlockingQueue<Runnable> taskQueue;
+
+    /**
+     * 执行线程队列
+     */
+    private final HashSet<Worker> workers = new HashSet<>();
+
+    /**
+     * 核心线程数
+     */
+    private final int coreSize;
+
+    /**
+     * 超时时间
+     */
+    private final long timeout;
+
+    /**
+     * 超时时间单位
+     */
+    private final TimeUnit unit;
+
+    /**
+     * 拒绝策略
+     */
+    private final RejectPolicy<Runnable> rejectPolicy;
+
+    private ThreadPool(Builder builder) {
+        this.coreSize = builder.coreSize;
+        this.timeout = builder.timeout;
+        this.unit = builder.unit;
+        this.rejectPolicy = builder.rejectPolicy;
+        this.taskQueue = new BlockingQueue<>(builder.capacity);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Builder构建器
+     */
+    public static class Builder {
+        private int coreSize = 5; // 默认核心线程数
+        private long timeout = 5; // 默认超时时间
+        private TimeUnit unit = TimeUnit.SECONDS; // 默认时间单位
+        private RejectPolicy<Runnable> rejectPolicy = (queue, task) -> {
+            log.info("任务 {} 被拒绝", task);
+        }; // 默认拒绝策略
+        private int capacity = 100; // 默认任务队列容量
+
+        public Builder coreSize(int coreSize) {
+            this.coreSize = coreSize;
+            return this;
+        }
+
+        public Builder timeout(long timeout, TimeUnit unit) {
+            this.timeout = timeout;
+            this.unit = unit;
+            return this;
+        }
+        
+        public Builder rejectPolicy(RejectPolicy<Runnable> rejectPolicy) {
+            this.rejectPolicy = rejectPolicy;
+            return this;
+        }
+
+        public Builder capacity(int capacity) {
+            this.capacity = capacity;
+            return this;
+        }
+
+        public ThreadPool build() {
+            return new ThreadPool(this);
+        }
+    }
+
+    /**
+     * 执行任务
+     *
+     * @param task 任务
+     */
+    public synchronized void execute(Runnable task) {
+        if (workers.size() < coreSize) {
+            Worker worker = new Worker(task);
+            synchronized (workers) {
+                workers.add(worker);
+            }
+            worker.start();
+        } else {
+            // 队列已满，尝试拒绝策略
+            taskQueue.tryPut(rejectPolicy, task);
+        }
+    }
+
+    /**
+     * 工作线程
+     */
+    class Worker extends Thread {
+        private Runnable task;
+
+        public Worker(Runnable task) {
+            this.task = task;
+        }
+
+        @SneakyThrows
+        @Override
+        public void run() {
+            while (task != null || (task = taskQueue.poll(timeout, unit)) != null) {
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    task = null;
+                }
+            }
+            synchronized (workers) {
+                log.info("移除线程 {}", this);
+                workers.remove(this);
+            }
+        }
+    }
+}
+```
+

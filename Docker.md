@@ -317,12 +317,11 @@ services:
 docker run -d \
     --name mysql \
     -p 3306:3306 \
-    -v $PWD/conf:/etc/mysql/conf.d \
-    -v $PWD/logs:/logs \
-    -v $PWD/data:/var/lib/mysql \
-    -v $PWD/config:/etc/mysql/conf.d \
+    -v /docker/mysql/conf:/etc/mysql/conf.d \
+    -v /docker/mysql/logs:/logs \
+    -v /docker/mysql/data:/var/lib/mysql \
     -e TZ=Asia/Shanghai \
-    -e MYSQL_ROOT_PASSWORD=123456 \
+    -e MYSQL_ROOT_PASSWORD=Qwer1234! \
     mysql \
     --character-set-server=utf8mb4 \
     --collation-server=utf8mb4_unicode_ci
