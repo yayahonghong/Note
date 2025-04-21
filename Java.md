@@ -115,11 +115,190 @@ System.out.println("Updated Name: " + field.get(person));  // 输出: Updated Na
 
 
 
-# 动态代理
+# 代理
+
+> [!Note]
+>
+> 代理（Proxy）是 Java 中一种重要的设计模式，用于在不修改原始类代码的情况下增强或控制对象的行为。Java 提供了多种代理实现方式，主要分为 **静态代理** 和 **动态代理**（JDK 动态代理、CGLIB 动态代理）。
 
 
 
+## 静态代理
 
+**特点**
+
+- **手动编写代理类**，在编译时确定代理关系
+- **代理类和目标类实现相同接口**
+- **简单直接**，但每个目标类需要一个代理类
+
+**示例**
+
+```java
+// 1. 定义接口
+interface UserService {
+    void save();
+}
+
+// 2. 目标类
+class UserServiceImpl implements UserService {
+    public void save() {
+        System.out.println("保存用户");
+    }
+}
+
+// 3. 静态代理类
+class UserServiceProxy implements UserService {
+    private UserService target;
+
+    public UserServiceProxy(UserService target) {
+        this.target = target;
+    }
+
+    public void save() {
+        System.out.println("前置增强");
+        target.save(); // 调用目标方法
+        System.out.println("后置增强");
+    }
+}
+
+// 4. 使用
+public class Main {
+    public static void main(String[] args) {
+        UserService target = new UserServiceImpl();
+        UserService proxy = new UserServiceProxy(target);
+        proxy.save();
+    }
+}
+```
+
+
+
+|    优点    |            缺点            |
+| :--------: | :------------------------: |
+|  实现简单  |  每个目标类需要一个代理类  |
+| 无额外依赖 | 接口修改时需同步修改代理类 |
+
+
+
+## 动态代理
+
+### JDK动态代理
+
+**特点**
+
+- **基于接口**（要求目标类必须实现接口）
+- 通过 `java.lang.reflect.Proxy` 和 `InvocationHandler` 实现
+- **运行时生成代理类**
+
+**示例**
+
+```java
+// 1. 定义接口和目标类（同上）
+
+// 2. 实现 InvocationHandler
+class LogHandler implements InvocationHandler {
+    private Object target;
+
+    public LogHandler(Object target) {
+        this.target = target;
+    }
+
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("方法调用前: " + method.getName());
+        Object result = method.invoke(target, args); // 反射调用目标方法
+        System.out.println("方法调用后");
+        return result;
+    }
+}
+
+// 3. 使用 Proxy 创建代理对象
+public class Main {
+    public static void main(String[] args) {
+        UserService target = new UserServiceImpl();
+        UserService proxy = (UserService) Proxy.newProxyInstance(
+            target.getClass().getClassLoader(),
+            target.getClass().getInterfaces(),
+            new LogHandler(target)
+        );
+        proxy.save();
+    }
+}
+```
+
+**实现原理**
+
+1. 运行时生成代理类（类名格式：`$Proxy0`）
+2. 代理类继承 `Proxy` 并实现目标接口
+3. 方法调用转发给 `InvocationHandler.invoke()`
+
+
+
+### CGLIB动态代理
+
+**特点**
+
+- **基于继承**（可代理无接口的类）
+- 通过 ASM 字节码框架生成子类
+- 需要引入 `cglib` 依赖
+
+**示例**
+
+```java
+// 1. 目标类（无需接口）
+class UserService {
+    public void save() {
+        System.out.println("保存用户");
+    }
+}
+
+// 2. 实现 MethodInterceptor
+class LogInterceptor implements MethodInterceptor {
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        System.out.println("方法调用前: " + method.getName());
+        Object result = proxy.invokeSuper(obj, args); // 调用父类方法
+        System.out.println("方法调用后");
+        return result;
+    }
+}
+
+// 3. 使用 Enhancer 创建代理
+public class Main {
+    public static void main(String[] args) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(UserService.class); // 设置父类
+        enhancer.setCallback(new LogInterceptor()); // 设置回调
+        UserService proxy = (UserService) enhancer.create(); // 创建代理
+        proxy.save();
+    }
+}
+```
+
+**实现原理**
+
+1. 生成目标类的子类（如 `UserService$$EnhancerByCGLIB$$xxxx`）
+2. 重写父类方法，加入拦截逻辑
+
+
+
+## 对比
+
+|       特性       |   静态代理   |   JDK 动态代理   |  CGLIB 动态代理  |
+| :--------------: | :----------: | :--------------: | :--------------: |
+| **是否需要接口** |     需要     |       需要       |      不需要      |
+|   **生成方式**   |   手动编写   |  运行时动态生成  |  运行时动态生成  |
+|     **性能**     |      高      | 中等（反射调用） | 高（ASM 字节码） |
+|     **依赖**     |      无      |     JDK 自带     |  需引入 `cglib`  |
+|   **适用场景**   | 简单少量代理 |  基于接口的代理  |  无接口的类代理  |
+
+
+
+## **应用场景**
+
+1. **AOP 编程**（如 Spring AOP）
+2. **远程方法调用**（RPC 框架）
+3. **事务管理**
+4. **日志记录**
+5. **权限控制**
 
 
 
@@ -400,3 +579,206 @@ Java Stream 流是 Java 8 引入的一个新的抽象层，用于处理序列（
 > 请注意，Stream 流本身并不是集合类型，它并不存储元素，而是通过管道将一个集合连接到另一个集合，故不会修改原集合。
 >
 > 此外，<font color=red>流一旦被使用（即执行了终端操作），它就不能再被使用</font>。
+
+
+
+
+
+# IO
+
+## IO流
+
+Java IO 流根据数据处理的方式可以分为字节流和字符流：
+
+- **字节流**：以字节为单位，读写数据，适用于任何类型的文件，包括文本、图片、音频等。
+- **字符流**：以字符为单位，读写数据，主要用于处理文本文件。
+
+
+
+Java IO 流的核心由四个抽象类组成，它们是：
+
+- *InputStream* / *OutputStream*：字节输入/输出流的基类。
+- *Reader* / *Writer*：字符输入/输出流的基类。
+
+
+
+**常用的 Java IO 流类**
+
+- *FileInputStream* / *FileOutputStream*：用于读取和写入文件的字节流。
+- *FileReader* / *FileWriter*：用于读取和写入文件的字符流。
+- *BufferedReader* / *BufferedWriter*：带有缓冲区的字符流，提高读写效率。
+- *DataInputStream* / *DataOutputStream*：用于读取和写入基本数据类型的数据流。
+- *ObjectInputStream* / *ObjectOutputStream*：用于读取和写入序列化对象的流。
+
+
+
+|       角色       |         说明         |                典型实现类                |
+| :--------------: | :------------------: | :--------------------------------------: |
+|    **节点流**    |  直接操作数据源的流  |      `FileInputStream`/`FileReader`      |
+|    **处理流**    | 对现有流进行包装增强 |     `BufferedInputStream`/`Scanner`      |
+|    **转换流**    | 字节流与字符流的桥梁 | `InputStreamReader`/`OutputStreamWriter` |
+| **对象序列化流** |  处理Java对象持久化  | `ObjectInputStream`/`ObjectOutputStream` |
+
+
+
+## IO模型
+
+### BIO-阻塞式IO
+
+- **同步阻塞模型**：线程在读写操作时完全**阻塞**
+- **1:1线程连接**：每个连接需要独立线程处理
+- **简单直观**：编程模型简单，适合低并发场景
+
+```java
+// 典型BIO服务器实现
+ServerSocket server = new ServerSocket(8080);
+while(true) {
+    Socket client = server.accept(); // 阻塞等待连接
+    new Thread(() -> {
+        InputStream in = client.getInputStream();
+        // 阻塞读取数据
+        byte[] buffer = new byte[1024];
+        int len = in.read(buffer); // 阻塞点
+        // 处理请求...
+    }).start();
+}
+```
+
+
+
+---
+
+|    优点    |        缺点        |
+| :--------: | :----------------: |
+|  编程简单  |   线程资源消耗大   |
+|  调试方便  | 并发量受限于线程数 |
+| 适合短连接 |   线程切换开销高   |
+
+---
+
+
+
+### NIO-非阻塞IO
+
+- **同步非阻塞模型**：通过Selector实现多路复用
+- **事件驱动机制**：通过Channel注册感兴趣的事件
+- **单线程处理多连接**：基于就绪选择机制
+
+
+
+**核心组件**
+
+|     组件     |       作用       |
+| :----------: | :--------------: |
+| **Channel**  | 双向数据传输通道 |
+|  **Buffer**  |    数据缓存区    |
+| **Selector** |  多路事件监听器  |
+
+
+
+```java
+// NIO服务器核心代码
+Selector selector = Selector.open();
+ServerSocketChannel ssc = ServerSocketChannel.open();
+ssc.bind(new InetSocketAddress(8080));
+ssc.configureBlocking(false);
+ssc.register(selector, SelectionKey.OP_ACCEPT); // 注册accept事件
+
+while(true) {
+    selector.select(); // 阻塞直到有就绪事件
+    Set<SelectionKey> keys = selector.selectedKeys();
+    Iterator<SelectionKey> iter = keys.iterator();
+    
+    while(iter.hasNext()) {
+        SelectionKey key = iter.next();
+        if(key.isAcceptable()) {
+            // 处理新连接
+            SocketChannel sc = ((ServerSocketChannel)key.channel()).accept();
+            sc.configureBlocking(false);
+            sc.register(selector, SelectionKey.OP_READ);
+        } else if(key.isReadable()) {
+            // 处理读事件
+            SocketChannel sc = (SocketChannel)key.channel();
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            sc.read(buffer); // 非阻塞读取
+            // 处理数据...
+        }
+        iter.remove();
+    }
+}
+```
+
+
+
+
+
+### AIO-异步IO
+
+- **真正的异步非阻塞**：内核完成IO后回调通知
+- **Proactor模式**：应用程序不参与IO过程
+- **回调驱动**：通过CompletionHandler处理结果
+
+
+
+```java
+// AIO服务器示例
+AsynchronousServerSocketChannel server = 
+    AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(8080));
+
+// 异步接收连接
+server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
+    @Override
+    public void completed(AsynchronousSocketChannel client, Void attachment) {
+        server.accept(null, this); // 继续接收新连接
+        
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        // 异步读操作
+        client.read(buffer, buffer, new CompletionHandler<Integer, ByteBuffer>() {
+            @Override
+            public void completed(Integer result, ByteBuffer buf) {
+                // 处理读取到的数据
+                buf.flip();
+                // 异步写回
+                client.write(buf);
+            }
+            
+            @Override
+            public void failed(Throwable exc, ByteBuffer buf) {
+                exc.printStackTrace();
+            }
+        });
+    }
+    
+    @Override
+    public void failed(Throwable exc, Void attachment) {
+        exc.printStackTrace();
+    }
+});
+```
+
+
+
+
+
+|  模型   |     英文全称     | JDK版本 |      核心特点       |          适用场景          |
+| :-----: | :--------------: | :-----: | :-----------------: | :------------------------: |
+| **BIO** |   Blocking I/O   |  1.0+   |      同步阻塞       | 连接数少(<1000)的固定架构  |
+| **NIO** | Non-blocking I/O |  1.4+   | 同步非阻塞/多路复用 |  高并发连接(如聊天服务器)  |
+| **AIO** | Asynchronous I/O |  1.7+   |     异步非阻塞      | 长连接大文件操作(如云存储) |
+
+
+
+
+
+1. **BIO适用场景**：
+   - 客户端应用开发
+   - 内部系统通信
+   - 连接数可预估的服务器
+2. **NIO适用场景**：
+   - 高并发Web服务器(Tomcat 8+默认NIO)
+   - 实时通信系统(如WebSocket)
+   - P2P网络应用
+3. **AIO适用场景**：
+   - 大型文件上传下载
+   - 数据库备份系统
+   - 需要极致性能的金融交易系统

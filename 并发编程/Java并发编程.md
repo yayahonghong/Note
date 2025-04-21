@@ -4484,3 +4484,198 @@ public class CyclicBarrierDemo {
 }
 ```
 
+
+
+### 线程安全集合类
+
+![image-20250419152902996](./images/image-20250419152902996.png)
+
+线程安全集合类可以分为三大类： 
+
+- 遗留的线程安全集合如  `Hashtable` ， `Vector`
+- 使用 Collections 装饰的线程安全集合:
+  - `Collections.synchronizedCollection `
+  - `Collections.synchronizedList `
+  - `Collections.synchronizedMap `
+  - `Collections.synchronizedSet `
+  - `Collections.synchronizedNavigableMap `
+  - `Collections.synchronizedNavigableSet`
+  - `Collections.synchronizedSortedMap `
+  - `Collections.synchronizedSortedSet`
+- `java.util.concurrent.*`
+
+
+
+`java.util.concurrent.*` 下的线程安全集合类，可以发现它们有规律，里面包含三类关键词： Blocking、CopyOnWrite、Concurrent
+
+- Blocking 大部分实现基于锁，并提供用来阻塞的方法 
+- CopyOnWrite 之类容器修改开销相对较重 
+- Concurrent 类型的容器
+  - 内部很多操作使用 cas 优化，一般可以提供较高吞吐量 
+  - 弱一致性
+    - 遍历时弱一致性，例如，当利用迭代器遍历时，如果容器发生修改，迭代器仍然可以继续进行遍 历，这时内容是旧的
+    - 求大小弱一致性，size 操作未必是 100% 准确 
+    - 读取弱一致性
+
+> [!Tip]
+>
+> **快速失败**
+>
+> 遍历时如果发生了修改，对于非安全容器来讲，使用 fail-fast 机制也就是让遍历立刻失败，抛出 `ConcurrentModificationException`，不再继续遍历
+
+
+
+### ConcurrentHashMap
+
+线程安全的哈希表实现，专为高并发场景设计，比 `Hashtable` 和 `Collections.synchronizedMap()` 有更好的并发性能。
+
+
+
+**基本操作**
+
+```java
+V put(K key, V value)  // 插入键值对
+V get(Object key)      // 获取值
+V remove(Object key)   // 删除键值对
+boolean containsKey(Object key) // 检查键是否存在
+    
+V putIfAbsent(K key, V value)  // 不存在则插入
+boolean remove(Object key, Object value) // 匹配则删除
+V replace(K key, V value)      // 替换值
+    
+void forEach(BiConsumer<? super K, ? super V> action) // 并行遍历
+V reduce(long parallelismThreshold, BiFunction<? super K, ? super V, ? extends U> transformer, BiFunction<? super U, ? super U, ? extends U> reducer) // MapReduce
+```
+
+
+
+#### 并发死链
+
+在 JDK 1.7 版本的 `HashMap` 实现中，存在一个可能导致并发死链(dead chain)的问题，这是在特定并发操作场景下可能发生的严重问题。
+
+
+
+**触发条件**
+
+**多线程并发扩容时可能形成环形链表**
+
+JDK 1.7 的扩容采用**头插法**迁移数据
+
+```java
+void transfer(Entry[] newTable) {
+    for (Entry<K,V> e : table) {
+        while (e != null) {
+            Entry<K,V> next = e.next;  // 记录下一个节点
+            int i = indexFor(e.hash, newTable.length);
+            e.next = newTable[i];     // 头插法：将当前节点指向桶头
+            newTable[i] = e;          // 更新桶头为当前节点
+            e = next;                 // 处理下一个节点
+        }
+    }
+}
+```
+
+假设初始链表：`A → B → null`
+两个线程并发扩容时可能产生以下时序：
+
+|   操作步骤    |                       线程1（被挂起）                        |                      线程2（完整执行）                       |         链表状态变化          |
+| :-----------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :---------------------------: |
+|   开始扩容    |                   读取 `e = A`, `next = B`                   |                                                              |         A → B → null          |
+|   线程1挂起   |               暂停执行（持有 `e=A`, `next=B`）               |                           开始扩容                           |                               |
+|   线程2执行   |                                                              | 完整执行扩容： ① 迁移A：`newTable[i] = A → null` ② 迁移B：`newTable[i] = B → A → null` | 线程2的新链表：`B → A → null` |
+|   线程1恢复   |            继续执行（仍用旧指针 `e=A`, `next=B`）            |                                                              |                               |
+| 线程1错误操作 | ① 将A插入新桶：`A.next = newTable[i]`（此时`newTable[i]=B`） ② 结果：`A → B → A → B...` |                                                              |  **形成环形链表：B → A → B**  |
+
+
+
+#### 重要属性和内部类
+
+```java
+        // 默认为 0
+        // 当初始化时, 为 -1
+        // 当扩容时, 为 -(1 + 扩容线程数)
+        // 当初始化或扩容完成后，为 下一次的扩容的阈值大小
+        private transient volatile int sizeCtl;
+
+        // 整个 ConcurrentHashMap 就是一个 Node[]
+        static class Node<K,V> implements Map.Entry<K,V> {}
+
+        // hash 表
+        transient volatile Node<K,V>[] table;
+
+        // 扩容时的 新 hash 表
+        private transient volatile Node<K,V>[] nextTable;
+
+        // 扩容时如果某个 bin 迁移完毕, 用 ForwardingNode 作为旧 table bin 的头结点
+        static final class ForwardingNode<K,V> extends Node<K,V> {}
+
+        // 用在 compute 以及 computeIfAbsent 时, 用来占位, 计算完成后替换为普通 Node
+        static final class ReservationNode<K,V> extends Node<K,V> {}
+
+        // 作为 treebin 的头节点, 存储 root 和 first
+        static final class TreeBin<K,V> extends Node<K,V> {}
+
+        // 作为 treebin 的节点, 存储 parent, left, right
+        static final class TreeNode<K,V> extends Node<K,V> {}
+```
+
+
+
+### LinkedBlockingQueue
+
+**线程安全、基于链表实现的有界/无界阻塞队列**。它采用 **FIFO（先进先出）** 策略，适用于生产者-消费者模型，支持高并发操作。
+
+---
+
+|     特性     | 说明                                                         |
+| :----------: | :----------------------------------------------------------- |
+| **数据结构** | 单向链表（`Node` 节点存储数据）                              |
+| **线程安全** | 使用 **两把锁（ReentrantLock）** 分别控制入队和出队，降低竞争 |
+| **阻塞机制** | 队列满时，`put()` 阻塞；队列空时，`take()` 阻塞              |
+|   **容量**   | 默认无界（`Integer.MAX_VALUE`），可指定有界容量              |
+|  **公平性**  | 锁默认非公平（可配置为公平锁）                               |
+|  **迭代器**  | 弱一致性（`iterator()` 遍历时可能反映部分修改）              |
+
+---
+
+
+
+**入队方法**
+
+|                   方法                    |                        说明                        | 阻塞/非阻塞  |  返回值   |
+| :---------------------------------------: | :------------------------------------------------: | :----------: | :-------: |
+|                `put(E e)`                 |               插入元素，队列满时阻塞               |   **阻塞**   |  `void`   |
+|               `offer(E e)`                |           插入元素，队列满时返回 `false`           |    非阻塞    | `boolean` |
+| `offer(E e, long timeout, TimeUnit unit)` |                插入元素，超时后放弃                | **限时阻塞** | `boolean` |
+|                `add(E e)`                 | 插入元素，队列满时抛异常（继承自 `AbstractQueue`） |    非阻塞    | `boolean` |
+
+
+
+**出队方法**
+
+|                方法                 |                          说明                          | 阻塞/非阻塞  | 返回值 |
+| :---------------------------------: | :----------------------------------------------------: | :----------: | :----: |
+|              `take()`               |               移除队首元素，队列空时阻塞               |   **阻塞**   |  `E`   |
+|              `poll()`               |           移除队首元素，队列空时返回 `null`            |    非阻塞    |  `E`   |
+| `poll(long timeout, TimeUnit unit)` |                移除队首元素，超时后放弃                | **限时阻塞** |  `E`   |
+|             `remove()`              | 移除队首元素，队列空时抛异常（继承自 `AbstractQueue`） |    非阻塞    |  `E`   |
+
+
+
+**LinkedBlockingQueue 与 ArrayBlockingQueue 的比较**
+
+- Linked 支持有界，Array 强制有界 
+- Linked 实现是链表，Array 实现是数组 
+- Linked 是懒惰的，而 Array 需要提前初始化 Node 数组 
+- Linked 每次入队会生成新 Node，而 Array 的 Node 是提前创建好的 
+- Linked 两把锁，Array 一把锁
+
+
+
+|     特性     | `ConcurrentLinkedQueue` |    `LinkedBlockingQueue`     |
+| :----------: | :---------------------: | :--------------------------: |
+|  **锁机制**  |       无锁（CAS）       |   两把锁（入队、出队分离）   |
+| **阻塞支持** |         非阻塞          | 支持阻塞（`put()`/`take()`） |
+|   **容量**   |          无界           |       可配置有界/无界        |
+|   **性能**   |      更高（无锁）       |        较低（锁竞争）        |
+| **适用场景** |   高并发、非阻塞需求    |      需要阻塞控制的场景      |
