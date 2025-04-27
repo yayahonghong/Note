@@ -327,6 +327,20 @@ docker run -d \
     --collation-server=utf8mb4_unicode_ci
 ```
 
+配置文件
+
+```properties
+[mysqld]
+log_error = /logs/mysql-error.log
+general_log = 0          # 默认关闭，需要时再开启（会产生大量日志）
+
+slow_query_log = 1       # 建议开启慢查询
+slow_query_log_file = /logs/mysql-slow.log
+long_query_time = 2      # 超过 2 秒的查询视为慢查询
+```
+
+
+
 
 
 ## Redis
