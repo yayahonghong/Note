@@ -355,8 +355,7 @@ docker run -d \
     -v /docker/redis/data:/data \
     -v /docker/redis/logs:/logs \
     redis \
-    --requirepass 123456 \
-    redis-server /etc/redis/redis.conf
+    redis-server /etc/redis/redis.conf --requirepass Qwer1234!
 ```
 
 > [!Tip]
@@ -368,7 +367,7 @@ docker run -d \
 
 
 
-配置文件示例
+配置文件示例(`/docker/redis/conf/redis.conf`)
 
 ```properties
 bind 0.0.0.0

@@ -273,7 +273,7 @@ Set的常见命令有：
 - SISMEMBER key member：判断一个元素是否存在于set中
 - SMEMBERS：获取set中的所有元素
 - SINTER key1 key2 ... ：求key1与key2的交集
-- SDIFF key1 key2 ... ：求key1与key2的差集
+- SDIFF key1 key2 ... ：求key1与key2的差集 
 - SUNION key1 key2 ..：求key1和key2的并集
 
 ![image-20250222180737333](./images/image-20250222180737333.png)
@@ -2419,9 +2419,9 @@ end
 
 2. **同步双写**：在修改数据库的同时，直接修改缓存
 - 优势：时效性强，缓存与数据库强一致
-   
+  
 - 缺点：有代码侵入，耦合度高
-   
+  
 - 场景：对一致性、时效性要求较高的缓存数据
 
 
