@@ -586,10 +586,9 @@ docker run -d \
   --name mongodb \
   -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=root \
-  -e MONGO_INITDB_ROOT_PASSWORD=example \
+  -e MONGO_INITDB_ROOT_PASSWORD=123456 \
   -v /docker/mongodb/data:/data/db \
   -v /docker/mongodb/config:/data/configdb \
-  --restart unless-stopped \
-  mongo:6
+  mongo
 ```
 
