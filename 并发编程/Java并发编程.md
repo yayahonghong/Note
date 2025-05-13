@@ -208,7 +208,7 @@ logback配置
 
 > [!TIP]
 >
-> j建议为线程指定名字
+> 建议为线程指定名字
 >
 > 可以通过线程对象的 `setName(String name)` 方法为线程指定名字
 
@@ -296,7 +296,7 @@ FutureTask 能够接收 Callable 类型的参数，用来处理有返回结果�
 
 - 任务管理器可以查看进程和线程数，也可以用来杀死进程 
 
-- `tasklist` 查看进程 
+- `tasklist` 查看进程
 
 - `taskkill` 杀死进程 
 
@@ -357,16 +357,16 @@ JVM 内存有堆、栈、方法区，栈会为每一个线程分配一块栈内�
 
 ### 线程上下文切换(Thread Context Switch)
 
-引起线程切换的情况：
+引起线程上下文切换的情况：
 
 - 线程的CPU时间片使用完
-- JVM进行垃圾回收
+- *JVM*进行垃圾回收
 - 有更高优先级的线程需要运行
-- 线程调用了 sleep、yield、wait、join、park、synchronized、lock等方法
+- 线程调用了 `sleep、yield、wait、join、park、synchronized、lock` 等方法
 
 
 
-当 `Context Switch` 发生时，需要由操作系统保存当前线程的状态，并恢复另一个线程的状态，Java 中对应的概念 就是程序计数器（Program Counter Register），它的作用是记住下一条 jvm 指令的执行地址，是线程私有的
+当 `Context Switch` 发生时，需要由操作系统保存当前线程的状态，并恢复另一个线程的状态，Java 中对应的概念就是程序计数器（Program Counter Register），它的作用是记住下一条 jvm 指令的执行地址，是线程私有的
 
 - 状态包括程序计数器、虚拟机栈中每个栈帧的信息，如局部变量、操作数栈、返回地址等 
 - Context Switch 频繁发生会影响性能
@@ -549,6 +549,7 @@ private static void test1() throws InterruptedException {
                 Thread current = Thread.currentThread();
                 if (current.isInterrupted()) {
                     log.info("被打断，处理中...");
+                    // ...
                     break;
                 }
 
@@ -570,9 +571,9 @@ private static void test1() throws InterruptedException {
     }
 ```
 
-> [!WARNING]
+> [!Important]
 >
-> 由于线程可能在slepp时被打断，而此时打断标记会被置为false，所以需要重新设置打断标记
+> 由于线程可能在sleep时被打断，而此时打断标记会被置为false，所以需要重新设置打断标记
 
 > [!Tip]
 >
@@ -585,16 +586,12 @@ private static void test1() throws InterruptedException {
 打断park线程，不会清空打断状态
 
 ```java
-public void stop() {
-            monitor.interrupt();
-        }
         Thread t1 = new Thread(() -> {
             log.debug("park...");
             LockSupport.park();
             log.debug("unpark...");
             log.debug("打断状态：{}", Thread.currentThread().isInterrupted());
-        },
-                "t1");
+        },"t1");
         t1.start();
         sleep(0.5);
         t1.interrupt();
@@ -658,7 +655,7 @@ public void stop() {
 - 【阻塞状态】 
   - 如果调用了阻塞 API，如 BIO 读写文件，这时该线程实际不会用到 CPU，会导致线程上下文切换，进入 【阻塞状态】 
   - 等 BIO 操作完毕，会由操作系统唤醒阻塞的线程，转换至【可运行状态】 
-  - 与【可运行状态】的区别是，对【阻塞状态】的线程来说只要它们一直不唤醒，调度器就一直不会考虑 调度它们 
+  - 与【可运行状态】的区别是，对【阻塞状态】的线程来说只要它们一直不唤醒，调度器就一直不会考虑调度它们 
 - 【终止状态】表示线程已经执行完毕，生命周期已经结束，不会再转换为其它状态
 
 
@@ -672,8 +669,8 @@ public void stop() {
 ![image-20250401223352536](./images/image-20250401223352536.png)
 
 - `NEW`  线程刚被创建，但是还没有调用  start() 方法 
-- `RUNNABLE` 当调用了  start() 方法之后，注意，Java API 层面的  RUNNABLE 状态涵盖了 操作系统 层面的 【可运行状态】、【运行状态】和【阻塞状态】（由于 BIO 导致的线程阻塞，在 Java 里无法区分，仍然认为 是可运行） 
-- `BLOCKED` ， `WAITING` ， 详述 `TIMED_WAITING` 都是 Java API 层面对【阻塞状态】的细分，后面会在状态转换一节 
+- `RUNNABLE` 当调用了  start() 方法之后，注意，Java API 层面的  RUNNABLE 状态涵盖了 操作系统 层面的 【可运行状态】、【运行状态】和【阻塞状态】（由于 BIO 导致的线程阻塞，在 Java 里无法区分，仍然认为是可运行） 
+- `BLOCKED` ， `WAITING` ， 详述 `TIMED_WAITING` 都是 Java API 层面对【阻塞状态】的细分
 - `TERMINATED` 当线程代码运行结束
 
 
@@ -790,7 +787,7 @@ public void stop() {
 
         t1.join();
         t2.join();
-
+ 
         System.out.println(count);
 ```
 
@@ -831,7 +828,7 @@ class Room {
 
 
 
-### 方法上的`synchronized`
+### 实例方法上的`synchronized`
 
 ```java
 class Room {
@@ -888,8 +885,8 @@ class Room {
 >
 > 局部变量存放在虚拟机栈的局部变量表中，每个线程都有自己的栈，线程之间不共享
 
-- 但局部变量引用的对象则未必 
-  - 如果该对象没有逃离方法的作用访问，它是线程安全的 
+- 但局部变量引用的对象则可能不安全 
+  - 如果该对象没有逃离方法的作用范围，它是线程安全的 
   - 如果该对象逃离方法的作用范围，需要考虑线程安全
 
 ```java
@@ -942,20 +939,20 @@ class ThreadSafeSubClass extends ThreadSafe{
 > 它们的每个方法是原子的
 >
 > 但注意它们多个**方法的组合不是原子的**
-
-```java
-Hashtable table = new Hashtable();
- // 线程1 get，线程2 put
- if( table.get("key") == null) {
-    table.put("key", value);
- }
-```
+>
+> ```java
+> Hashtable table = new Hashtable();
+>  // 线程1 get，线程2 put
+>  if(table.get("key") == null) {
+>     table.put("key", value);
+>  }
+> ```
 
 
 
 > [!Note]
 >
-> `String`、`Integer` 等都是不可变类，因为其内部的状态不可以改变，因此它们的方法都是线程安全的
+> `String`、`Integer` 等都是**不可变类**，因为其内部的状态不可以改变，因此它们的方法都是线程安全的
 
 
 
@@ -1053,8 +1050,7 @@ public class UserDaoImpl implements UserDao {
         String sql = "update user set password = ? where username = ?";
         try (Connection conn = DriverManager.getConnection("", "", "")) {
             // ...
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
     }
 }
 ```
@@ -1166,7 +1162,7 @@ Monitor 被翻译为监视器或管程
 
 ### 轻量级锁
 
-轻量级锁的使用场景：如果一个对象虽然有多线程要加锁，但加锁的时间是错开的（也就是没有竞争），那么可以 使用轻量级锁来优化。
+轻量级锁的使用场景：如果一个对象虽然有多线程要加锁，但加锁的时间是错开的（也就是没有竞争），那么可以使用轻量级锁来优化。
 
 轻量级锁对使用者是透明的，即语法仍然是  `synchronized`
 
@@ -1221,7 +1217,7 @@ public static void method2() {
 - 这时 Thread-1 加轻量级锁失败，进入锁膨胀流程 
   - 即为 Object 对象申请 Monitor 锁，让 Object 指向重量级锁地址 
   - 然后自己进入 Monitor 的 EntryList BLOCKED
-- 当 Thread-0 退出同步块解锁时，使用 CAS 将 Mark Word 的值恢复给对象头，失败。这时会进入重量级解锁 流程，即按照 Monitor 地址找到 Monitor 对象，设置 Owner 为 null，唤醒 EntryList 中 BLOCKED 线程
+- 当 Thread-0 退出同步块解锁时，使用 CAS 将 Mark Word 的值恢复给对象头，失败。这时会进入重量级解锁流程，即按照 Monitor 地址找到 Monitor 对象，设置 Owner 为 null，唤醒 EntryList 中 BLOCKED 线程
 
 ![image-20250404145448215](./images/image-20250404145448215.png)
 
@@ -1229,12 +1225,12 @@ public static void method2() {
 
 ### 自旋优化
 
-重量级锁竞争的时候，可以使用自旋来进行优化，如果当前线程自旋成功（即这时候持锁线程已经退出了同步 块，释放了锁），当前线程就可以避免阻塞。
+重量级锁竞争的时候，可以使用自旋来进行优化，如果当前线程自旋成功（即这时候持锁线程已经退出了同步块，释放了锁），当前线程就可以避免阻塞。
 
 
 
 - 自旋会占用 CPU 时间，<font color=red>单核 CPU 自旋就是浪费，多核 CPU 自旋才能发挥优势</font>。 
-- 在 Java 6 之后自旋锁是自适应的，比如对象刚刚的一次自旋操作成功过，那么认为这次自旋成功的可能性会 高，就多自旋几次；反之，就少自旋甚至不自旋。
+- 在 Java 6 之后自旋锁是自适应的，比如对象刚刚的一次自旋操作成功过，那么认为这次自旋成功的可能性会高，就多自旋几次；反之，就少自旋甚至不自旋。
 - Java 7 之后不能控制是否开启自旋功能。
 
 
@@ -1249,7 +1245,7 @@ public static void method2() {
 >
 > 偏向锁是JVM为了提高同步性能而设计的一种锁优化机制。它基于"大多数情况下锁不存在竞争"的假设，让锁偏向于第一个获取它的线程。
 >
-> 只有第一次使用 CAS 将线程 ID 设置到对象的 Mark Word 头，之后发现这个线程 ID 是自己的就表示没有竞争，不用重新 CAS。以后只要不发生竞争，这个对象就归该线程所有
+> 只有第一次使用 CAS 将线程 ID 设置到对象的 Mark Word 头，之后发现这个线程 ID 是自己的就表示没有竞争，不用重新 CAS。以后只要不发生竞争，这个对象就归该线程所有。
 
 ![image-20250404150434146](./images/image-20250404150434146.png)
 

@@ -769,14 +769,21 @@ b2 ->> b2: 01234567890abcdef3333\r
 
     private static void split(ByteBuffer buffer) {
         buffer.flip();
-        byte[] bytes;
-        for (int i = 0; i < buffer.remaining(); i++) {
+        int oldLimit = buffer.limit();
+        for (int i = 0; i < buffer.limit(); i++) {
             if (buffer.get(i) == '\n') {
-                bytes = new byte[i + 1];
-                buffer.get(bytes);
-                System.out.println(StandardCharsets.UTF_8.decode(ByteBuffer.wrap(bytes)));
+                int length = i + 1 - buffer.position();
+                ByteBuffer msg = ByteBuffer.allocate(length);
+                for (int j = 0; j < length; j++) {
+                    msg.put(buffer.get());
+                }
+                msg.flip();
+                System.out.println(StandardCharsets.UTF_8.decode(msg));
+                // 继续查找下一个完整消息
+                i = buffer.position() - 1;
             }
         }
+        buffer.limit(oldLimit);
         buffer.compact();
     }
 ```
@@ -793,3 +800,432 @@ b2 ->> b2: 01234567890abcdef3333\r
 
 
 ### 处理write事件
+
+- 非阻塞模式下，无法保证把 buffer 中所有数据都写入 channel，因此需要追踪 write 方法的返回值（代表实际写入字节数）
+- 用 selector 监听所有 channel 的可写事件，每个 channel 都需要一个 key 来跟踪 buffer，但这样又会导致占用内存过多，就有两阶段策略
+  * 当消息处理器第一次写入消息时，才将 channel 注册到 selector 上
+  * selector 检查 channel 上的可写事件，如果所有的数据写完了，就取消 channel 的注册
+  * 如果不取消，会每次可写均会触发 write 事件
+
+```java
+public static void main(String[] args) throws IOException {
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        ssc.configureBlocking(false);
+        ssc.bind(new InetSocketAddress(8080));
+
+        Selector selector = Selector.open();
+        ssc.register(selector, SelectionKey.OP_ACCEPT);
+
+        while(true) {
+            selector.select();
+
+            Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+            while (iter.hasNext()) {
+                SelectionKey key = iter.next();
+                iter.remove();
+                if (key.isAcceptable()) {
+                    SocketChannel sc = ssc.accept();
+                    sc.configureBlocking(false);
+                    SelectionKey sckey = sc.register(selector, SelectionKey.OP_READ);
+                    // 1. 向客户端发送内容
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < 3000000; i++) {
+                        sb.append("a");
+                    }
+                    ByteBuffer buffer = Charset.defaultCharset().encode(sb.toString());
+                    int write = sc.write(buffer);
+                    // 3. write 表示实际写了多少字节
+                    System.out.println("实际写入字节:" + write);
+                    // 4. 如果有剩余未读字节，才需要关注写事件
+                    if (buffer.hasRemaining()) {
+                        // read 1  write 4
+                        // 在原有关注事件的基础上，多关注 写事件
+                        sckey.interestOps(sckey.interestOps() + SelectionKey.OP_WRITE);
+                        // 把 buffer 作为附件加入 sckey
+                        sckey.attach(buffer);
+                    }
+                } else if (key.isWritable()) {
+                    ByteBuffer buffer = (ByteBuffer) key.attachment();
+                    SocketChannel sc = (SocketChannel) key.channel();
+                    int write = sc.write(buffer);
+                    System.out.println("实际写入字节:" + write);
+                    if (!buffer.hasRemaining()) { // 写完了
+                        key.interestOps(key.interestOps() - SelectionKey.OP_WRITE);
+                        key.attach(null);
+                    }
+                }
+            }
+        }
+    }
+```
+
+
+
+### 多线程优化
+
+**优化思路**：
+
+* 单线程配一个选择器，专门处理 accept 事件
+* 创建 cpu 核心数的线程，每个线程配一个选择器，轮流处理 read 事件
+
+```java
+    public static void main(String[] args) throws IOException {
+        // 初始化服务
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        ssc.configureBlocking(false);
+        Selector selector = Selector.open();
+        SelectionKey sscKey = ssc.register(selector, 0, null);
+        sscKey.interestOps(SelectionKey.OP_ACCEPT);
+        ssc.bind(new InetSocketAddress(8080));
+
+        // 初始化工作线程
+        Worker[] workers = new Worker[Runtime.getRuntime().availableProcessors()];
+        for (int i = 0; i < workers.length; i++) {
+            workers[i] = new Worker("worker-" + i);
+        }
+
+        int index = 0;
+        while (true) {
+            // 监听连接事件
+            selector.select();
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    SocketChannel socketChannel = ssc.accept();
+                    socketChannel.configureBlocking(false);
+                    // 将连接分配到工作线程
+                    workers[index % workers.length].register(socketChannel);
+                    index++;
+                }
+            }
+        }
+    }
+
+    static class Worker implements Runnable {
+        private final String name;
+        private final ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<>();
+        private Selector selector;
+        private volatile boolean isInit = false;
+
+        public Worker(String name) {
+            this.name = name;
+        }
+
+        public void register(SocketChannel socketChannel) throws IOException {
+            if (!isInit) {
+                selector = Selector.open();
+                new Thread(this, this.name).start();
+                isInit = true;
+            }
+            queue.add(() -> {
+                try {
+                    socketChannel.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(16));
+                } catch (ClosedChannelException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            selector.wakeup();
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    selector.select();
+                    Runnable task = queue.poll();
+                    if (task != null) {
+                        task.run();
+                    }
+                    Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                    while (iterator.hasNext()) {
+                        SelectionKey key = iterator.next();
+                        iterator.remove();
+                        if (key.isReadable()) {
+                            // 处理消息
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+```
+
+> [!Note]
+>
+> 为什么使用**队列**来注册事件，并且还要在工作线程中完成注册？
+>
+> ✔因为当工作线程启动后调用`selector.select()`会被阻塞，此时在主线程中注册方法也同样会被阻塞。同时主线程向队列提交注册任务后还需要调用`selector.wakeup()`使工作线程的*selector*立即从阻塞状态返回，执行队列中的注册任务。
+
+
+
+### UDP传输
+
+* UDP 是无连接的，client 发送数据不会管 server 是否开启
+* server 这边的 receive 方法会将接收到的数据存入 byte buffer，但如果数据报文超过 buffer 大小，多出来的数据会被默默抛弃
+
+```java
+	// 服务端
+	public static void main(String[] args) {
+        try (DatagramChannel channel = DatagramChannel.open()) {
+            channel.socket().bind(new InetSocketAddress(8080));
+            ByteBuffer buffer = ByteBuffer.allocate(32);
+            channel.receive(buffer);
+            buffer.flip();
+            // 处理消息
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	// 客户端
+    public static void main(String[] args) {
+        try (DatagramChannel channel = DatagramChannel.open()) {
+            ByteBuffer buffer = StandardCharsets.UTF_8.encode("hello");
+            InetSocketAddress address = new InetSocketAddress("localhost", 8080);
+            channel.send(buffer, address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+```
+
+
+
+## 总结
+
+### IO模型
+
+无论哪种IO模型，数据从设备到用户空间的传输都分为**两个阶段**：
+
+1. 等待数据就绪
+   - 内核检查数据是否到达（如网卡是否有数据、磁盘是否完成读取）。
+   - 若未就绪，根据IO模型决定是否阻塞用户线程。
+2. 数据拷贝
+   - 将数据从**内核缓冲区**拷贝到**用户缓冲区**（如`read()`的`buf`参数）。
+
+---
+
+
+
+####  **同步阻塞（BIO）**
+
+- **特点**：用户线程发起IO操作后**一直阻塞**，直到数据就绪并完成数据拷贝。
+- **流程**：
+  1. 线程调用`read()`，内核开始准备数据（如等待网卡数据到达）。
+  2. 内核等待数据到达后，将数据从内核空间拷贝到用户空间。
+  3. 拷贝完成后，线程解除阻塞，继续执行。
+- **缺点**：线程在等待期间无法做其他事，浪费CPU资源。
+- **应用场景**：简单但并发低的场景（如传统Socket编程）。
+
+------
+
+
+
+#### **同步非阻塞（NIO）**
+
+- **特点**：用户线程**轮询检查**内核数据是否就绪，期间可执行其他任务。
+- **流程**：
+  1. 线程调用`read()`，若数据未就绪，内核立即返回`EWOULDBLOCK`错误。
+  2. 线程不断轮询，直到数据就绪后，发起数据拷贝（仍由线程同步完成）。
+- **缺点**：轮询消耗CPU资源，响应延迟高。
+- **应用场景**：极少使用，通常结合多路复用替代。
+
+------
+
+
+
+#### **多路复用（IO Multiplexing）**
+
+- **特点**：通过**单个线程监控多个IO事件**（如`select`/`poll`/`epoll`），就绪后再同步处理。
+- **流程**：
+  1. 线程调用`select()`，阻塞等待至少一个IO事件就绪。
+  2. 当某个Socket数据就绪，`select()`返回，线程再调用`read()`同步拷贝数据。
+- **优点**：单线程高效管理多个连接，避免多线程上下文切换。
+- **缺点**：数据拷贝仍同步进行，且`select`有FD数量限制。
+- **应用场景**：高并发网络服务（如Nginx、Redis）。
+
+------
+
+
+
+#### **信号驱动IO**
+
+- **特点**：通过信号通知数据就绪，数据拷贝仍需线程同步完成。
+- **流程**：
+  1. 线程注册信号处理函数并调用`sigaction()`。
+  2. 内核数据就绪后发送信号，线程再调用`read()`同步拷贝数据。
+- **缺点**：信号处理复杂，实际应用少。
+- **注意**：严格来说，这不是主流分类，通常归为同步模型。
+
+------
+
+
+
+#### **异步非阻塞（AIO）**
+
+- **特点**：用户线程发起IO操作后立即返回，**内核负责数据就绪和拷贝**，完成后通知线程。
+- **流程**：
+  1. 线程调用`aio_read()`，内核立即返回。
+  2. 内核完成数据准备和拷贝后，通过回调或信号通知线程。
+- **优点**：线程完全无需等待，资源利用率最高。
+- **缺点**：实现复杂，需操作系统支持（如Linux的`io_uring`）。
+- **应用场景**：高性能服务器（如Proactor模式）。
+
+---
+
+|     **模型**      | 数据就绪等待方式 | 数据拷贝方式 | 是否同步 |
+| :---------------: | :--------------: | :----------: | :------: |
+|     同步阻塞      | 用户线程阻塞等待 | 用户线程同步 |   同步   |
+|    同步非阻塞     | 用户线程轮询检查 | 用户线程同步 |   同步   |
+|     多路复用      | 内核批量监控事件 | 用户线程同步 |   同步   |
+|    信号驱动IO     |   内核异步通知   | 用户线程同步 |   同步   |
+| 异步非阻塞（AIO） |   内核全权处理   | 内核异步完成 |   异步   |
+
+
+
+### 多路复用 VS BIO
+
+**1. 资源占用更少，支持更高并发**
+
+- **传统阻塞IO**：
+  每个连接需要分配一个独立线程/进程，线程越多，内存和CPU的消耗越大（例如：1000连接 → 1000线程）。
+  受限于系统最大线程数和上下文切换成本（线程栈、CPU调度开销）。
+- **多路复用**：
+  单线程可管理成百上千个连接（例如：1线程处理1000个连接），​**​资源消耗极低​**​，适合高并发场景（如Web服务器、实时通信）。
+
+------
+
+**2. 避免线程频繁切换**
+
+- **阻塞IO的代价**：
+  每个阻塞的线程会被操作系统挂起，当大量线程在等待IO时，CPU时间浪费在​**​线程上下文切换​**​上。
+- **多路复用的优化**：
+  只在有IO事件就绪时唤醒线程（如`epoll`的事件驱动机制），​**​减少无效的上下文切换​**​，提升CPU利用率。
+
+------
+
+**3. 高响应速度**
+
+- **阻塞IO的延迟**：
+  线程需等待IO操作完成，若某一线程阻塞，可能影响其他线程的响应。
+- **多路复用的优势**：
+  通过事件机制（如`epoll_wait`）​**​即时感知就绪的IO事件​**​，第一时间处理活跃连接（如Redis的单线程高性能）。
+
+------
+
+**4. 统一管理所有连接**
+
+- **阻塞IO的分散性**：
+  每个线程独立处理一个连接，逻辑分散，代码复杂度高（如锁竞争、资源同步问题）。
+- **多路复用的集中管理**：
+  单线程统一监控所有连接的状态，​**​简化代码逻辑​**​（如Nginx的事件驱动架构），降低多线程编程的难度。
+
+------
+
+**5. 灵活的扩展能力**
+
+- **传统阻塞IO的瓶颈**：
+  线程数与连接数线性相关，难以应对突发的高并发（如每秒万级连接）。
+- **多路复用的可扩展性**：
+  采用非阻塞事件机制（如`epoll`的`ET`模式），轻松扩展至支持数万甚至百万级并发（如云服务的负载均衡器）。
+
+
+
+### 零拷贝
+
+传统的 IO 将一个文件通过 socket 写出
+
+```java
+File f = new File("helloword/data.txt");
+RandomAccessFile file = new RandomAccessFile(file, "r");
+
+byte[] buf = new byte[(int)f.length()];
+file.read(buf);
+
+Socket socket = ...;
+socket.getOutputStream().write(buf);
+```
+
+内部工作流程是这样的：
+
+![image-20250513234448851](./images/image-20250513234448851.png)
+
+1. **磁盘到内核缓冲区**：
+   数据从磁盘读取到内核空间的 ​**​Page Cache​**​（通过DMA直接内存访问，无需CPU参与）。
+2. **内核缓冲区到用户缓冲区**：
+   数据从内核空间拷贝到用户空间（由CPU完成，用户程序通过`read()`调用）。
+3. **用户缓冲区到内核缓冲区**：
+   用户程序调用`send()`发送数据，数据从用户空间拷贝回内核的 ​**​Socket Buffer​**​（由CPU完成）。
+4. **内核缓冲区到网卡**：
+   数据从Socket Buffer通过DMA拷贝到网卡，发送到网络。
+
+**总拷贝次数**：4次（2次CPU拷贝，2次DMA拷贝）
+**上下文切换**：用户态 ↔ 内核态的切换（`read()`和`send()`两次系统调用）。
+
+
+
+**零拷贝（Zero-Copy）的核心思想**：**消除冗余的数据拷贝和上下文切换**，直接在内核空间完成数据传输。
+
+![image-20250513235610051](./images/image-20250513235610051.png)
+
+1. java 调用 transferTo 方法后，要从 java 程序的**用户态**切换至**内核态**，使用 DMA将数据读入**内核缓冲区**
+2. 只会将一些 offset 和 length 信息拷入 **socket 缓冲区**，几乎无消耗
+3. 使用 DMA 将 **内核缓冲区**的数据写入网卡，不会使用 cpu
+
+**0次CPU拷贝**
+
+
+
+```java
+        File file = new File(Paths.get("data.txt").toUri());
+        FileChannel channel = new FileInputStream(file).getChannel();
+        channel.transferTo(0L, channel.size(), Channels.newChannel(System.out));
+        channel.close();
+```
+
+
+
+
+
+### 异步IO
+
+异步模型需要底层操作系统（Kernel）提供支持
+
+* Windows 系统通过 IOCP 实现了真正的异步 IO
+* Linux 系统异步 IO 在 2.6 版本引入，但其底层实现还是用多路复用模拟了异步 IO，性能没有优势
+
+
+
+### 文件 AIO
+
+```java
+        try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(
+                Paths.get("data.txt"),
+                StandardOpenOption.READ)) {
+            ByteBuffer buffer = ByteBuffer.allocate(16);
+            channel.read(buffer, 0, buffer, new CompletionHandler<>() {
+                @Override
+                public void completed(Integer result, ByteBuffer attachment) {
+                    attachment.flip();
+                    while (attachment.hasRemaining()) {
+                        log.info(String.valueOf(attachment.get()));
+                    }
+                }
+
+                @Override
+                public void failed(Throwable exc, ByteBuffer attachment) {
+                    log.error(exc.toString());
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+```
+
+> [!Caution]
+>
+> 文件异步IO使用的是守护线程，即其他所有线程结束，该线程也会立即结束而不会完成后续任务
