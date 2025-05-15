@@ -1229,3 +1229,165 @@ socket.getOutputStream().write(buf);
 > [!Caution]
 >
 > 文件异步IO使用的是守护线程，即其他所有线程结束，该线程也会立即结束而不会完成后续任务
+
+
+
+# Netty基础
+
+入门示例：
+
+```java
+        // 服务端
+		new ServerBootstrap()
+                .group(new NioEventLoopGroup())
+                // 服务端Channel实现
+                .channel(NioServerSocketChannel.class)
+                // 负责读写
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel channel) {
+                        // 将消息转换为字符串
+                        channel.pipeline().addLast(new StringDecoder());
+                        // 处理接收到的消息
+                        channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) {
+                                log.info("received a message: {}", msg);
+                            }
+                        });
+                    }
+                })
+                .bind(8080);
+
+		
+		// 客户端
+        new Bootstrap()
+                .group(new NioEventLoopGroup())
+                .channel(NioSocketChannel.class)
+                // 处理器
+                .handler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) {
+                        // 将字符串转换为字节数组
+                        ch.pipeline().addLast(new StringEncoder());
+                    }
+                })
+                .connect(new InetSocketAddress("localhost", 8080))
+                .sync() // 阻塞等待连接建立
+                .channel()
+                .writeAndFlush("Hello, Netty!");
+```
+
+
+
+## 组件
+
+### *EventLoop*
+
+**事件循环对象**，*EventLoop* 本质是一个单线程执行器（同时维护了一个 Selector），处理 Channel 上源源不断的 io 事件。
+
+1. **单线程设计**：每个EventLoop在其生命周期内只使用一个线程
+2. **事件循环**：不断检查是否有新的事件需要处理
+3. **任务队列**：维护一个任务队列用于执行非I/O任务
+4. **线程安全**：确保所有任务按顺序执行
+
+
+
+**事件循环组**，*EventLoopGroup* 是一组 EventLoop，Channel 一般会调用 EventLoopGroup 的 register 方法来绑定其中一个 EventLoop，后续这个 Channel 上的 io 事件都由此 EventLoop 来处理（保证了 io 事件处理时的线程安全）
+
+
+
+> [!Tip]
+>
+> 1. 避免在EventLoop中执行长时间阻塞的操作
+> 2. 将耗时操作放入业务线程池处理
+> 3. 合理配置EventLoopGroup的线程数（通常与CPU核心数相关）
+
+
+
+IO事件可以由多个Handler处理，而且这些Handler可以在不同的EventLoopGroup中，Handler间交接任务的源码如下
+
+```java
+static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
+    final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
+    // 下一个 handler 的事件循环是否与当前的事件循环是同一个线程
+    EventExecutor executor = next.executor();
+    
+    // 是，直接调用
+    if (executor.inEventLoop()) {
+        next.invokeChannelRead(m);
+    } 
+    // 不是，将要执行的代码作为任务提交给下一个事件循环处理（换人）
+    else {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                next.invokeChannelRead(m);
+            }
+        });
+    }
+}
+```
+
+
+
+### *Channel*
+
+* close() 可以用来关闭 channel
+* closeFuture() 用来处理 channel 的关闭
+  * sync() 方法作用是同步等待 channel 关闭
+  * 而 addListener() 方法是异步等待 channel 关闭
+* pipeline() 方法添加处理器
+* write() 方法将数据写入
+* writeAndFlush() 方法将数据写入并刷出
+
+
+
+#### *ChannelFuture*
+
+1. **异步通知机制**：通过添加监听器获取操作完成通知
+2. **操作状态查询**：可检查操作是否完成、成功或取消
+3. **不可变性**：一旦创建，结果不可改变
+4. **链式操作**：支持添加多个监听器
+
+```java
+// 添加监听器，操作完成时回调
+ChannelFuture addListener(GenericFutureListener<? extends Future<? super Void>> listener);
+
+// 移除监听器
+ChannelFuture removeListener(GenericFutureListener<? extends Future<? super Void>> listener);
+
+// 等待操作完成（阻塞当前线程）
+ChannelFuture sync() throws InterruptedException;
+
+// 操作是否完成
+boolean isDone();
+
+// 操作是否成功
+boolean isSuccess();
+
+// 取消操作（Netty中通常不支持）
+boolean cancel(boolean mayInterruptIfRunning);
+```
+
+
+
+> [!Note]
+>
+> 客户端的connect方法是异步方法，并不会等待连接建立成功，所以需要ChannelFuture来同步获取连接的Channel
+
+```java
+        ChannelFuture channelFuture = new Bootstrap()
+                .group(new NioEventLoopGroup())
+                .channel(NioSocketChannel.class)
+                // 处理器
+                .handler(...)
+                .connect(new InetSocketAddress("localhost", 8080));
+        channelFuture.sync(); // 等待连接建立
+        Channel channel = channelFuture.channel();
+        channel.writeAndFlush("Hello, Netty!");
+```
+
+> [!Tip]
+>
+> 或者为ChannelFuture添加监视器来等待操作完成，自动回调
