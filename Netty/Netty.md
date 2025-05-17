@@ -1391,3 +1391,222 @@ boolean cancel(boolean mayInterruptIfRunning);
 > [!Tip]
 >
 > 或者为ChannelFuture添加监视器来等待操作完成，自动回调
+
+
+
+#### 正确关闭Channel
+
+`channel.close()`也是一个异步操作，如果在关闭后才能进行其他任务，需要使用同步方法或者监听器
+
+```java
+        // 同步等待
+		ChannelFuture closeFuture = channel.closeFuture();
+        closeFuture.sync();
+        // 其他操作
+        log.debug("关闭连接");
+
+		
+		// 或者添加监听器
+        closeFuture.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                //...
+            }
+        });
+```
+
+> [!Tip]
+>
+> 以上操作之后保证在`channel.close()`成功后执行
+
+
+
+#### 关闭Netty
+
+```java
+        NioEventLoopGroup group = new NioEventLoopGroup();
+		//初始化Netty
+		//...
+		group.shutdownGracefully();
+```
+
+
+
+
+
+### *Future* & *Promise*
+
+```mermaid
+graph LR
+subgraph 继承体系
+Netty-Future --> JDK-Future
+Promise --> Netty-Future
+end
+```
+
+* jdk Future 只能同步等待任务结束（或成功、或失败）才能得到结果
+* netty Future 可以同步等待任务结束得到结果，也可以异步方式得到结果，但都是要等任务结束
+* netty Promise 不仅有 netty Future 的功能，而且脱离了任务独立存在，只作为两个线程间传递结果的容器
+
+
+
+**常用方法**：
+
+| 功能/名称    | jdk Future                     | netty Future                                                 | Promise      |
+| ------------ | ------------------------------ | ------------------------------------------------------------ | ------------ |
+| cancel       | 取消任务                       | -                                                            | -            |
+| isCanceled   | 任务是否取消                   | -                                                            | -            |
+| isDone       | 任务是否完成，不能区分成功失败 | -                                                            | -            |
+| get          | 获取任务结果，阻塞等待         | -                                                            | -            |
+| getNow       | -                              | 获取任务结果，非阻塞，还未产生结果时返回 null                | -            |
+| await        | -                              | 等待任务结束，如果任务失败，不会抛异常，而是通过 isSuccess 判断 | -            |
+| sync         | -                              | 等待任务结束，如果任务失败，抛出异常                         | -            |
+| isSuccess    | -                              | 判断任务是否成功                                             | -            |
+| cause        | -                              | 获取失败信息，非阻塞，如果没有失败，返回null                 | -            |
+| addLinstener | -                              | 添加回调，异步接收结果                                       | -            |
+| setSuccess   | -                              | -                                                            | 设置成功结果 |
+| setFailure   | -                              | -                                                            | 设置失败结果 |
+
+
+
+### *Handler* & *Pipeline*
+
+ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站两种。所有 ChannelHandler 被连成一串，就是 Pipeline
+
+* 入站处理器通常是 ChannelInboundHandlerAdapter 的子类，主要用来读取客户端数据，写回结果
+* 出站处理器通常是 ChannelOutboundHandlerAdapter 的子类，主要对写回结果进行加工
+
+![image-20250517175356906](./images/image-20250517175356906.png)
+
+> [!Tip]
+>
+> 入站顺序 从左到右
+>
+> 出站顺序 从右到左
+>
+> Handler间通过ChannelHandlerContext.fireChannelRead(msg)传递处理的数据
+
+> [!Warning]
+>
+> * ChannelHandlerContext.channel().write(msg) 从尾部开始查找出站处理器
+> * ChannelHandlerContext.write(msg) 是从当前节点找上一个出站处理器
+
+
+
+### *ByteBuf*
+
+> [!Tip]
+>
+> Netty中的ByteBuf对NIO中的ByteBuffer进行了功能增强
+
+#### 创建
+
+```java
+// 直接内存
+ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(10);
+ByteBuf buffer = ByteBufAllocator.DEFAULT.directBuffer(10);
+
+// Java堆内存
+ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer(10);
+```
+
+> [!Note]
+>
+> * 直接内存创建和销毁的代价昂贵，但读写性能高（少一次内存复制），适合配合池化功能一起用
+> * 直接内存对 GC 压力小，因为这部分内存不受 JVM 垃圾回收的管理，但也要注意及时主动释放
+
+
+
+#### 池化
+
+池化的最大意义在于可以**重用** ByteBuf
+
+* 没有池化，则每次都得创建新的 ByteBuf 实例，这个操作对直接内存代价昂贵，就算是堆内存，也会增加 GC 压力
+* 有了池化，则可以重用池中 ByteBuf 实例，并且采用了与 jemalloc 类似的内存分配算法提升分配效率
+* 高并发时，池化功能更节约内存，减少内存溢出的可能
+
+> [!Tip]
+>
+> 默认开启池化，可通过`-Dio.netty.allocator.type={unpooled|pooled}`配置
+
+
+
+#### 结构
+
+![image-20250517181626745](./images/image-20250517181626745.png)
+
+
+
+#### 写入
+
+| 方法签名                                                     | 含义                   | 备注                                                |
+| ------------------------------------------------------------ | ---------------------- | --------------------------------------------------- |
+| writeBoolean(boolean value)                                  | 写入 boolean 值        | 用一字节 01\|00 代表true\|false                     |
+| writeByte(int value)                                         | 写入 byte 值           |                                                     |
+| writeShort(int value)                                        | 写入 short 值          |                                                     |
+| writeInt(int value)                                          | 写入 int 值            | （大端）Big Endian，即 0x250，写入后 00 00 02 50    |
+| writeIntLE(int value)                                        | 写入 int 值            | （小端）Little Endian，即 0x250，写入后 50 02 00 00 |
+| writeLong(long value)                                        | 写入 long 值           |                                                     |
+| writeChar(int value)                                         | 写入 char 值           |                                                     |
+| writeFloat(float value)                                      | 写入 float 值          |                                                     |
+| writeDouble(double value)                                    | 写入 double 值         |                                                     |
+| writeBytes(ByteBuf src)                                      | 写入 netty 的 ByteBuf  |                                                     |
+| writeBytes(byte[] src)                                       | 写入 byte[]            |                                                     |
+| writeBytes(ByteBuffer src)                                   | 写入 nio 的 ByteBuffer |                                                     |
+| int writeCharSequence(CharSequence sequence, Charset charset) | 写入字符串             |                                                     |
+
+
+
+#### 读取
+
+读过的内容，就属于废弃部分了，再读只能读那些尚未读取的部分，可以在 read 前先做个标记 mark
+
+```java
+buffer.markReaderIndex();
+// ...
+buffer.resetReaderIndex();
+```
+
+
+
+#### 扩容
+
+扩容规则是
+
+* 如何写入后数据大小**未超过 512**，则选择下一个 16 的整数倍，例如写入后大小为 12 ，则扩容后 capacity 是 16
+* 如果写入后数据大小**超过 512**，则选择下一个 2^n，例如写入后大小为 513，则扩容后 capacity 是 2^10=1024
+* 扩容不能超过 max capacity
+
+
+
+#### 内存回收
+
+> [!Tip]
+>
+> 主要针对直接内存
+
+* UnpooledHeapByteBuf 使用的是 JVM 内存，只需等 GC 回收内存即可
+* UnpooledDirectByteBuf 使用的就是直接内存了，需要特殊的方法来回收内存
+* PooledByteBuf 和它的子类使用了池化机制，需要更复杂的规则来回收内存
+
+
+
+Netty 采用了**引用计数法**（可参考笔记JVM垃圾回收篇）来控制回收内存，每个 ByteBuf 都实现了 ReferenceCounted 接口
+
+* 每个 ByteBuf 对象的初始计数为 1
+* 调用 **release** 方法计数减 1，如果计数为 0，ByteBuf 内存被回收
+* 调用 **retain** 方法计数加 1，表示调用者没用完之前，其它 handler 即使调用了 release 也不会造成回收
+* 当计数为 0 时，底层内存会被回收，这时即使 ByteBuf 对象还在，其各个方法均无法正常使用
+
+
+
+**一些实践规则**：
+
+* 入站 ByteBuf 处理原则
+  * 对原始 ByteBuf 不做处理，调用 ctx.fireChannelRead(msg) 向后传递，这时无须 release
+  * 将原始 ByteBuf **转换为其它类型**的 Java 对象，这时 ByteBuf 就没用了，**必须 release**
+  * 如果不调用 ctx.fireChannelRead(msg) 向后传递，那么也必须 release
+  * 注意各种异常，如果 ByteBuf 没有成功传递到下一个 ChannelHandler，必须 release
+  * 假设消息一直向后传，那么 TailContext 会负责释放未处理消息（原始的 ByteBuf）
+* 出站 ByteBuf 处理原则
+  * 出站消息最终都会转为 ByteBuf 输出，一直向前传，由 HeadContext flush 后 release
