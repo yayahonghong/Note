@@ -1498,6 +1498,14 @@ ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站�
 > [!Tip]
 >
 > Netty中的ByteBuf对NIO中的ByteBuffer进行了功能增强
+>
+> **优势**：
+>
+> * 池化 - 可以重用池中 ByteBuf 实例，更节约内存，减少内存溢出的可能
+> * 读写指针分离，不需要像 ByteBuffer 一样切换读写模式
+> * 可以自动扩容
+> * 支持链式调用，使用更流畅
+> * 很多地方体现零拷贝，例如 slice、duplicate、CompositeByteBuf
 
 #### 创建
 
@@ -1610,3 +1618,187 @@ Netty 采用了**引用计数法**（可参考笔记JVM垃圾回收篇）来控�
   * 假设消息一直向后传，那么 TailContext 会负责释放未处理消息（原始的 ByteBuf）
 * 出站 ByteBuf 处理原则
   * 出站消息最终都会转为 ByteBuf 输出，一直向前传，由 HeadContext flush 后 release
+
+
+
+#### 切片
+
+> [!Tip]
+>
+> ByteBuf的切片(Slice)是Netty提供的一种零拷贝机制，允许在不实际复制数据的情况下创建现有缓冲区的**视图**(view)。
+
+切片操作会创建一个新的ByteBuf实例，该实例与原始缓冲区共享相同的内存区域，但有自己的读写索引和标记。
+
+**特点**：
+
+- **零拷贝**：不实际复制数据，减少内存开销
+- **共享底层存储**：多个切片共享同一块内存
+- **独立索引**：每个切片有自己的读写索引
+- **视图限制**：切片只能访问原始缓冲区的一部分
+
+```java
+// 创建一个从readerIndex开始到writerIndex结束的切片
+ByteBuf slice = buffer.slice();
+
+// 创建一个从指定index开始，指定length长度的切片
+ByteBuf slice = buffer.slice(offset, length);
+
+// 创建一个切片并增加引用计数(防止原始缓冲区被释放)
+ByteBuf slice = buffer.retainedSlice();
+```
+
+> [!Caution]
+>
+> 原始的ByteBuf释放内存后，其切片就无法使用了，建议使用原始ByteBuf的`retainedSlice()`增加引用计数，或者切片的`retain()`方法
+
+
+
+#### 其他
+
+1. duplicate
+
+【零拷贝】的体现之一，就好比截取了原始 ByteBuf 所有内容，并且没有 max capacity 的限制，也是与原始 ByteBuf 使用同一块底层内存，只是读写指针是独立的
+
+
+
+2. copy
+
+会将底层内存数据进行**深拷贝**，因此无论读写，都与原始 ByteBuf 无关
+
+
+
+3. CompositeByteBuf
+
+【零拷贝】的体现之一，可以将多个 ByteBuf **合并**为一个逻辑上的 ByteBuf，避免拷贝
+
+```java
+CompositeByteBuf buf3 = ByteBufAllocator.DEFAULT.compositeBuffer();
+// true 表示增加新的 ByteBuf 自动递增 write index, 否则 write index 会始终为 0
+buf3.addComponents(true, buf1, buf2);
+```
+
+
+
+4. Unpooled
+
+Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创建、组合、复制等操作
+
+其跟【零拷贝】相关的 wrappedBuffer 方法，可以用来包装 ByteBuf
+
+
+
+---
+
+# Netty进阶
+
+## 粘包&半包
+
+在基于流的传输协议（如TCP）中，数据是以字节流的形式传输的，没有明确的消息边界，这会导致：
+
+1. **粘包（TCP粘包）**：发送方发送的多个数据包被接收方当作一个数据包接收
+2. **半包（拆包）**：接收方一次没有接收到完整的数据包，只接收了部分数据
+
+
+
+**原因**：
+
+1. **粘包原因**：
+   - 发送方使用Nagle算法，将多个小数据包合并发送
+   - 接收方缓冲区较大，一次读取了多个数据包
+2. **半包原因**：
+   - 发送的数据包大于接收方缓冲区大小
+   - 发送的数据包大于TCP最大报文长度
+   - 网络传输过程中发生分片
+
+
+
+### 解决方案
+
+Netty提供了多种解码器来处理粘包和半包问题：
+
+#### 1. 固定长度解码器 FixedLengthFrameDecoder
+
+- 每个数据包都严格按照固定长度进行拆分
+- 当累积读取到指定长度的数据后，解码器会将其作为一个完整消息
+
+```java
+// 每个数据包固定长度为100字节
+ch.pipeline().addLast(new FixedLengthFrameDecoder(100));
+```
+
+**特点**：
+
+- 实现简单
+- 效率高
+- 不够灵活，浪费带宽（需要填充数据）
+
+
+
+#### 2. 行分隔符解码器 LineBasedFrameDecoder
+
+- 以换行符(`\n`或`\r\n`)作为消息分隔符
+
+```java
+// 以换行符(\n或\r\n)作为消息分隔符
+ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
+```
+
+
+
+#### 3. 分隔符解码器 DelimiterBasedFrameDecoder
+
+```java
+// 使用自定义分隔符
+ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
+ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
+```
+
+
+
+#### 4. 长度字段解码器 LengthFieldBasedFrameDecoder
+
+- 基于消息头中的长度字段来标识整个消息的长度
+- 高度可配置，能适应各种协议格式
+
+```java
+// 参数说明：
+// maxFrameLength - 最大帧长度
+// lengthFieldOffset - 长度字段偏移量
+// lengthFieldLength - 长度字段字节数
+// lengthAdjustment - 长度调整值（长度字段之后还有多少字节才是内容）
+// initialBytesToStrip - 需要跳过的字节数
+ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(
+    1024 * 1024, 
+    0, 
+    4, 
+    0, 
+    4));
+```
+
+
+
+#### 自定义协议示例
+
+```java
+// 协议格式: [长度][内容]
+public class MyProtocolDecoder extends ByteToMessageDecoder {
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        if (in.readableBytes() < 4) {
+            return; // 长度字段不足，等待更多数据
+        }
+        
+        in.markReaderIndex(); // 标记读取位置
+        int length = in.readInt();
+        
+        if (in.readableBytes() < length) {
+            in.resetReaderIndex(); // 数据不足，重置读取位置
+            return;
+        }
+        
+        byte[] content = new byte[length];
+        in.readBytes(content);
+        out.add(new String(content, StandardCharsets.UTF_8));
+    }
+}
+```
