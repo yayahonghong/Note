@@ -1716,7 +1716,7 @@ Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创�
 
 Netty提供了多种解码器来处理粘包和半包问题：
 
-#### 1. 固定长度解码器 FixedLengthFrameDecoder
+1. 固定长度解码器 FixedLengthFrameDecoder
 
 - 每个数据包都严格按照固定长度进行拆分
 - 当累积读取到指定长度的数据后，解码器会将其作为一个完整消息
@@ -1734,7 +1734,7 @@ ch.pipeline().addLast(new FixedLengthFrameDecoder(100));
 
 
 
-#### 2. 行分隔符解码器 LineBasedFrameDecoder
+2. 行分隔符解码器 LineBasedFrameDecoder
 
 - 以换行符(`\n`或`\r\n`)作为消息分隔符
 
@@ -1745,7 +1745,7 @@ ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
 
 
 
-#### 3. 分隔符解码器 DelimiterBasedFrameDecoder
+3. 分隔符解码器 DelimiterBasedFrameDecoder
 
 ```java
 // 使用自定义分隔符
@@ -1755,7 +1755,7 @@ ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
 
 
 
-#### 4. 长度字段解码器 LengthFieldBasedFrameDecoder
+4. 长度字段解码器 LengthFieldBasedFrameDecoder
 
 - 基于消息头中的长度字段来标识整个消息的长度
 - 高度可配置，能适应各种协议格式
@@ -1777,7 +1777,7 @@ ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(
 
 
 
-#### 自定义协议示例
+自定义协议示例
 
 ```java
 // 协议格式: [长度][内容]
@@ -1802,3 +1802,196 @@ public class MyProtocolDecoder extends ByteToMessageDecoder {
     }
 }
 ```
+
+
+
+## Netty的HTTP
+
+```java
+        new ServerBootstrap()
+                .group(new NioEventLoopGroup())
+                // 服务端Channel实现
+                .channel(NioServerSocketChannel.class)
+                // 负责读写
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel channel) {
+                        channel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
+
+                        // Http编解码器
+                        channel.pipeline().addLast(new HttpServerCodec());
+
+                        channel.pipeline().addLast(new SimpleChannelInboundHandler<HttpRequest>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) {
+                                DefaultFullHttpResponse res = new DefaultFullHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK);
+                                byte[] bytes = "Hello Netty".getBytes(StandardCharsets.UTF_8);
+                                res.content().writeBytes(bytes);
+                                // 设置响应内容长度
+                                res.headers().setInt(CONTENT_LENGTH, bytes.length);
+                                ctx.writeAndFlush(res);
+                            }
+                        });
+                    }
+                })
+                .bind(8080);
+```
+
+
+
+## 自定义协议
+
+1. **协议标识**
+
+- **协议名称/版本**：明确协议标识及版本号，便于兼容性管理。
+- **端口号**：约定服务端监听端口（如HTTP-80，HTTPS-443），需避免冲突。
+
+------
+
+2. **消息结构**
+
+- 帧格式：定义消息头（Header）和消息体（Body）的组成。
+  - **Header**：包含元数据（如消息类型、长度、状态码、时间戳）。
+  - **Body**：承载实际数据（如JSON、二进制流）。
+- **边界标识**：通过定长字段、分隔符（如`\r\n`）或长度前缀标记消息边界。
+
+------
+
+3. **数据编码**
+
+- **序列化方式**：JSON（易读）、Protocol Buffers（高效）、XML（结构化）或自定义二进制格式。
+- **字符编码**：如UTF-8，确保多语言兼容。
+
+------
+
+4. **交互模型**
+
+- **通信模式**：请求-响应（如HTTP）、发布-订阅（如MQTT）或单向推送。
+- **状态管理**：无状态（如HTTP）或有状态（如FTP控制连接）。
+
+------
+
+5. **错误处理**
+
+- **错误码/消息**：定义标准错误码（如`404-Not Found`）和恢复机制。
+- **重试策略**：超时后重试次数、退避算法（Exponential Backoff）。
+
+------
+
+6. **安全机制**
+
+- **认证**：API Key、OAuth 2.0、JWT等。
+- **加密**：TLS/SSL传输加密或端到端加密（如Signal协议）。
+- **防篡改**：数字签名（HMAC）验证数据完整性。
+
+------
+
+7. **性能优化**
+
+- **压缩**：Gzip、Brotli减少传输体积。
+- **长连接**：复用TCP连接（如HTTP/2多路复用）。
+- **缓存控制**：类似HTTP的`Cache-Control`头。
+
+------
+
+8. **扩展性设计**
+
+- **预留字段**：Header中保留扩展位或自定义字段。
+- **版本协商**：客户端与服务端协商支持的协议版本（如TLS握手）。
+
+------
+
+9. **流量控制**
+
+- **限速机制**：令牌桶算法限制请求速率。
+- **拥塞控制**：动态调整发送窗口（类似TCP）。
+
+------
+
+10. **调试与日志**
+
+- **请求ID**：唯一标识请求，便于链路追踪。
+- **日志格式**：结构化日志（如JSON）记录关键事件。
+
+
+
+
+
+示例：
+
+* 魔数，用来在第一时间判定是否是无效数据包
+* 版本号，可以支持协议的升级
+* 序列化算法，消息正文到底采用哪种序列化反序列化方式，可以由此扩展，例如：json、protobuf、hessian、jdk
+* 指令类型
+* 请求序号，为了双工通信，提供异步能力
+* 正文长度
+* 消息正文
+
+
+
+**自定义编解码器**：
+
+```java
+@Slf4j
+public class MessageCodec extends ByteToMessageCodec<Message> {
+
+    @Override
+    protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
+        // 4 字节的魔数
+        out.writeBytes(new byte[]{1, 2, 3, 4});
+        // 1 字节的版本,
+        out.writeByte(1);
+        // 1 字节的序列化方式 jdk 0 , json 1
+        out.writeByte(0);
+        // 1 字节的指令类型
+        out.writeByte(msg.getMessageType());
+        // 4 个字节
+        out.writeInt(msg.getSequenceId());
+        // 无意义，对齐填充
+        out.writeByte(0xff);
+        // 获取内容的字节数组
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(msg);
+        byte[] bytes = bos.toByteArray();
+        // 长度
+        out.writeInt(bytes.length);
+        // 写入内容
+        out.writeBytes(bytes);
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        int magicNum = in.readInt();
+        byte version = in.readByte();
+        byte serializerType = in.readByte();
+        byte messageType = in.readByte();
+        int sequenceId = in.readInt();
+        in.readByte();
+        int length = in.readInt();
+        byte[] bytes = new byte[length];
+        in.readBytes(bytes, 0, length);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+        Message message = (Message) ois.readObject();
+        log.debug("{}, {}, {}, {}, {}, {}", magicNum, version, serializerType, messageType, sequenceId, length);
+        log.debug("{}", message);
+        out.add(message);
+    }
+}
+```
+
+> [!Warning]
+>
+> 以上编解码不能解决粘包半包问题，仍然需要在pipeline中添加`LengthFieldBasedFrameDecoder`帧解码器
+
+
+
+> [!Note]
+>
+> `@Sharable`注解在Netty中用于标记线程安全的Handler
+>
+> - 如`LengthFieldBasedFrameDecoder`，其未使用注解标记，会产生线程安全问题（每个Channel都应该使用新的实例），主要原因是该解码器需要记录半包消息等待消息完全到达，属于**有状态的类**
+>
+> - 对于编解码器类（一般线程安全），不应该继承 `ByteToMessageCodec` 或 `CombinedChannelDuplexHandler` ，因为其被限制了不能使用`@Sharable`注解
+>
+> - `MessageToMessageCodec`父类的子类可以使用`@Sharable`注解
