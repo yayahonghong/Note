@@ -3547,7 +3547,7 @@ set是Redis中的单列集合，满足下列特点：
 
 ZSet也就是SortedSet，其中每一个元素都需要指定一个score值和member值，具有以下特征：
 
-* 可以根据score值排序后
+* 可以根据score值排序
 * member必须唯一
 * 可以根据member查询分数
 

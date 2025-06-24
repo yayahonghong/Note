@@ -592,3 +592,18 @@ docker run -d \
   mongo
 ```
 
+
+
+## Zookeeper
+
+```bash
+docker run -d \
+--name zookeeper \
+--privileged=true \
+-p 2181:2181 \
+-v /docker/zookeeper/data:/data \
+-v /docker/zookeeper/conf:/conf \
+-v /docker/zookeeper/logs:/datalog \
+zookeeper
+```
+

@@ -1995,3 +1995,124 @@ public class MessageCodec extends ByteToMessageCodec<Message> {
 > - 对于编解码器类（一般线程安全），不应该继承 `ByteToMessageCodec` 或 `CombinedChannelDuplexHandler` ，因为其被限制了不能使用`@Sharable`注解
 >
 > - `MessageToMessageCodec`父类的子类可以使用`@Sharable`注解
+
+
+
+
+
+## 优化
+
+### 参数调优
+
+#### *CONNECT_TIMEOUT_MILLIS*
+
+* 属于 SocketChannal 参数
+* 用在客户端建立连接时，如果在指定毫秒内无法连接，会抛出 timeout 异常
+
+
+
+客户端进行配置：
+
+```java
+bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
+```
+
+
+
+> [!Tip]
+>
+> 在客户端
+>
+> ```java
+> serverBootstrap.option();       // 配置服务端参数
+> serverBootstrap.childOption();  // 配置客户端参数
+> ```
+
+
+
+#### *SO_BACKLOG*
+
+- 服务器端配置
+- 通过  `option(ChannelOption.SO_BACKLOG, value)` 来设置大小
+
+```mermaid
+sequenceDiagram
+
+participant c as client
+participant s as server
+participant sq as syns queue
+participant aq as accept queue
+
+s ->> s : bind()
+s ->> s : listen()
+c ->> c : connect()
+c ->> s : 1. SYN
+Note left of c : SYN_SEND
+s ->> sq : put
+Note right of s : SYN_RCVD
+s ->> c : 2. SYN + ACK
+Note left of c : ESTABLISHED
+c ->> s : 3. ACK
+sq ->> aq : put
+Note right of s : ESTABLISHED
+aq -->> s : 
+s ->> s : accept()
+```
+
+1. 第一次握手，client 发送 SYN 到 server，状态修改为 SYN_SEND，server 收到，状态改变为 SYN_REVD，并将该请求放入 sync queue 队列
+2. 第二次握手，server 回复 SYN + ACK 给 client，client 收到，状态改变为 ESTABLISHED，并发送 ACK 给 server
+3. 第三次握手，server 收到 ACK，状态改变为 ESTABLISHED，将该请求从 sync queue 放入 accept queue
+
+其中
+
+* 在 linux 2.2 之前，**backlog** 大小包括了两个队列的大小，在 2.2 之后，分别用下面两个参数来控制
+
+* sync queue - 半连接队列
+  * 大小通过 /proc/sys/net/ipv4/tcp_max_syn_backlog 指定，在 `syncookies` 启用的情况下，逻辑上没有最大值限制，这个设置便被忽略
+* accept queue - 全连接队列
+  * 其大小通过 /proc/sys/net/core/somaxconn 指定，在使用 listen 函数时，内核会根据传入的 backlog 参数与系统参数，取二者的较小值
+  * 如果 accpet queue 队列满了，server 将发送一个拒绝连接的错误信息到 client
+
+
+
+#### *ulimit -n value*
+
+操作系统级别参数，设置**进程可打开文件描述符数量上限**
+
+
+
+#### *TCP_NODELAY*
+
+`childOption(ChannelOption.TCP_NODELAY, true)` *// 关键配置*
+
+
+
+- **Nagle 算法**：TCP 默认启用该算法，会缓冲小数据包（等待一定时间或数据量达到 MSS 最大报文段大小），合并发送以减少网络拥塞。
+- **`TCP_NODELAY=true`**：禁用 Nagle 算法，数据立即发送，**降低延迟**（适合交互式应用，如实时游戏、SSH、RPC）。
+- **`TCP_NODELAY=false`**：启用 Nagle 算法，**提高吞吐量**（适合大文件传输等延迟不敏感场景）。
+
+
+
+#### *ALLOCATOR*
+
+用于配置 **内存分配器（ByteBufAllocator）**，决定如何分配和管理网络通信中的内存（ByteBuf）
+
+- **`PooledByteBufAllocator`**（默认）：基于内存池的高性能分配器，减少 GC 压力。
+- **`UnpooledByteBufAllocator`**：非池化分配器，每次请求都新建 `ByteBuf`（简单但效率低）。
+- **`PreferHeapByteBufAllocator`**：优先使用堆内存（`byte[]`）。
+
+`option(ChannelOption.ALLOCATOR, new PreferHeapByteBufAllocator())`
+
+`option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)`
+
+
+
+```bash
+# 指定内存池中每个区域的块大小（默认：16MB）
+-Dio.netty.allocator.pageSize=8192
+# 是否使用直接内存（默认：true）
+-Dio.netty.noPreferDirect=true
+# 是否开启池化
+-Dio.netty.allocator.type=pooled
+```
+
