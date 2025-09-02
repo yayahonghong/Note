@@ -8,27 +8,67 @@ theme:
     - navigation.tabs
     - navigation.sections
     - toc.integrate
-    - navigation.instant
-    - navigation.tracking
+    - content.code.annotate    # 代码注释
+    - content.tabs.link        # 内容标签页
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
 
-# 插件：自动为每个页面生成一个深入的目录 sidebar
+
 plugins:
   - search
 
-# 核心导航配置
+markdown_extensions:
+  - pymdownx.details      # 支持折叠内容块
+  - pymdownx.superfences  # 支持代码块和其他内容
+  - admonition           # 支持提示框
+  - toc:                 # 目录配置
+      permalink: true    # 标题锚点
+      toc_depth: 4      # 目录深度
+
+
 nav:
   - 首页: index.md
-  - JVM 详解: JVM/JVM.md
-  - 并发编程: 并发编程/并发编程.md
-  - Spring 核心: Spring/Spring.md
-  - Spring Boot: SpringBoot/SpringBoot.md
-  - SpringCloud: SpringCloud/SpringCloud.md
-  - MySQL: MySQL/MySQL.md
-  - Redis: Redis/Redis.md
-  - Netty 入门: Netty/Netty.md
-  - Docker 从入门到实践: Docker.md
-  - Linux 常用命令: Linux.md
-  - Git 原理与应用: Git/Git.md
+  - Java 技术栈:
+    - JVM 详解: JVM/JVM.md
+    - 并发编程: 并发编程/并发编程.md
+    - Java 基础: Java.md
+  - Spring 全家桶:
+    - Spring 核心: 
+      - 概述: Spring/Spring-Overview.md
+      - 基于XML的Spring应用: Spring/Spring-XML.md
+      - 基于注解的Spring应用: Spring/Spring-Annotation.md
+      - Spring: Spring/Spring.md
+    - Spring Boot: SpringBoot/SpringBoot.md
+    - SpringCloud 微服务:
+      - 概览: SpringCloud/index.md
+      - 概述: SpringCloud/SpringCloud-Overview.md
+      - MyBatis-Plus: SpringCloud/SpringCloud-MyBatisPlus.md
+  - 数据库技术:
+    - MySQL: MySQL/MySQL.md
+    - Redis: Redis/Redis.md
+  - 网络与中间件:
+    - Netty: Netty/Netty.md
+    - Kafka: Kafka.md
+    - Zookeeper: Zookeeper.md
+  - 运维技术:
+    - Docker: Docker.md
+    - Linux: Linux.md
+  - 开发工具:
+    - Git: Git/Git.md
+  - 其他:
+    - C++ 核心: C++核心编程.md
+    - 系统相关: 系统相关.md
 
 extra:
   social:
