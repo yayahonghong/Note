@@ -1,22 +1,22 @@
-# Docker概述
+## Docker概述
 
 Docker 是一个用于开发、发布和运行应用程序的开放平台。Docker 使您能够将应用程序与基础设施分离，以便您可以快速交付软件。借助 Docker，您可以像管理应用程序一样管理基础设施。通过利用 Docker 的方法来传送、测试和部署代码，您可以显著减少编写代码和在生产中运行代码之间的延迟。
 
-### Docker 的核心概念：
+#### Docker 的核心概念：
 - **镜像（Image）**：Docker 镜像是一个只读模板，包含了运行应用程序所需的所有文件、依赖和配置。镜像是容器的基础。
 - **容器（Container）**：容器是镜像的运行实例。容器是轻量级的、可移植的，并且与主机环境隔离。
 - **Docker Hub**：Docker Hub 是一个公共的镜像仓库，用户可以从中拉取和推送镜像。
 
-### Docker 的优势：
+#### Docker 的优势：
 - **轻量级**：容器共享主机的操作系统内核，因此比虚拟机更轻量。
 - **可移植性**：容器可以在任何支持 Docker 的环境中运行，确保开发、测试和生产环境的一致性。
 - **隔离性**：每个容器都运行在独立的环境中，互不干扰。
 
 ---
 
-# 安装Docker
+## 安装Docker
 
-### CentOS 7 安装 Docker
+#### CentOS 7 安装 Docker
 
 1. **卸载旧版本 Docker**（如果存在）：
    ```bash
@@ -86,9 +86,9 @@ Docker 是一个用于开发、发布和运行应用程序的开放平台。Dock
 
 ---
 
-# 部署应用
+## 部署应用
 
-### 以 MySQL 为例
+#### 以 MySQL 为例
 
 1. **运行 MySQL 容器**：
    
@@ -122,9 +122,9 @@ Docker 是一个用于开发、发布和运行应用程序的开放平台。Dock
 
 ---
 
-# 镜像&容器
+## 镜像&容器
 
-### 常用命令
+#### 常用命令
 
 1. **拉取镜像**：
    ```bash
@@ -168,9 +168,9 @@ Docker 是一个用于开发、发布和运行应用程序的开放平台。Dock
 
 ---
 
-# 数据卷
+## 数据卷
 
-### 数据卷操作
+#### 数据卷操作
 
 1. **创建数据卷**：
    ```bash
@@ -212,9 +212,9 @@ Docker 是一个用于开发、发布和运行应用程序的开放平台。Dock
 
 ---
 
-# 自定义镜像
+## 自定义镜像
 
-### Dockerfile 示例
+#### Dockerfile 示例
 
 ```dockerfile
 FROM centos:7  # 指定基础镜像
@@ -225,7 +225,7 @@ EXPOSE 80  # 暴露端口
 ENTRYPOINT ["nginx", "-g", "daemon off;"]  # 容器启动命令
 ```
 
-### 构建镜像
+#### 构建镜像
 
 ```bash
 docker build -t myapp:1.0 .
@@ -233,9 +233,9 @@ docker build -t myapp:1.0 .
 
 ---
 
-# 网络
+## 网络
 
-### 常用命令
+#### 常用命令
 
 1. **查看网络列表**：
    ```bash
@@ -259,9 +259,9 @@ docker build -t myapp:1.0 .
 
 ---
 
-# Docker Compose 快速部署
+## Docker Compose 快速部署
 
-### 示例 `docker-compose.yml`
+#### 示例 `docker-compose.yml`
 
 ```yaml
 version: '3'
@@ -276,7 +276,7 @@ services:
       MYSQL_ROOT_PASSWORD: example
 ```
 
-### 常用命令
+#### 常用命令
 
 1. **启动服务**：
    ```bash
@@ -295,7 +295,7 @@ services:
 
 ---
 
-# 常见问题
+## 常见问题
 
 1. **容器无法启动**：
    ```bash
@@ -309,9 +309,9 @@ services:
 
 
 
-# 常用部署脚本
+## 常用部署脚本
 
-## MySQl
+### MySQl
 
 ```bash
 docker run -d \
@@ -343,7 +343,7 @@ long_query_time = 2      # 超过 2 秒的查询视为慢查询
 
 
 
-## Redis
+### Redis
 
 ```bash
 docker run -d \
@@ -382,7 +382,7 @@ logfile "/logs/redis.log"
 
 
 
-## RabbitMQ
+### RabbitMQ
 
 ```bash
 docker run -d \
@@ -416,20 +416,20 @@ docker run -d \
 配置文件
 
 ```properties
-# 基础配置
+## 基础配置
 loopback_users.guest = false
 listeners.tcp.default = 5672
 
-# 内存和磁盘设置
+## 内存和磁盘设置
 vm_memory_high_watermark.relative = 0.6
 disk_free_limit.absolute = 2GB
 
-# 集群配置
-# cluster_formation.peer_discovery_backend = rabbit_peer_discovery_classic_config
-# cluster_formation.classic_config.nodes.1 = rabbit@rabbit1
-# cluster_formation.classic_config.nodes.2 = rabbit@rabbit2
+## 集群配置
+## cluster_formation.peer_discovery_backend = rabbit_peer_discovery_classic_config
+## cluster_formation.classic_config.nodes.1 = rabbit@rabbit1
+## cluster_formation.classic_config.nodes.2 = rabbit@rabbit2
 
-# 日志设置
+## 日志设置
 log.file.level = info
 log.file.rotation.date = $D0
 log.file.rotation.size = 50MB
@@ -437,7 +437,7 @@ log.file.rotation.size = 50MB
 
 
 
-## Nginx
+### Nginx
 
 ```bash
 docker run -d \
@@ -506,7 +506,7 @@ server {
 
 
 
-## Nacos
+### Nacos
 
 ```bash
 mkdir -p /docker/nacos/standalone/{logs,conf,data}
@@ -535,7 +535,7 @@ docker run -d \
 
 
 
-## ElasticSearch
+### ElasticSearch
 
 ```bash
 mkdir -p /docker/elasticsearch/{data,config,logs}
@@ -562,7 +562,7 @@ docker run -d \
 
 
 
-## PostgreSQL
+### PostgreSQL
 
 ```bash
 docker run -d \
@@ -579,7 +579,7 @@ docker run -d \
 
 
 
-## MongoDB
+### MongoDB
 
 ```bash
 docker run -d \
@@ -594,7 +594,7 @@ docker run -d \
 
 
 
-## Zookeeper
+### Zookeeper
 
 ```bash
 docker run -d \
