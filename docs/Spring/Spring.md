@@ -1,4 +1,6 @@
-# Spring概述
+# Spring
+
+## Spring概述
 
 > [!Tip]
 >
@@ -8,15 +10,15 @@
 
 ---
 
-## 传统JavaWeb开发的问题
+### 传统JavaWeb开发的问题
 
 ![dbaa7e60-1001-4281-a809-dbbe8c9f9eea](./images/dbaa7e60-1001-4281-a809-dbbe8c9f9eea.png)
 
 ![5ac6ac85-d68e-4906-b19b-1cd951b7dd02](./images/5ac6ac85-d68e-4906-b19b-1cd951b7dd02.png)
 
-## IoC、DI和AOP思想提出
+### IoC、DI和AOP思想提出
 
-### IoC
+#### IoC
 
 IoC思想： Inversion of Control，翻译为“**控制反转**”或“反转控制”，强调的是原来在程序中**创建Bean的权利**反转给**第三方**。
 
@@ -36,7 +38,7 @@ IoC思想： Inversion of Control，翻译为“**控制反转**”或“反转�
 
 ![f517ccd6-664c-4d4e-9fa3-d053e8c68fe9](./images/f517ccd6-664c-4d4e-9fa3-d053e8c68fe9.png)
 
-### DI
+#### DI
 
 上面使用BeanFactory的方式已经实现的"控制反转"，将Bean的创建权交给了BeanFactory，如果我们想将UserDao的创建权也反转给BeanFactory，与此同时UserService内部还需要用到UserDao实例对象，那应该怎样操作呢？
 
@@ -72,7 +74,7 @@ IoC思想： Inversion of Control，翻译为“**控制反转**”或“反转�
 
 
 
-### AOP
+#### AOP
 
 AOP，Aspect Oriented Programming，**面向切面编程**，是对面向对象编程OOP的升华。OOP是纵向对一个事物的抽象，一个对象包括静态的属性信息，包括动态的方法信息等。而AOP是横向的对不同事物的抽象，属性与属性、方法与方法、对象与对象都可以组成一个切面，而用这种思维去设计编程的方式叫做面向切面编程
 
@@ -80,7 +82,7 @@ AOP，Aspect Oriented Programming，**面向切面编程**，是对面向对象�
 
 ---
 
-## BeanFactory快速入门
+### BeanFactory快速入门
 
 1. 导入Spring的jar包或Maven坐标；
 
@@ -191,7 +193,7 @@ UserDao userService = (UserService) beanFactory.getBean("userService");
 
 
 
-## ApplicationContext快速入门
+### ApplicationContext快速入门
 
 ApplicationContext 称为Spring容器，内部封装了BeanFactory，比BeanFactory功能更丰富更强大，使用ApplicationContext 进行开发时，xml配置文件的名称习惯写成applicationContext.xml
 
@@ -205,7 +207,7 @@ System.out.println(userService);
 
 
 
-## BeanFactory与ApplicationContext的关系
+### BeanFactory与ApplicationContext的关系
 
 1. BeanFactory是Spring的早期接口，称为Spring的Bean工厂，ApplicationContext是后期更高级接口，称之为Spring 容器；
 
@@ -229,9 +231,9 @@ System.out.println(userService);
 
 ---
 
-# 基于xml的Spring应用
+## 基于xml的Spring应用
 
-## 常用配置
+### 常用配置
 
 Spring开发中主要是对Bean的配置，Bean的常用配置一览如下：
 
@@ -250,7 +252,7 @@ Spring开发中主要是对Bean的配置，Bean的常用配置一览如下：
 
 
 
-### Bean的别名配置
+#### Bean的别名配置
 
 可以为当前Bean指定多个别名，根据别名也可以获得Bean对象此时多个名称都可以获得UserDaoImpl实例对象
 
@@ -264,7 +266,7 @@ applicationContext.getBean("aaa");
 applicationContext.getBean("bbb");
 ```
 
-### Bean的范围配置
+#### Bean的范围配置
 
 默认情况下，<u>单纯的Spring环境</u>Bean的作用范围有两个：singleton和prototype
 
@@ -274,7 +276,7 @@ applicationContext.getBean("bbb");
   
   
 
-### Bean的延迟加载
+#### Bean的延迟加载
 
 当lazy-init设置为true时为延迟加载，也就是当Spring容器创建的时候，不会立即创建Bean实例，等待用到时再创建Bean实例并存储到单例池中去，后续在使用该Bean直接从单例池获取即可，本质上该Bean还是**单例**的
 
@@ -284,7 +286,7 @@ applicationContext.getBean("bbb");
 
 
 
-### Bean的初始化和销毁方法配置
+#### Bean的初始化和销毁方法配置
 
 Bean在被实例化后，可以执行指定的初始化方法完成一些初始化的操作，Bean在销毁之前也可以执行指定的销毁方法完成一些操作，初始化方法名称和销毁方法名称通过
 
@@ -337,7 +339,7 @@ public class UserDaoImpl implements UserDao, InitializingBean {
 
 ---
 
-### Bean的实例化配置
+#### Bean的实例化配置
 
 Spring的实例化方式主要如下两种：
 
@@ -440,7 +442,7 @@ public interface FactoryBean<T> {
 
 ---
 
-### Bean的依赖注入配置
+#### Bean的依赖注入配置
 
 Bean的依赖注入有两种方式：
 
@@ -556,7 +558,7 @@ Bean的依赖注入有两种方式：
 
 ---
 
-### Spring的其他配置标签
+#### Spring的其他配置标签
 
 Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是自定义标签
 
@@ -623,7 +625,7 @@ Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是�
 
 
 
-## Spring 的get方法
+### Spring 的get方法
 
 | 方法定义                                     | 返回值和参数                                                 |
 | ---------------------------------------- | ------------------------------------------------------ |
@@ -642,7 +644,7 @@ Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是�
 
 
 
-## Spring 配置非自定义Bean
+### Spring 配置非自定义Bean
 
 以上在xml 中配置的Bean都是自己定义的，例如：UserDaoImpl，UserServiceImpl。但是，在实际开发中有些功能类并不是我们自己定义的，而是使用的第三方jar包中的，那么，这些Bean要想让Spring进行管理，也需要对其进行配置
 
@@ -704,7 +706,7 @@ Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是�
 
 
 
-## Bean 实例化的基本流程
+### Bean 实例化的基本流程
 
 Spring容器在进行初始化时，会将xml配置的的信息封装成一个`BeanDefinition`对象，所有的BeanDefinition存储到一个名为`beanDefinitionMap`的Map集合中去，Spring框架在对该Map进行遍历，使用反射创建Bean实例对象，创建好的Bean对象存储在一个名为`singletonObjects`的Map集合中，当调用getBean方法时则最终从该Map集合中取出Bean实例对象返回。
 
@@ -724,7 +726,7 @@ Spring容器在进行初始化时，会将xml配置的的信息封装成一个`B
 
 
 
-## Spring的后处理器
+### Spring的后处理器
 
 Spring的后处理器是Spring对外开发的重要扩展点，允许我们介入到Bean的整个实例化流程中来，以达到**动态注册BeanDefinition，动态修改BeanDefinition，以及动态修改Bean**的作用。Spring主要有两种后处理器：
 
@@ -782,7 +784,7 @@ public class MyBeanFactoryPostProcessor2 implements BeanDefinitionRegistryPostPr
 
 
 
-### 案例：使用Spring的BeanFactoryPostProcessor扩展点完成自定义注解扫描
+#### 案例：使用Spring的BeanFactoryPostProcessor扩展点完成自定义注解扫描
 
 要求如下：
 
@@ -909,7 +911,7 @@ public interface BeanPostProcessor {
 
 
 
-### 案例：对Bean方法进行执行时间日志增强
+#### 案例：对Bean方法进行执行时间日志增强
 
 要求如下：
 
@@ -955,7 +957,7 @@ public class TImeLogBeanPostProcessor implements BeanPostProcessor {
 
 
 
-## Spring Bean的生命周期
+### Spring Bean的生命周期
 
 Spring Bean的生命周期是从 Bean 实例化之后，即通过反射创建出对象之后，到Bean成为一个完整对象，最终存储到单例池中，这个过程被称为Spring Bean的生命周期。
 
@@ -991,7 +993,7 @@ Spring Bean的初始化过程涉及如下几个过程：
 
 
 
-### Bean实例属性填充
+#### Bean实例属性填充
 
 BeanDefinition 中有对当前Bean实体的注入信息通过属性`propertyValues`进行了存储
 
@@ -1013,7 +1015,7 @@ Spring在进行属性注入时，会分为如下几种情况：
 
 
 
-#### 解决循环引用
+##### 解决循环引用
 
 Spring提供了**三级缓存**存储完整Bean实例和<u>半成品</u>Bean实例，用于解决循环引用问题
 
@@ -1053,7 +1055,7 @@ UserService和UserDao循环依赖的过程结合上述三级缓存描述如下�
   
   
 
-### 常用的Aware接口
+#### 常用的Aware接口
 
 Aware接口是一种**框架辅助属性注入**的一种思想，其他框架中也可以看到类似的接口。框架具备高度封装性，我们接触到的一般都是业务代码，一个**底层功能API**不能轻易的获取到，但是这不意味着永远用不到这些对象，如果用到了，就可以使用框架提供的类似Aware的接口，让框架给我们注入该对象。
 
@@ -1066,7 +1068,7 @@ Aware接口是一种**框架辅助属性注入**的一种思想，其他框架�
 
 
 
-### 一图总结
+#### 一图总结
 
 ![d58d7a4e-8220-4d4f-a386-5d4f5603f4a5](./images/d58d7a4e-8220-4d4f-a386-5d4f5603f4a5.png)
 
@@ -1074,7 +1076,7 @@ Aware接口是一种**框架辅助属性注入**的一种思想，其他框架�
 
 
 
-## Spring xml方式整合第三方框架
+### Spring xml方式整合第三方框架
 
 xml整合第三方框架有两种整合方案：
 
@@ -1084,7 +1086,7 @@ xml整合第三方框架有两种整合方案：
    
    
 
-### Spring整合MyBatis
+#### Spring整合MyBatis
 
 MyBatis提供了mybatis-spring.jar专门用于两大框架的整合。
 
@@ -1161,7 +1163,7 @@ class MapperScannerConfigurer implements BeanDefinitionRegistryPostProcessor, In
 
 
 
-### 其他框架
+#### 其他框架
 
 以Spring的context 命名空间为例，该方式是命名空间扩展方式。
 
@@ -1197,7 +1199,7 @@ jdbc.password=root
 
 
 
-### 某一个框架与Spring的集成开发
+#### 某一个框架与Spring的集成开发
 
 步骤分析：
 
@@ -1220,9 +1222,9 @@ jdbc.password=root
 
 ---
 
-# 基于注解的Spring应用
+## 基于注解的Spring应用
 
-## Bean的基本注解开发
+### Bean的基本注解开发
 
 使用注解对需要被Spring实例化的Bean进行标注，需要告诉Spring去哪找这些Bean，要配置组件扫描路径：
 
@@ -1291,7 +1293,7 @@ public class UserDaoImpl implements UserDao{
 
 
 
-## Bean依赖注入注解开发
+### Bean依赖注入注解开发
 
 Bean依赖注入的注解，主要是使用注解的方式替代xml的 标签完成属性的注入操作
 
@@ -1315,7 +1317,7 @@ Spring主要提供如下注解，用于在Bean内部进行属性注入的：
 
  
 
-### @Value注入
+#### @Value注入
 
 - 直接注入普通属性：
 
@@ -1356,7 +1358,7 @@ public void setUsername(String username){
 
 
 
-### @Autowired注入
+#### @Autowired注入
 
 用于根据 **类型** 进行注入
 
@@ -1389,7 +1391,7 @@ public void setUserDao(UserDao userDao){
 
 
 
-### @Qualifier注入
+#### @Qualifier注入
 
 `@Qualifier`配合`@Autowired`可以完成**根据名称**注入Bean实例，使用`@Qualifier`指定名称:
 
@@ -1407,7 +1409,7 @@ public void setUserDao(UserDao userDao){
 
 
 
-### @Resource注入
+#### @Resource注入
 
 @Resource注解既可以根据类型注入，也可以根据名称注入，**无参就是根据类型注入**，**有参数就是根据名称注入**
 
@@ -1429,7 +1431,7 @@ public void setUserDao(UserDao userDao){
 
 
 
-## 非自定义Bean注解开发
+### 非自定义Bean注解开发
 
 非自定义Bean不能像自定义Bean一样使用@Component进行管理，非自定义Bean要通过工厂的方式进行实例化，使用`@Bean`标注方法即可，@Bean的属性为beanName，如不指定为当前<font color=red>工厂方法名称</font>
 
@@ -1462,7 +1464,7 @@ public DataSource dataSource(){
   
   
 
-## Bean配置类的注解开发
+### Bean配置类的注解开发
 
 > [!Note]
 >
@@ -1529,7 +1531,7 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
 
 
 
-## Spring配置其他注解
+### Spring配置其他注解
 
 `@Primary`注解用于标注相同类型的Bean**优先使用权**，@Primary 是Spring3.0引入的，与@Component和@Bean一起使用，标注Bean的优先级更高，则在通过类型获取Bean或通过@Autowired根据类型进行注入时，会选用优先级更高的
 
@@ -1551,7 +1553,7 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
 
 
 
-## Spring注解解析原理
+### Spring注解解析原理
 
 ![f2162561-dae0-4621-838e-f067485ddb4d](./images/f2162561-dae0-4621-838e-f067485ddb4d.png)
 
@@ -1559,7 +1561,7 @@ ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig
 
 
 
-## Spring注解方式整合第三方框架
+### Spring注解方式整合第三方框架
 
 第三方框架整合，依然使用MyBatis作为整合对象
 
@@ -1651,21 +1653,21 @@ public class SpringConfiguration {
 
 ---
 
-# Spring的AOP开发
+## Spring的AOP开发
 
-## AOP简介
+### AOP简介
 
 <font color=red>AOP，Aspect Oriented Programming，面向切面编程</font>，是对面向对象编程OOP的升华。OOP是纵向对一个事物的抽象，一个对象包括静态的属性信息，包括动态的方法信息等。而AOP是横向的对不同事物的抽象，属性与属性、方法与方法、对象与对象都可以组成一个切面，而用这种思维去设计编程的方式叫做面向切面编程
 
 
 
-### AOP思想的实现方案
+#### AOP思想的实现方案
 
 <font color=red>动态代理技术</font>，在运行期间，对目标对象的方法进行增强，代理对象同名方法内可以执行原有逻辑的同时嵌入执行其他增强逻辑或其他对象的方法
 
 ![d9f5b485-3837-47a7-a9a4-5c18a62abe08](./images/d9f5b485-3837-47a7-a9a4-5c18a62abe08.png)
 
-#### AOP模拟实现
+##### AOP模拟实现
 
 ```java
 @Component
@@ -1703,7 +1705,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, ApplicationConte
 
 
 
-### AOP相关概念
+#### AOP相关概念
 
 | 概念    | 单词        | 解释                       |
 | ----- | --------- | ------------------------ |
@@ -1717,9 +1719,9 @@ public class AopBeanPostProcessor implements BeanPostProcessor, ApplicationConte
 
 
 
-## 基于xml方式配置AOP
+### 基于xml方式配置AOP
 
-### 快速入门
+#### 快速入门
 
 **步骤**
 
@@ -1777,7 +1779,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, ApplicationConte
    
    
 
-### AOP详细配置的细节
+#### AOP详细配置的细节
 
 - 切点表达式的配置方式
 
@@ -1789,7 +1791,7 @@ public class AopBeanPostProcessor implements BeanPostProcessor, ApplicationConte
   
   
 
-#### 配置语法
+##### 配置语法
 
 切点表达式是配置要对哪些连接点（哪些类的哪些方法）进行通知的增强，语法如下：
 
@@ -1822,7 +1824,7 @@ execution(* *..*.*(..))
 
 
 
-#### 通知类型
+##### 通知类型
 
 | 通知类型 | 配置方式                    | 执行时机                         |
 | ---- | ----------------------- | ---------------------------- |
@@ -1834,7 +1836,7 @@ execution(* *..*.*(..))
 
 
 
-#### 通知参数
+##### 通知参数
 
 通知方法在被调用时，Spring可以为其传递一些必要的参数
 
@@ -1877,7 +1879,7 @@ public void afterThrowing(JoinPoint joinPoint,Throwable th){
 
 
 
-#### 另一种配置方式
+##### 另一种配置方式
 
 AOP的另一种配置方式，该方式需要通知类实现Advice的子功能接口
 
@@ -1911,7 +1913,7 @@ public class Advices implements MethodBeforeAdvice, AfterReturningAdvice {
 
 
 
-#### 原理
+##### 原理
 
 xml解析器向Spring容器中注册了一个BeanPostProcessor，该BeanPostProcessor在需要切入的Bean的生命周期中生成了**代理对象**
 
@@ -1956,9 +1958,9 @@ public class CglibTest {
 
 
 
-## 基于注解方式配置AOP
+### 基于注解方式配置AOP
 
-### 基本使用
+#### 基本使用
 
 ```java
 @Component
@@ -1988,7 +1990,7 @@ public class MyAdvice {
 
 
 
-### 配置详解
+#### 配置详解
 
 ```java
     //前置通知
@@ -2032,15 +2034,15 @@ public class AnnoAdvice {
 
 
 
-### 原理解析
+#### 原理解析
 
 ![58a1ce43-0ca1-4473-b9bc-2a36dbccecf2](./images/58a1ce43-0ca1-4473-b9bc-2a36dbccecf2.png)
 
 
 
-## 基于AOP的声明式事务控制
+### 基于AOP的声明式事务控制
 
-### 概述
+#### 概述
 
 事务是开发中必不可少的东西，使用JDBC开发时，我们使用connnection对事务进行控制，使用MyBatis时，我们使用SqlSession对事务进行控制，缺点显而易见，当我们切换数据库访问技术时，事务控制的方式总会变化，Spring 就将这些技术基础上，提供了统一的控制事务的接口。
 
@@ -2065,7 +2067,7 @@ Spring事务编程相关的类主要有如下三个
 
 
 
-### xml方式
+#### xml方式
 
 导入Spring事务的相关的坐标，spring-jdbc坐标已经引入**spring-tx**坐标
 
@@ -2188,7 +2190,7 @@ http://www.springframework.org/schema/tx/spring-tx.xsd
 
 
 
-### 注解方式
+#### 注解方式
 
 在**方法上**添加@Transactional注解，该注解可以配置事务定义信息配置
 
@@ -2238,16 +2240,16 @@ public class SpringConfig {
 
 
 
-### 事务失效
+#### 事务失效
 
-#### **1. 方法非 `public` 修饰**
+##### **1. 方法非 `public` 修饰**
 
 - **问题**：Spring 事务基于 AOP 动态代理实现，默认只代理 `public` 方法。
 - **解决**：确保 `@Transactional` 注解的方法为 `public`。
 
 
 
-#### **2. 事务方法被同类内部调用**
+##### **2. 事务方法被同类内部调用**
 
 - **问题**：事务方法被同类中的其他方法直接调用（绕过代理对象）。
 
@@ -2284,7 +2286,7 @@ public class SpringConfig {
 
 
 
-#### **3. 异常未被正确抛出**
+##### **3. 异常未被正确抛出**
 
 - **问题**：默认事务仅对 `RuntimeException` 和 `Error` 回滚，其他异常需手动配置。
 - **解决**：
@@ -2293,7 +2295,7 @@ public class SpringConfig {
 
 
 
-#### **4. 事务传播机制配置错误**
+##### **4. 事务传播机制配置错误**
 
 - **问题**：默认传播机制为 `REQUIRED`，若嵌套事务配置不当，可能导致预期外的行为。
 
@@ -2305,9 +2307,9 @@ public class SpringConfig {
 
 ---
 
-# Spring整合Web环境
+## Spring整合Web环境
 
-## Javaweb三大组件
+### Javaweb三大组件
 
 Javaweb组件的特点
 
@@ -2319,7 +2321,7 @@ Javaweb组件的特点
 
 
 
-## 整合web的思路及实现
+### 整合web的思路及实现
 
 在进行Java开发时要遵循三层架构+MVC，Spring操作最核心的就是Spring容器，web层需要注入Service，service层需要注入Dao（Mapper），web层使用Servlet技术充当的话，需要在Servlet中获得Spring容器
 
@@ -2365,7 +2367,7 @@ public class SpringContextListener implements ServletContextListener {
 
 
 
-## web开发组件spring-web
+### web开发组件spring-web
 
 导入依赖(`pom.xml`)：
 
@@ -2435,7 +2437,7 @@ public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWeb
 
 
 
-## web层MVC框架思想与设计思路
+### web层MVC框架思想与设计思路
 
 原始Javaweb开发中，Servlet充当Controller的角色，Jsp充当View角色，JavaBean充当模型角色，后期Ajax异步流行后，在加上现在前后端分离开发模式成熟后，View就被原始Html+Vue替代。原始Javaweb开发中，Servlet充当Controller有很多弊端，显而易见的有如下几个：
 
@@ -2467,13 +2469,13 @@ public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWeb
 
 
 
-# SpringMVC框架
+## SpringMVC框架
 
 ---
 
-## SpringMVC简介
+### SpringMVC简介
 
-### SpringMVC概述
+#### SpringMVC概述
 
 SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布的组件，SpringMVC和Spring可以无缝整合，使用DispatcherServlet作为前端控制器，且内部提供了处理器映射器、处理器适配器、视图解析器等组件，可以简化JavaBean封装，Json转化、文件上传等操作。
 
@@ -2481,7 +2483,7 @@ SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布�
 
 
 
-### SpringMVC快速入门
+#### SpringMVC快速入门
 
 1. 导入`spring-webmvc`坐标（pom.xml）
 
@@ -2543,7 +2545,7 @@ public class UserController {
 
 
 
-### Controller中访问容器中的Bean
+#### Controller中访问容器中的Bean
 
 1. 创建一个applicationContext.xml文件
 
@@ -2580,7 +2582,7 @@ public class UserController {
    
    
 
-### SpringMVC关键组件浅析
+#### SpringMVC关键组件浅析
 
 | 组件                    | 描述                                                   | 常用类                          |
 | --------------------- | ---------------------------------------------------- | ---------------------------- |
@@ -2602,9 +2604,9 @@ public class UserController {
   
   
 
-## SpringMVC的请求处理
+### SpringMVC的请求处理
 
-### 请求映射路径的配置
+#### 请求映射路径的配置
 
 配置映射路径，映射器处理器才能找到Controller的方法资源，目前主流映射路径配置方式就是`@RequestMapping`
 
@@ -2677,9 +2679,9 @@ public enum RequestMethod {
 
 
 
-### 请求数据的接收
+#### 请求数据的接收
 
-#### 一般数据
+##### 一般数据
 
 - 当客户端提交的数据是<font color=red>普通键值对形式</font>时，直接使用同名形参接收即可
 
@@ -2746,7 +2748,7 @@ public enum RequestMethod {
 
 
 
-#### 接收Restful风格数据
+##### 接收Restful风格数据
 
 Rest(Representational State Transfer)表象化状态转变（表述性状态转变），在2000年被提出，基于HTTP、URI、xml、JSON等标准和协议，支持轻量级、跨平台、跨语言的架构设计。是Web服务的一种新网络应用程序的设计风格和开发方式。
 
@@ -2803,7 +2805,7 @@ Restful风格的请求，常见的规则有如下三点：
 
 
 
-#### 文件上传
+##### 文件上传
 
 接收文件上传的数据，文件上传的表单需要一定的要求，如下：
 
@@ -2871,7 +2873,7 @@ Restful风格的请求，常见的规则有如下三点：
 
 
 
-#### 获取请求头数据
+##### 获取请求头数据
 
 接收Http请求头数据，接收指定名称的请求头-->`@RequestHeader`
 
@@ -2912,7 +2914,7 @@ Restful风格的请求，常见的规则有如下三点：
 
 
 
-#### 获得转发Request域中数据
+##### 获得转发Request域中数据
 
 在进行资源之间转发时，有时需要将一些参数存储到request域中携带给下一个资源
 
@@ -2934,7 +2936,7 @@ Restful风格的请求，常见的规则有如下三点：
 
 
 
-#### 请求参数乱码的解决
+##### 请求参数乱码的解决
 
 Spring已经提供好的CharacterEncodingFilter来进行编码过滤
 
@@ -2956,7 +2958,7 @@ Spring已经提供好的CharacterEncodingFilter来进行编码过滤
 
 
 
-### Javaweb常用对象获取
+#### Javaweb常用对象获取
 
 获得Javaweb常见原生对象，有时在我们的Controller方法中需要用到Javaweb的原生对象，例如：Request、Response等，我们只需要将需要的对象以形参的形式写在方法上，SpringMVC框架在调用Controller方法时，会**自动传递**实参
 
@@ -2969,7 +2971,7 @@ Spring已经提供好的CharacterEncodingFilter来进行编码过滤
 
 
 
-### 请求静态资源
+#### 请求静态资源
 
 静态资源请求失效的原因，当DispatcherServlet的映射路径配置为 / 的时候，那么就覆盖的Tomcat容器默认的缺省Servlet，在Tomcat的config目录下有一个web.xml 是对所有的web项目的全局配置，其中有如下配置
 
@@ -3026,7 +3028,7 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 
 
-### 注解驱动`<mvc:annotation-driven/>`
+#### 注解驱动`<mvc:annotation-driven/>`
 
 静态资源配置的第二第三种方式我们可以正常访问静态资源了，但是Controller又无法访问了，报错404，即找不到对应的资源
 
@@ -3055,7 +3057,7 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 
 
-## SpringMVC的响应处理
+### SpringMVC的响应处理
 
 响应数据主要分为两大部分：
 
@@ -3065,7 +3067,7 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
   
   
 
-### 传统同步业务数据响应
+#### 传统同步业务数据响应
 
 传统同步业务在数据响应时，SpringMVC又涉及如下四种形式：
 
@@ -3111,7 +3113,7 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 
 
-### 前后端分离异步业务数据响应
+#### 前后端分离异步业务数据响应
 
 - 同步方式回写数据，是将数据响应给浏览器进行页面展示的，而异步方式回写数据一般是回写给Ajax引擎的，即谁访问服务器端，服务器端就将数据响应给谁
 
@@ -3129,9 +3131,9 @@ url-pattern配置为 / 的Servlet我们称其为缺省的Servlet，作用是当�
 
 
 
-## SpringMVC的拦截器
+### SpringMVC的拦截器
 
-### 拦截器 Interceptor 简介
+#### 拦截器 Interceptor 简介
 
 SpringMVC的拦截器Interceptor规范，主要是对Controller资源访问时进行拦截操作的技术，拦截后可以进行权限控制、功能增强等。拦截器有点类似 Javaweb开发中的Filter，但二者并不相同：
 
@@ -3157,7 +3159,7 @@ HandlerInterceptor接口方法的作用及其参数、返回值详解如下
 
 
 
-### 拦截器快速入门
+#### 拦截器快速入门
 
 实现HandlerInterceptor接口
 
@@ -3196,7 +3198,7 @@ HandlerInterceptor
 
 
 
-### 拦截器执行顺序
+#### 拦截器执行顺序
 
 ![b04a3e68-defc-4833-9cf6-24ef292be7b5](./images/b04a3e68-defc-4833-9cf6-24ef292be7b5.png)
 
@@ -3214,7 +3216,7 @@ Interceptor3不放行的情况
 
 
 
-### 拦截器执行原理
+#### 拦截器执行原理
 
 请求到来时先会使用组件HandlerMapping去匹配Controller的方法（Handler）和符合拦截路径的Interceptor，Handler和多个Interceptor被封装成一个`HandlerExecutionChain`的对象:
 
@@ -3236,9 +3238,9 @@ public class HandlerExecutionChain {
 
 
 
-## SpringMVC的全注解开发
+### SpringMVC的全注解开发
 
-### spring-mvc.xml 中组件转化为注解形式
+#### spring-mvc.xml 中组件转化为注解形式
 
 - 组件扫描，可以通过@ComponentScan注解完成；
 
@@ -3316,7 +3318,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
 
 
-### DispatcherServlet加载核心配置类
+#### DispatcherServlet加载核心配置类
 
 现在是使用SpringMVCConfig核心配置类提替代的spring-mvc.xml，怎么加载呢？参照Spring的ContextLoaderListener加载核心配置类的做法，定义了一个AnnotationConfigWebApplicationContext，通过代码注册核心配置类
 
@@ -3337,7 +3339,7 @@ public class MyAnnotationConfigWebApplicationContext extends AnnotationConfigWeb
  </init-param>
 ```
 
-### 消除web.xml
+#### 消除web.xml
 
 - Servlet3.0环境中，web容器提供了`javax.servlet.ServletContainerInitializer`接口，实现了该接口后，在对应的类加载路径的`META-INF/services` 目录创建一个名为`javax.servlet.ServletContainerInitializer`的文件，文件内容指定具体的ServletContainerInitializer实现类，那么，当web容器启动时就会运行这个初始化器做一些组件内的初始化工作；
 
@@ -3372,9 +3374,9 @@ public class MyAnnotationConfigDispatcherServletInitializer extends AbstractAnno
 
 
 
-## SpringMVC的组件原理剖析
+### SpringMVC的组件原理剖析
 
-### 前端控制器初始化
+#### 前端控制器初始化
 
 前端控制器DispatcherServlet是SpringMVC的入口，也是SpringMVC的大脑，主流程的工作都是在此完成的。DispatcherServlet 本质是个Servlet，当配置了 load-on-startup 时，会在服务器启动时就执行创建和执行初始化init方法，每次请求都会执行service方法
 
@@ -3465,7 +3467,7 @@ protected void initStrategies(ApplicationContext context) {
 
 
 
-### 前端控制器执行主流程
+#### 前端控制器执行主流程
 
 ![7ea58f93-0164-4675-b4e7-0491db88910b](./images/7ea58f93-0164-4675-b4e7-0491db88910b.png)
 
@@ -3473,9 +3475,9 @@ protected void initStrategies(ApplicationContext context) {
 
 
 
-## SpringMVC的异常处理机制
+### SpringMVC的异常处理机制
 
-### SpringMVC 异常的处理流程
+#### SpringMVC 异常的处理流程
 
 异常分为编译时异常和运行时异常，编译时异常我们 try-catch 进行捕获，捕获后自行处理，而运行时异常是不可预期的，就需要规范编码来避免，在SpringMVC中，不管是编译异常还是运行时异常，都可以最终由SpringMVC提供的异常处理器进行统一处理，这样就避免了随时随地捕获处理的繁琐性。
 
@@ -3487,7 +3489,7 @@ SpringMVC 处理异常的思路是，一路向上抛，都抛给前端控制器 
 
 
 
-### SpringMVC 的异常处理方式
+#### SpringMVC 的异常处理方式
 
 SpringMVC 提供了以下三种处理异常的方式：
 
@@ -3589,7 +3591,7 @@ public class GlobalExceptionHandler {
 
 
 
-### 异常处理机制原理剖析
+#### 异常处理机制原理剖析
 
 初始化加载的处理器异常解析器，SpringMVC的前置控制器在进行初始化的时候，会初始化处理器异常解析器HandlerExceptionResolver
 
@@ -3637,7 +3639,7 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 
 
 
-### SpringMVC 常用的异常解析器
+#### SpringMVC 常用的异常解析器
 
 | 接口或类                                | 说明                                                           |
 | ----------------------------------- | ------------------------------------------------------------ |

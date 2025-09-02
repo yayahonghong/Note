@@ -1,17 +1,19 @@
+# Netty
+
 
 > [!Important]
 >
 > Netty 网络编程开坑！！！q(≧▽≦q)
 
-# *NIO*基础
+## *NIO*基础
 
 > [!Tip]
 >
 > *NIO*：*Non-blocking I/O* 或 *New I/O*
 
-## 三大组件
+### 三大组件
 
-### *Channel* & *Buffer*
+#### *Channel* & *Buffer*
 
 channel 有一点类似于 stream，它就是读写数据的**双向通道**，可以从 channel 将数据读入 buffer，也可以将 buffer 的数据写入 channel，而之前的 stream 要么是输入，要么是输出，channel 比 stream 更为底层
 
@@ -43,11 +45,11 @@ buffer 则用来缓冲读写数据，常见的 buffer 有
 
 
 
-### *Selector*
+#### *Selector*
 
 从传统服务器设计开始：
 
-#### 多线程版设计
+##### 多线程版设计
 
 ```mermaid
 graph TD
@@ -68,7 +70,7 @@ end
 
 
 
-#### 线程池版设计
+##### 线程池版设计
 
 ```mermaid
 graph TD
@@ -87,7 +89,7 @@ end
 
 
 
-#### selector 版设计
+##### selector 版设计
 
 selector 的作用就是配合**一个线程**来管理多个 channel，获取这些 channel 上发生的事件，这些 channel 工作在非阻塞模式下，不会让线程吊死在一个 channel 上。适合连接数特别多，但流量低的场景（low traffic）
 
@@ -105,9 +107,9 @@ end
 
 
 
-## ByteBuffer
+### ByteBuffer
 
-### 示例
+#### 示例
 
 ```java
 @Slf4j
@@ -147,7 +149,7 @@ public class ChannelDemo1 {
 
 
 
-### 结构
+#### 结构
 
 ByteBuffer 有以下重要属性
 
@@ -181,9 +183,9 @@ compact 方法，是把未读完的部分向前压缩，然后切换至写模式
 
 
 
-### 常见方法
+#### 常见方法
 
-#### 分配空间
+##### 分配空间
 
 以字节为单位分配
 
@@ -197,7 +199,7 @@ ByteBuffer buffer = ByteBuffer.allocateDirect(16);
 
 
 
-#### 写入数据
+##### 写入数据
 
 有两种方式：
 
@@ -212,7 +214,7 @@ buffer.put((byte) 97);
 
 
 
-#### 读取数据
+##### 读取数据
 
 同样有两种办法
 
@@ -238,7 +240,7 @@ buffer.get();
 
 
 
-#### 转换字符串
+##### 转换字符串
 
 ```java
 ByteBuffer buffer = StandardCharsets.UTF_8.encode("你好");
@@ -258,7 +260,7 @@ String str = StandardCharsets.UTF_8.decode(buffer).toString();
 
 
 
-### Scattering Reads
+#### Scattering Reads
 
 分散读取
 
@@ -280,7 +282,7 @@ try (RandomAccessFile file = new RandomAccessFile("3parts.txt", "rw")) {
 
 
 
-### Gathering Writes
+#### Gathering Writes
 
 将多个 buffer 的数据填充至 channel
 
@@ -303,15 +305,15 @@ try (RandomAccessFile file = new RandomAccessFile("3parts.txt", "rw")) {
 
 
 
-## 文件编程
+### 文件编程
 
-### FileChannel
+#### FileChannel
 
 > [!Warning]
 >
 > FileChannel 只能工作在阻塞模式下
 
-#### 得到FileChannel
+##### 得到FileChannel
 
 不能直接打开 FileChannel，必须通过 FileInputStream、FileOutputStream 或者 RandomAccessFile 来获取 FileChannel，它们都有 getChannel 方法
 
@@ -321,7 +323,7 @@ try (RandomAccessFile file = new RandomAccessFile("3parts.txt", "rw")) {
 
 
 
-#### 读取
+##### 读取
 
 从 channel 读取数据填充 ByteBuffer，返回值表示读到了多少字节，-1 表示到达了文件的末尾
 
@@ -331,7 +333,7 @@ int readBytes = channel.read(buffer);
 
 
 
-#### 写入
+##### 写入
 
 ```java
 ByteBuffer buffer = ...;
@@ -351,13 +353,13 @@ while(buffer.hasRemaining()) {
 
 
 
-#### 关闭
+##### 关闭
 
 channel 必须关闭，不过调用了 FileInputStream、FileOutputStream 或者 RandomAccessFile 的 close 方法会间接地调用 channel 的 close 方法
 
 
 
-#### 位置
+##### 位置
 
 获取当前位置
 
@@ -379,7 +381,7 @@ channel.position(newPos);
 
 
 
-### Channel互传
+#### Channel互传
 
 ```java
 String FROM = "from.txt";
@@ -406,7 +408,7 @@ try (FileChannel from = new FileInputStream(FROM).getChannel();
 
 
 
-### Path
+#### Path
 
 jdk7 引入了 Path 和 Paths 类
 
@@ -425,7 +427,7 @@ Path projects = Paths.get("d:\\data", "projects"); //  d:\data\projects
 
 
 
-### Files
+#### Files
 
 ```java
 // 判断文件是否存在
@@ -454,9 +456,9 @@ Files.walkFileTree(Paths.get("E:/"), new SimpleFileVisitor<>() {...});
 
 
 
-## 网络编程
+### 网络编程
 
-### 阻塞 和 非阻塞
+#### 阻塞 和 非阻塞
 
 ```java
 ByteBuffer buffer = ByteBuffer.allocate(16);
@@ -497,7 +499,7 @@ while (true) {
 
 
 
-### Selector
+#### Selector
 
 * 一个线程配合 selector 就可以监控多个 channel 的事件，事件发生线程才去处理。避免非阻塞模式下所做无用功
 * 让这个线程能够被充分利用
@@ -506,7 +508,7 @@ while (true) {
 
 
 
-#### 创建
+##### 创建
 
 ```java
 Selector selector = Selector.open();
@@ -514,7 +516,7 @@ Selector selector = Selector.open();
 
 
 
-#### 绑定 Channel 事件
+##### 绑定 Channel 事件
 
 也称之为注册事件，绑定的事件 selector 才会关心 
 
@@ -533,7 +535,7 @@ SelectionKey key = channel.register(selector, 绑定事件);
 
 
 
-#### 监听 Channel 事件
+##### 监听 Channel 事件
 
 可以通过下面三种方法来监听是否有事件发生，方法的返回值代表有多少 channel 发生了事件
 
@@ -561,7 +563,7 @@ int count = selector.selectNow();
 
 
 
-####  select 何时不阻塞
+#####  select 何时不阻塞
 
 > [!Tip]
 >
@@ -576,7 +578,7 @@ int count = selector.selectNow();
 
 
 
-### 处理accept事件
+#### 处理accept事件
 
 ```java
     public static void main(String[] args) {
@@ -619,7 +621,7 @@ int count = selector.selectNow();
 
 
 
-### 处理read事件
+#### 处理read事件
 
 ```java
 	public static void main(String[] args) {
@@ -676,7 +678,7 @@ int count = selector.selectNow();
 
 
 
-### 消息边界处理
+#### 消息边界处理
 
 当接收的数据长度大于Buffer时，数据的边界就无法在一次处理中解决
 
@@ -790,7 +792,7 @@ b2 ->> b2: 01234567890abcdef3333\r
 
 
 
-#### ByteBuffer 大小分配
+##### ByteBuffer 大小分配
 
 * 每个 channel 都需要记录可能被切分的消息，因为 ByteBuffer **不能被多个 channel 共同使用**
 * ByteBuffer 不能太大，比如一个 ByteBuffer 1Mb 的话，要支持百万连接就要 1Tb 内存，因此需要设计大小可变的 ByteBuffer
@@ -799,7 +801,7 @@ b2 ->> b2: 01234567890abcdef3333\r
 
 
 
-### 处理write事件
+#### 处理write事件
 
 - 非阻塞模式下，无法保证把 buffer 中所有数据都写入 channel，因此需要追踪 write 方法的返回值（代表实际写入字节数）
 - 用 selector 监听所有 channel 的可写事件，每个 channel 都需要一个 key 来跟踪 buffer，但这样又会导致占用内存过多，就有两阶段策略
@@ -861,7 +863,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-### 多线程优化
+#### 多线程优化
 
 **优化思路**：
 
@@ -962,7 +964,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-### UDP传输
+#### UDP传输
 
 * UDP 是无连接的，client 发送数据不会管 server 是否开启
 * server 这边的 receive 方法会将接收到的数据存入 byte buffer，但如果数据报文超过 buffer 大小，多出来的数据会被默默抛弃
@@ -995,9 +997,9 @@ public static void main(String[] args) throws IOException {
 
 
 
-## 总结
+### 总结
 
-### IO模型
+#### IO模型
 
 无论哪种IO模型，数据从设备到用户空间的传输都分为**两个阶段**：
 
@@ -1011,7 +1013,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-####  **同步阻塞（BIO）**
+#####  **同步阻塞（BIO）**
 
 - **特点**：用户线程发起IO操作后**一直阻塞**，直到数据就绪并完成数据拷贝。
 - **流程**：
@@ -1025,7 +1027,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-#### **同步非阻塞（NIO）**
+##### **同步非阻塞（NIO）**
 
 - **特点**：用户线程**轮询检查**内核数据是否就绪，期间可执行其他任务。
 - **流程**：
@@ -1038,7 +1040,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-#### **多路复用（IO Multiplexing）**
+##### **多路复用（IO Multiplexing）**
 
 - **特点**：通过**单个线程监控多个IO事件**（如`select`/`poll`/`epoll`），就绪后再同步处理。
 - **流程**：
@@ -1052,7 +1054,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-#### **信号驱动IO**
+##### **信号驱动IO**
 
 - **特点**：通过信号通知数据就绪，数据拷贝仍需线程同步完成。
 - **流程**：
@@ -1065,7 +1067,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-#### **异步非阻塞（AIO）**
+##### **异步非阻塞（AIO）**
 
 - **特点**：用户线程发起IO操作后立即返回，**内核负责数据就绪和拷贝**，完成后通知线程。
 - **流程**：
@@ -1087,7 +1089,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-### 多路复用 VS BIO
+#### 多路复用 VS BIO
 
 **1. 资源占用更少，支持更高并发**
 
@@ -1135,7 +1137,7 @@ public static void main(String[] args) throws IOException {
 
 
 
-### 零拷贝
+#### 零拷贝
 
 传统的 IO 将一个文件通过 socket 写出
 
@@ -1191,7 +1193,7 @@ socket.getOutputStream().write(buf);
 
 
 
-### 异步IO
+#### 异步IO
 
 异步模型需要底层操作系统（Kernel）提供支持
 
@@ -1200,7 +1202,7 @@ socket.getOutputStream().write(buf);
 
 
 
-### 文件 AIO
+#### 文件 AIO
 
 ```java
         try (AsynchronousFileChannel channel = AsynchronousFileChannel.open(
@@ -1232,7 +1234,7 @@ socket.getOutputStream().write(buf);
 
 
 
-# Netty基础
+## Netty基础
 
 入门示例：
 
@@ -1280,9 +1282,9 @@ socket.getOutputStream().write(buf);
 
 
 
-## 组件
+### 组件
 
-### *EventLoop*
+#### *EventLoop*
 
 **事件循环对象**，*EventLoop* 本质是一个单线程执行器（同时维护了一个 Selector），处理 Channel 上源源不断的 io 事件。
 
@@ -1331,7 +1333,7 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
 
 
 
-### *Channel*
+#### *Channel*
 
 * close() 可以用来关闭 channel
 * closeFuture() 用来处理 channel 的关闭
@@ -1343,7 +1345,7 @@ static void invokeChannelRead(final AbstractChannelHandlerContext next, Object m
 
 
 
-#### *ChannelFuture*
+##### *ChannelFuture*
 
 1. **异步通知机制**：通过添加监听器获取操作完成通知
 2. **操作状态查询**：可检查操作是否完成、成功或取消
@@ -1394,7 +1396,7 @@ boolean cancel(boolean mayInterruptIfRunning);
 
 
 
-#### 正确关闭Channel
+##### 正确关闭Channel
 
 `channel.close()`也是一个异步操作，如果在关闭后才能进行其他任务，需要使用同步方法或者监听器
 
@@ -1421,7 +1423,7 @@ boolean cancel(boolean mayInterruptIfRunning);
 
 
 
-#### 关闭Netty
+##### 关闭Netty
 
 ```java
         NioEventLoopGroup group = new NioEventLoopGroup();
@@ -1434,7 +1436,7 @@ boolean cancel(boolean mayInterruptIfRunning);
 
 
 
-### *Future* & *Promise*
+#### *Future* & *Promise*
 
 ```mermaid
 graph LR
@@ -1469,7 +1471,7 @@ end
 
 
 
-### *Handler* & *Pipeline*
+#### *Handler* & *Pipeline*
 
 ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站两种。所有 ChannelHandler 被连成一串，就是 Pipeline
 
@@ -1493,7 +1495,7 @@ ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站�
 
 
 
-### *ByteBuf*
+#### *ByteBuf*
 
 > [!Tip]
 >
@@ -1507,7 +1509,7 @@ ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站�
 > * 支持链式调用，使用更流畅
 > * 很多地方体现零拷贝，例如 slice、duplicate、CompositeByteBuf
 
-#### 创建
+##### 创建
 
 ```java
 // 直接内存
@@ -1525,7 +1527,7 @@ ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer(10);
 
 
 
-#### 池化
+##### 池化
 
 池化的最大意义在于可以**重用** ByteBuf
 
@@ -1539,13 +1541,13 @@ ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer(10);
 
 
 
-#### 结构
+##### 结构
 
 ![image-20250517181626745](./images/image-20250517181626745.png)
 
 
 
-#### 写入
+##### 写入
 
 | 方法签名                                                     | 含义                   | 备注                                                |
 | ------------------------------------------------------------ | ---------------------- | --------------------------------------------------- |
@@ -1565,7 +1567,7 @@ ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer(10);
 
 
 
-#### 读取
+##### 读取
 
 读过的内容，就属于废弃部分了，再读只能读那些尚未读取的部分，可以在 read 前先做个标记 mark
 
@@ -1577,7 +1579,7 @@ buffer.resetReaderIndex();
 
 
 
-#### 扩容
+##### 扩容
 
 扩容规则是
 
@@ -1587,7 +1589,7 @@ buffer.resetReaderIndex();
 
 
 
-#### 内存回收
+##### 内存回收
 
 > [!Tip]
 >
@@ -1621,7 +1623,7 @@ Netty 采用了**引用计数法**（可参考笔记JVM垃圾回收篇）来控�
 
 
 
-#### 切片
+##### 切片
 
 > [!Tip]
 >
@@ -1653,7 +1655,7 @@ ByteBuf slice = buffer.retainedSlice();
 
 
 
-#### 其他
+##### 其他
 
 1. duplicate
 
@@ -1689,9 +1691,9 @@ Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创�
 
 ---
 
-# Netty进阶
+## Netty进阶
 
-## 粘包&半包
+### 粘包&半包
 
 在基于流的传输协议（如TCP）中，数据是以字节流的形式传输的，没有明确的消息边界，这会导致：
 
@@ -1712,7 +1714,7 @@ Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创�
 
 
 
-### 解决方案
+#### 解决方案
 
 Netty提供了多种解码器来处理粘包和半包问题：
 
@@ -1805,7 +1807,7 @@ public class MyProtocolDecoder extends ByteToMessageDecoder {
 
 
 
-## Netty的HTTP
+### Netty的HTTP
 
 ```java
         new ServerBootstrap()
@@ -1839,7 +1841,7 @@ public class MyProtocolDecoder extends ByteToMessageDecoder {
 
 
 
-## 自定义协议
+### 自定义协议
 
 1. **协议标识**
 
@@ -2000,11 +2002,11 @@ public class MessageCodec extends ByteToMessageCodec<Message> {
 
 
 
-## 优化
+### 优化
 
-### 参数调优
+#### 参数调优
 
-#### *CONNECT_TIMEOUT_MILLIS*
+##### *CONNECT_TIMEOUT_MILLIS*
 
 * 属于 SocketChannal 参数
 * 用在客户端建立连接时，如果在指定毫秒内无法连接，会抛出 timeout 异常
@@ -2030,7 +2032,7 @@ bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
 
 
 
-#### *SO_BACKLOG*
+##### *SO_BACKLOG*
 
 - 服务器端配置
 - 通过  `option(ChannelOption.SO_BACKLOG, value)` 来设置大小
@@ -2075,13 +2077,13 @@ s ->> s : accept()
 
 
 
-#### *ulimit -n value*
+##### *ulimit -n value*
 
 操作系统级别参数，设置**进程可打开文件描述符数量上限**
 
 
 
-#### *TCP_NODELAY*
+##### *TCP_NODELAY*
 
 `childOption(ChannelOption.TCP_NODELAY, true)` *// 关键配置*
 
@@ -2093,7 +2095,7 @@ s ->> s : accept()
 
 
 
-#### *ALLOCATOR*
+##### *ALLOCATOR*
 
 用于配置 **内存分配器（ByteBufAllocator）**，决定如何分配和管理网络通信中的内存（ByteBuf）
 
@@ -2108,11 +2110,11 @@ s ->> s : accept()
 
 
 ```bash
-# 指定内存池中每个区域的块大小（默认：16MB）
+## 指定内存池中每个区域的块大小（默认：16MB）
 -Dio.netty.allocator.pageSize=8192
-# 是否使用直接内存（默认：true）
+## 是否使用直接内存（默认：true）
 -Dio.netty.noPreferDirect=true
-# 是否开启池化
+## 是否开启池化
 -Dio.netty.allocator.type=pooled
 ```
 

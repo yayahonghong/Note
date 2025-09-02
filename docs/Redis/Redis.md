@@ -1,10 +1,12 @@
-# 基础篇
+# Redis
 
-## SQL与NoSQL
+## 基础篇
+
+### SQL与NoSQL
 
 SQL（Structured Query Language）和NoSQL（Not Only SQL）是两种不同类型的数据库管理系统，它们在数据存储、查询、扩展性和使用场景上有显著区别。
 
-### SQL（关系型数据库）
+#### SQL（关系型数据库）
 
 **特点：**
 
@@ -28,7 +30,7 @@ SQL（Structured Query Language）和NoSQL（Not Only SQL）是两种不同类�
 
 ------
 
-### NoSQL（非关系型数据库）
+#### NoSQL（非关系型数据库）
 
 **特点：**
 
@@ -53,7 +55,7 @@ SQL（Structured Query Language）和NoSQL（Not Only SQL）是两种不同类�
 
 ------
 
-### SQL vs NoSQL 对比
+#### SQL vs NoSQL 对比
 
 | 特性         | SQL                            | NoSQL                      |
 | :----------- | :----------------------------- | :------------------------- |
@@ -67,7 +69,7 @@ SQL（Structured Query Language）和NoSQL（Not Only SQL）是两种不同类�
 
 ------
 
-### 选择依据
+#### 选择依据
 
 1. **数据结构**：如果数据结构固定且关系复杂，选择SQL；如果数据结构多变，选择NoSQL。
 2. **扩展需求**：需要水平扩展时，NoSQL更合适。
@@ -78,7 +80,7 @@ SQL（Structured Query Language）和NoSQL（Not Only SQL）是两种不同类�
 
 
 
-## 认识Redis
+### 认识Redis
 
 Redis诞生于2009年全称是**Remote Dictionary Server**，远程词典服务器，是一个基于内存的键值型NoSQL数据库。
 
@@ -96,7 +98,7 @@ Redis诞生于2009年全称是**Remote Dictionary Server**，远程词典服务�
 
 
 ```bash
-# Docker 创建 Redis 容器命令
+## Docker 创建 Redis 容器命令
 docker run -d \
 --log-opt max-size=100m \
 --log-opt max-file=2 \
@@ -130,7 +132,7 @@ ping
 
 
 
-## Redis通用命令
+### Redis通用命令
 
 - KEYS：查看符合模板的所有key，支持通配符，**不建议在生产环境使用**
 - DEL：删除一个（或多个）指定的key
@@ -144,7 +146,7 @@ ping
 
 
 
-## key的结构
+### key的结构
 
 Redis没有类似MySQL中的Table的概念，我们该如何区分不同类型的key呢
 
@@ -166,13 +168,13 @@ product相关的key：heima:product:1
 
 
 
-## 数据类型
+### 数据类型
 
 ![image-20250222171456006](./images/image-20250222171456006.png)
 
 
 
-### String
+#### String
 
 String类型，也就是字符串类型，是Redis中最简单的存储类型。
 
@@ -200,7 +202,7 @@ String的常见命令有：
 
 
 
-### Hash
+#### Hash
 
 Hash类型，也叫散列，其value是一个无序字典，类似于Java中的HashMap结构。
 
@@ -228,7 +230,7 @@ Hash的常见命令有：
 
 
 
-### List
+#### List
 
 Redis中的List类型与Java中的LinkedList类似，可以看做是一个双向链表结构。既可以支持正向检索和也可以支持反向检索
 
@@ -254,7 +256,7 @@ List的常见命令有：
 
 
 
-### Set
+#### Set
 
 Redis的Set结构与Java中的HashSet类似，可以看做是一个value为null的HashMap。因为也是一个hash表，因此具备与HashSet类似的特征
 
@@ -280,7 +282,7 @@ Set的常见命令有：
 
 
 
-### SortedSet
+#### SortedSet
 
 Redis的SortedSet是一个可排序的set集合，与Java中的TreeSet有些类似，但底层数据结构却差别很大。SortedSet中的每一个元素都带有一个score属性，可以基于score属性对元素排序，底层的实现是一个跳表（SkipList）加 hash表。
 
@@ -309,7 +311,7 @@ SortedSet的常见命令有：
 
 
 
-## Java客户端
+### Java客户端
 
 在Redis官网中提供了各种语言的客户端，地址：https://redis.io/clients
 
@@ -317,7 +319,7 @@ SortedSet的常见命令有：
 
 
 
-### Jedis
+#### Jedis
 
 1.引入依赖
 
@@ -411,7 +413,7 @@ public class JedisPoolConnection {
 
 
 
-### SpringDataRedis
+#### SpringDataRedis
 
 SpringData是Spring中数据操作的模块，包含对各种数据库的集成，其中对Redis的集成模块就叫做SpringDataRedis，官网地址：https://spring.io/projects/spring-data-redis
 
@@ -487,7 +489,7 @@ spring:
 
 
 
-#### 序列化
+##### 序列化
 
 RedisTemplate可以接收任意Object作为值写入Redis，只不过写入前会把Object序列化为字节形式，默认是采用JDK序列化
 
@@ -530,7 +532,7 @@ RedisTemplate可以接收任意Object作为值写入Redis，只不过写入前�
 
 
 
-### StringRedisTemplate
+#### StringRedisTemplate
 
 尽管JSON的序列化方式可以满足我们的需求，但依然存在一些问题
 
@@ -576,9 +578,9 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-# 实战篇
+## 实战篇
 
-## 短信登录
+### 短信登录
 
 ![image-20250223172141477](./images/image-20250223172141477.png)
 
@@ -588,7 +590,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-## Redis实现缓存
+### Redis实现缓存
 
 **缓存**就是数据交换的缓冲区（称作Cache [ kæʃ ] ），是存贮数据的临时地方，一般读写性能较高
 
@@ -600,7 +602,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-### 缓存更新策略
+#### 缓存更新策略
 
 ![image-20250225160127096](./images/image-20250225160127096.png)
 
@@ -636,7 +638,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-### 缓存穿透
+#### 缓存穿透
 
 **缓存穿透**是指客户端请求的数据在缓存中和数据库中都不存在，这样缓存永远不会生效，这些请求都会到达数据库。
 
@@ -673,7 +675,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-### 缓存雪崩
+#### 缓存雪崩
 
 **缓存雪崩**是指在同一时段<font color=red>大量的缓存key同时失效或者Redis服务宕机</font>，导致大量请求到达数据库，带来巨大压力。
 
@@ -686,7 +688,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-### 缓存击穿
+#### 缓存击穿
 
 **缓存击穿问题**也叫热点Key问题，就是一个被**高并发访问**并且**缓存重建业务较复杂**的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。
 
@@ -706,7 +708,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 
 
-## 全局唯一ID
+### 全局唯一ID
 
 全局ID生成器，是一种在**分布式系统**下用来生成全局唯一ID的工具，需要满足以下特性：
 
@@ -720,7 +722,7 @@ Spring默认提供了一个**StringRedisTemplate**类，它的key和value的序�
 
 常见的实现方式包括UUID、Snowflake算法等。
 
-### 1. UUID（Universally Unique Identifier）
+#### 1. UUID（Universally Unique Identifier）
 
 UUID 是一个128位的标识符，通常表示为32个十六进制字符，分为5段（8-4-4-4-12）。UUID 的生成基于时间戳、随机数或硬件地址等，确保全局唯一性。
 
@@ -742,7 +744,7 @@ UUID 是一个128位的标识符，通常表示为32个十六进制字符，分�
 
 ------
 
-### 2. Snowflake算法
+#### 2. Snowflake算法
 
 Snowflake 是 Twitter 开源的分布式ID生成算法，生成一个64位的ID，结构如下：
 
@@ -770,7 +772,7 @@ Snowflake 是 Twitter 开源的分布式ID生成算法，生成一个64位的ID�
 
 
 
-### 3.Redis自增
+#### 3.Redis自增
 
 ```java
 @Component
@@ -802,7 +804,7 @@ public class RedisIdWorker {
 
 
 
-## 超卖问题
+### 超卖问题
 
 超卖问题（Overselling）是电商、秒杀、库存管理等场景中常见的核心问题，指系统**实际销售数量超过库存数量**，导致订单无法履约。
 
@@ -821,7 +823,7 @@ public class RedisIdWorker {
 
 **解决方案**：
 
-#### **1. 数据库层面：锁机制**
+##### **1. 数据库层面：锁机制**
 
 - **悲观锁（Pessimistic Lock）**
   通过 `SELECT ... FOR UPDATE` 锁定记录，确保串行操作。
@@ -847,7 +849,7 @@ public class RedisIdWorker {
   **优点**：无锁竞争，适合高并发。
   **缺点**：需处理更新失败（如重试或提示用户）。
 
-#### **2. 分布式锁**
+##### **2. 分布式锁**
 
 - **Redis 锁**
   使用 `SET key value NX EX` 实现原子锁：
@@ -863,7 +865,7 @@ public class RedisIdWorker {
 
   **注意**：需解决锁过期和误删问题（如 Redlock 算法）。
 
-#### **3. 缓存层原子操作**
+##### **3. 缓存层原子操作**
 
 - **Redis 原子扣减**
   利用 Redis 的原子命令（如 `DECR` 或 Lua 脚本）：
@@ -891,7 +893,7 @@ public class RedisIdWorker {
       # 恢复库存：redis.incr("product_1_stock")
   ```
 
-#### **4. 消息队列削峰**
+##### **4. 消息队列削峰**
 
 - 将请求放入队列（如 Kafka、RabbitMQ），由消费者顺序处理：
 
@@ -909,9 +911,9 @@ public class RedisIdWorker {
 
 
 
-## 一人一单
+### 一人一单
 
-### 单实例部署
+#### 单实例部署
 
 某些业务只允许用户进行一次交易
 
@@ -939,7 +941,7 @@ synchronized (userId.toString().intern()) {
 
 
 
-### 多实例部署
+#### 多实例部署
 
 > [!CAUTION]
 >
@@ -974,9 +976,9 @@ synchronized (userId.toString().intern()) {
 
 
 
-## 基于Redis的分布式锁
+### 基于Redis的分布式锁
 
-### 简单实现
+#### 简单实现
 
 实现分布式锁时需要实现的两个基本方法：
 
@@ -1027,7 +1029,7 @@ DEL lock
 
 
 
-### 锁误删问题
+#### 锁误删问题
 
 主要发生在某个线程阻塞时锁超时释放了，其他线程就可以获得锁，当被阻塞的线程恢复后就会删除不属于自己的锁
 
@@ -1043,7 +1045,7 @@ DEL lock
 
 
 
-#### 原子性问题
+##### 原子性问题
 
 如果查询和删除锁不能原子性执行，就仍然有可能发生锁误删问题
 
@@ -1120,7 +1122,7 @@ return 0
 
 
 
-### Redission
+#### Redission
 
 基于`SETNX`实现的分布式锁存在下面的问题
 
@@ -1136,7 +1138,7 @@ return 0
 
 
 
-#### 快速入门
+##### 快速入门
 
 引入依赖
 
@@ -1175,7 +1177,7 @@ public class RedisConfig {
 
 
 
-#### 可重入锁原理
+##### 可重入锁原理
 
 利用hash结构记录线程id和重入次数
 
@@ -1231,7 +1233,7 @@ end;
 
 
 
-#### 重试机制和看门狗
+##### 重试机制和看门狗
 
 •**可重试**：利用信号量和PubSub功能实现等待、唤醒，获取锁失败的重试机制
 
@@ -1239,7 +1241,7 @@ end;
 
 
 
-#### 主从一致性
+##### 主从一致性
 
 原理：多个独立的Redis节点，必须在所有节点都获取重入锁，才算获取锁成功
 
@@ -1249,7 +1251,7 @@ end;
 
 
 
-## 基于Redis的消息队列
+### 基于Redis的消息队列
 
 > [!TIP]
 >
@@ -1272,7 +1274,7 @@ Redis提供了三种不同的方式来实现消息队列：
 
 
 
-### 使用list实现
+#### 使用list实现
 
 Redis的list数据结构是一个双向链表，很容易模拟出队列效果。队列是入口和出口不在一边，因此我们可以利用：LPUSH 结合 RPOP、或者 RPUSH 结合 LPOP来实现。
 
@@ -1295,7 +1297,7 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 
 
-### 使用PubSub实现
+#### 使用PubSub实现
 
 **PubSub**（发布订阅）是Redis2.0版本引入的消息传递模型。顾名思义，消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有订阅者都能收到相关消息。
 
@@ -1319,7 +1321,7 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 
 
-### 使用Stream实现
+#### 使用Stream实现
 
 `Stream`是Redis5.0引入的一种数据类型，可以实现功能较完善的消息队列
 
@@ -1361,16 +1363,16 @@ STREAM类型消息队列的XREAD命令特点：
 ![image-20250316160957819](./images/image-20250316160957819.png)
 
 ```bash
-# 创建消费者组
+## 创建消费者组
 xgroup create key groupName ID
 
-# 删除消费者组
+## 删除消费者组
 xgroup destroy key groupName
 
-# 将消费者添加到消费者组
+## 将消费者添加到消费者组
 xgroup createconsumer key groupName consumerName
 
-# 删除消费者组中的消费者
+## 删除消费者组中的消费者
 xgroup delconsumer key groupName consumerName
 ```
 
@@ -1380,7 +1382,7 @@ xgroup delconsumer key groupName consumerName
 
 
 
-## Feed流模式（推流）
+### Feed流模式（推流）
 
 Feed流产品有两种常见的模式：
 
@@ -1419,7 +1421,7 @@ Feed流中的数据会不断更新，数据的角标也会变化，所以不能�
 
 
 
-## GEO数据（Redis）
+### GEO数据（Redis）
 
 GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中加入了对GEO的支持，允许存储地理坐标信息，帮助我们根据经纬度来检索数据。常见的命令有：
 
@@ -1439,7 +1441,7 @@ GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中�
 
 
 
-## BitMap
+### BitMap
 
 > [!NOTE]
 >
@@ -1487,7 +1489,7 @@ BitMap的操作命令有：
 
 
 
-## HyperLogLog&&UV统计
+### HyperLogLog&&UV统计
 
 - **UV**：全称**U**nique **V**isitor，也叫独立访客量，是指通过互联网访问、浏览这个网页的自然人。1天内同一个用户多次访问该网站，只记录1次。
 
@@ -1535,9 +1537,9 @@ Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16k
 
 ---
 
-# 高级篇
+## 高级篇
 
-## 分布式缓存
+### 分布式缓存
 
 单机Redis存在如下问题：
 
@@ -1555,7 +1557,7 @@ Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16k
 
 
 
-### Redis持久化
+#### Redis持久化
 
 Redis有两种持久化方案：
 
@@ -1564,7 +1566,7 @@ Redis有两种持久化方案：
 
 
 
-#### RDB持久化
+##### RDB持久化
 
 RDB全称Redis Database Backup file（Redis数据备份文件），也被叫做Redis数据快照。简单来说就是把内存中的所有数据都记录到磁盘中。当Redis实例故障重启后，从磁盘读取快照文件，恢复数据。快照文件称为RDB文件，默认是保存在当前运行目录。
 
@@ -1582,7 +1584,7 @@ RDB持久化在四种情况下会执行：
 Redis内部有触发RDB的机制，可以在redis.conf文件中找到，格式如下：
 
 ```properties
-# 900秒内，如果至少有1个key被修改，则执行bgsave ， 如果是save "" 则表示禁用RDB
+## 900秒内，如果至少有1个key被修改，则执行bgsave ， 如果是save "" 则表示禁用RDB
 save 900 1  
 save 300 10  
 save 60 10000 
@@ -1593,13 +1595,13 @@ save 60 10000
 RDB的其它配置也可以在redis.conf文件中设置：
 
 ```properties
-# 是否压缩 ,建议不开启，压缩也会消耗cpu，磁盘的话不值钱
+## 是否压缩 ,建议不开启，压缩也会消耗cpu，磁盘的话不值钱
 rdbcompression yes
 
-# RDB文件名称
+## RDB文件名称
 dbfilename dump.rdb  
 
-# 文件保存的路径目录
+## 文件保存的路径目录
 dir ./ 
 ```
 
@@ -1632,7 +1634,7 @@ RDB的缺点？
 
 
 
-#### AOF持久化
+##### AOF持久化
 
 AOF全称为Append Only File（追加文件）。Redis处理的每一个写命令都会记录在AOF文件，可以看做是命令日志文件。
 
@@ -1641,9 +1643,9 @@ AOF全称为Append Only File（追加文件）。Redis处理的每一个写命�
 AOF**默认是关闭的**，需要修改redis.conf配置文件来开启AOF：
 
 ```properties
-# 是否开启AOF功能，默认是no
+## 是否开启AOF功能，默认是no
 appendonly yes
-# AOF文件的名称
+## AOF文件的名称
 appendfilename "appendonly.aof"
 ```
 
@@ -1652,11 +1654,11 @@ appendfilename "appendonly.aof"
 AOF的命令记录的频率也可以通过redis.conf文件来配置：
 
 ```properties
-# 表示每执行一次写命令，立即记录到AOF文件
+## 表示每执行一次写命令，立即记录到AOF文件
 appendfsync always 
-# 写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案
+## 写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案
 appendfsync everysec 
-# 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘
+## 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘
 appendfsync no
 ```
 
@@ -1677,9 +1679,9 @@ appendfsync no
 Redis也会在触发阈值时自动去重写AOF文件。阈值也可以在redis.conf中配置：
 
 ```properties
-# AOF文件比上次文件 增长超过多少百分比则触发重写
+## AOF文件比上次文件 增长超过多少百分比则触发重写
 auto-aof-rewrite-percentage 100
-# AOF文件体积最小多大以上才触发重写 
+## AOF文件体积最小多大以上才触发重写 
 auto-aof-rewrite-min-size 64mb 
 ```
 
@@ -1699,11 +1701,11 @@ auto-aof-rewrite-min-size 64mb
 
 
 
-### 主从集群
+#### 主从集群
 
-### 哨兵
+#### 哨兵
 
-### 分片集群
+#### 分片集群
 
 以上内容详见笔记[SpringCloud-Redis](./../SpringCloud/SpringCloud微服务.md)
 
@@ -1711,7 +1713,7 @@ auto-aof-rewrite-min-size 64mb
 
 
 
-## 多级缓存
+### 多级缓存
 
 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库
 
@@ -1747,9 +1749,9 @@ auto-aof-rewrite-min-size 64mb
 
 
 
-### JVM进程缓存
+#### JVM进程缓存
 
-#### Caffeine
+##### Caffeine
 
 - 分布式缓存，例如Redis：
   - 优点：存储容量更大、可靠性更好、可以在集群间共享
@@ -1834,7 +1836,7 @@ Caffeine提供了三种缓存清除策略：
 
 
 
-#### 案例
+##### 案例
 
 ```java
 @Configuration
@@ -1876,7 +1878,7 @@ public class ItemController {
 
 
 
-### Lua入门
+#### Lua入门
 
 `Nginx`编程需要用到Lua语言，Lua 是一种轻量小巧的脚本语言，用标准C语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。官网：https://www.lua.org/
 
@@ -1888,7 +1890,7 @@ public class ItemController {
 
 
 
-#### 变量
+##### 变量
 
 Lua中支持的常见数据类型包括：
 
@@ -1941,7 +1943,7 @@ print(map.age)
 
 
 
-#### 循环
+##### 循环
 
 遍历数组：
 
@@ -1968,7 +1970,7 @@ end
 
 
 
-#### 函数
+##### 函数
 
 定义函数的语法：
 
@@ -1989,7 +1991,7 @@ end
 
 
 
-#### 条件控制
+##### 条件控制
 
 ```lua
 if(布尔表达式)
@@ -2008,7 +2010,7 @@ end
 
 
 
-### OpenResty
+#### OpenResty
 
 OpenResty® 是一个基于 Nginx的高性能 Web 平台，用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。具备下列特点：
 
@@ -2020,7 +2022,7 @@ OpenResty® 是一个基于 Nginx的高性能 Web 平台，用于方便地搭建
 
 
 
-#### OpenResty监听请求
+##### OpenResty监听请求
 
 OpenResty的很多功能都依赖于其目录下的Lua库，需要在nginx.conf中指定依赖库的目录，并导入依赖：
 
@@ -2029,9 +2031,9 @@ OpenResty的很多功能都依赖于其目录下的Lua库，需要在nginx.conf�
 修改`/usr/local/openresty/nginx/conf/nginx.conf`文件，在其中的http下面，添加下面代码：
 
 ```nginx
-#lua 模块
+##lua 模块
 lua_package_path "/usr/local/openresty/lualib/?.lua;;";
-#c模块     
+##c模块     
 lua_package_cpath "/usr/local/openresty/lualib/?.so;;";  
 ```
 
@@ -2060,7 +2062,7 @@ ngx.say('内容')
 
 
 
-#### 请求参数处理
+##### 请求参数处理
 
 `openresty`提供了API获取请求参数
 
@@ -2068,7 +2070,7 @@ ngx.say('内容')
 
 
 
-#### 查询Tomcat
+##### 查询Tomcat
 
 nginx提供了内部API用以发送http请求：
 
@@ -2100,7 +2102,7 @@ local resp = ngx.location.capture("/path",{
 
 
 
-#### **封装http工具**
+##### **封装http工具**
 
 在`/usr/local/openresty/lualib`目录下，新建一个common.lua文件：
 
@@ -2139,7 +2141,7 @@ return _M
 
 
 
-#### **CJSON工具类**
+##### **CJSON工具类**
 
 OpenResty提供了一个cjson的模块用来处理JSON的序列化和反序列化。
 
@@ -2173,7 +2175,7 @@ print(obj.name)
 
 
 
-#### 基于ID负载均衡
+##### 基于ID负载均衡
 
 实际开发中，OpenResty需要对tomcat集群做负载均衡。
 
@@ -2238,7 +2240,7 @@ nginx -s reload
 
 
 
-#### Redis缓存
+##### Redis缓存
 
 **Redis缓存预热**
 
@@ -2337,7 +2339,7 @@ return _M
 
 
 
-#### Nginx本地缓存
+##### Nginx本地缓存
 
 OpenResty为Nginx提供了**shared dict**的功能，可以在nginx的多个worker之间共享数据，实现缓存功能。
 
@@ -2395,7 +2397,7 @@ end
 
 
 
-### 缓存同步
+#### 缓存同步
 
 > [!NOTE]
 >
@@ -2406,7 +2408,7 @@ end
 
 
 
-#### 缓存同步策略
+##### 缓存同步策略
 
 1. **设置有效期**：给缓存设置有效期，到期后自动删除。再次查询时更新
 
@@ -2443,7 +2445,7 @@ end
 
 
 
-#### Canal
+##### Canal
 
 **Canal [kə'næl]**，译意为水道/管道/沟渠，canal是阿里巴巴旗下的一款开源项目，基于Java开发。基于数据库增量日志解析，提供增量数据订阅&消费。GitHub的地址：https://github.com/alibaba/canal
 
@@ -2457,7 +2459,7 @@ Canal是基于mysql的主从同步来实现的（Canal就是把自己**伪装成
 
 
 
-#### 监听Canal
+##### 监听Canal
 
 我们可以利用Canal提供的Java客户端，监听Canal通知消息。当收到变化的消息时，完成对缓存的更新。
 
@@ -2573,7 +2575,7 @@ public class ItemHandler implements EntryHandler<Item> {
 
 
 
-## Redis最佳实践
+### Redis最佳实践
 
 > [!NOTE]
 >
@@ -2581,9 +2583,9 @@ public class ItemHandler implements EntryHandler<Item> {
 
 
 
-### Redis键值设计
+#### Redis键值设计
 
-#### 优雅的key结构
+##### 优雅的key结构
 
 Redis的Key虽然可以自定义，但最好遵循下面的几个最佳实践约定：
 
@@ -2602,7 +2604,7 @@ Redis的Key虽然可以自定义，但最好遵循下面的几个最佳实践约
 
 
 
-#### 拒绝BigKey
+##### 拒绝BigKey
 
 BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
@@ -2623,7 +2625,7 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
 
 
-##### **BigKey的危害**
+###### **BigKey的危害**
 
 - 网络阻塞
   - 对BigKey执行读请求时，少量的QPS就可能导致带宽使用率被占满，导致Redis实例，乃至所在物理机变慢
@@ -2636,7 +2638,7 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
 
 
-##### **发现BigKey**
+###### **发现BigKey**
 
 1. `redis-cli --bigkeys` 命令
 
@@ -2669,7 +2671,7 @@ BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：
 
 
 
-##### **删除BigKaey**
+###### **删除BigKaey**
 
 BigKey内存占用较多，即便时删除这样的key也需要耗费很长时间，导致Redis主线程阻塞，引发一系列问题。
 
@@ -2681,11 +2683,11 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 
 
-#### 恰当的数据类型
+##### 恰当的数据类型
 
 1. **例1：比如存储一个User对象，我们有三种存储方式：**
 
-##### ①方式一：json字符串
+###### ①方式一：json字符串
 
 | user:1 | {"name": "Jack", "age": 21} |
 | :----: | :-------------------------: |
@@ -2694,7 +2696,7 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 缺点：数据耦合，不够灵活
 
-##### ②方式二：字段打散
+###### ②方式二：字段打散
 
 | user:1:name | Jack |
 | :---------: | :--: |
@@ -2704,7 +2706,7 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 缺点：占用空间大、没办法做统一控制
 
-##### ③方式三：hash（推荐）
+###### ③方式三：hash（推荐）
 
 <table>
 	<tr>
@@ -2758,7 +2760,7 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 
 
-##### 方案一
+###### 方案一
 
 拆分为string类型
 
@@ -2792,7 +2794,7 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 
 
-##### 方案二（推荐）
+###### 方案二（推荐）
 
 拆分为小的hash，将 `id / 100` 作为key， 将 `id % 100` 作为field，这样每100个元素为一个Hash
 
@@ -2855,9 +2857,9 @@ BigKey内存占用较多，即便时删除这样的key也需要耗费很长时�
 
 
 
-### 批处理优化
+#### 批处理优化
 
-#### MSET
+##### MSET
 
 redis处理指令是很快的，主要花费的时候在于网络传输。于是乎很容易想到将多条指令批量的传输给redis
 
@@ -2896,7 +2898,7 @@ void testMxx() {
 
 
 
-#### Pipline（管道）
+##### Pipline（管道）
 
 MSET虽然可以批处理，但是却只能操作部分数据类型，因此如果有对复杂数据类型的批处理需要，建议使用Pipeline
 
@@ -2921,7 +2923,7 @@ void testPipeline() {
 
 
 
-#### 集群下的批处理
+##### 集群下的批处理
 
 如MSET或Pipeline这样的批处理需要在一次请求中携带多条命令，而此时如果Redis是一个集群，那批处理命令的多个key必须落在**同一个插槽**中，否则就会导致执行失败。
 
@@ -2998,9 +3000,9 @@ void testPipeline() {
 
 
 
-### 服务器端优化
+#### 服务器端优化
 
-#### 持久化配置
+##### 持久化配置
 
 几点建议：
 
@@ -3017,7 +3019,7 @@ void testPipeline() {
 
 
 
-#### 慢查询
+##### 慢查询
 
 在Redis执行时耗时超过某个阈值的命令，称为慢查询。
 
@@ -3047,7 +3049,7 @@ void testPipeline() {
 
 
 
-#### 命令及安全配置
+##### 命令及安全配置
 
 Redis会绑定在0.0.0.0:6379，这样将会将Redis服务暴露到公网上，而Redis如果没有做身份认证，会出现严重的安全漏洞.
 漏洞重现方式：https://cloud.tencent.com/developer/article/1039000
@@ -3075,7 +3077,7 @@ Redis会绑定在0.0.0.0:6379，这样将会将Redis服务暴露到公网上，�
 
 
 
-#### 内存配置
+##### 内存配置
 
 当Redis内存不足时，可能导致Key频繁被删除、响应时间变长、QPS不稳定等问题。当内存使用率达到90%以上时就需要我们警惕，并快速定位到内存占用的原因。
 
@@ -3111,7 +3113,7 @@ Redis会绑定在0.0.0.0:6379，这样将会将Redis服务暴露到公网上，�
 
 
 
-#### 服务器端集群优化
+##### 服务器端集群优化
 
 集群虽然具备高可用特性，能实现自动故障恢复，但是如果使用不当，也会存在一些问题：
 
@@ -3173,19 +3175,19 @@ lua和事务都是要保证原子性问题，如果key不在一个节点，那�
 
 ---
 
-# 原理篇
+## 原理篇
 
 > [!IMPORTANT]
 >
 > 深入 `Redis` 底层
 
-## 数据结构
+### 数据结构
 
 > [!NOTE]
 >
 > `Redis` 底层基于 C语言 实现
 
-### 动态字符串SDS
+#### 动态字符串SDS
 
 字符串是Redis中最常用的一种数据结构。不过Redis没有直接使用C语言中的字符串，因为C语言字符串存在很多问题：
 
@@ -3232,7 +3234,7 @@ SDS之所以叫做动态字符串，是因为它具备动态扩容的能力
 
 
 
-### IntSet
+#### IntSet
 
 IntSet是Redis中set集合的一种实现方式，基于整数数组来实现，并且具备长度可变、有序等特征。
 
@@ -3268,7 +3270,7 @@ Intset可以看做是特殊的整数数组，具备一些特点：
 
 
 
-### Dict
+#### Dict
 
 Redis是一个键值型（Key-Value Pair）的数据库，我们可以根据键实现快速的增删改查。而键与值的映射关系正是通过Dict来实现的。
 
@@ -3285,7 +3287,7 @@ Dict由三部分组成，分别是：哈希表（DictHashTable）、哈希节点
 ![image-20250326223004013](./images/image-20250326223004013.png)
 ![image-20250326225251078](./images/image-20250326225251078.png)
 
-#### **Dict扩容**
+##### **Dict扩容**
 
 Dict中的HashTable就是数组结合单向链表的实现，当集合中元素较多时，必然导致哈希冲突增多，链表过长，则查询效率会大大降低。可采取扩容解决。
 
@@ -3297,7 +3299,7 @@ Dict在每次新增键值对时都会检查负载因子（**LoadFactor = used/si
 
 
 
-#### **Dict的rehash**
+##### **Dict的rehash**
 
 不管是扩容还是收缩，必定会创建新的哈希表，导致哈希表的size和sizemask变化，而key的查询与sizemask有关。
 
@@ -3321,7 +3323,7 @@ Dict在每次新增键值对时都会检查负载因子（**LoadFactor = used/si
 
 
 
-### ZipList
+#### ZipList
 
 ZipList 是一种特殊的“双端队列” ，由一系列特殊编码的**连续内存**块组成。可以在任意一端进行压入/弹出操作, 并且该操作的时间复杂度为 O(1)。
 
@@ -3337,7 +3339,7 @@ ZipList 是一种特殊的“双端队列” ，由一系列特殊编码的**连
 
 
 
-#### **ZipListEntry**
+##### **ZipListEntry**
 
 ZipList 中的Entry并不像普通链表那样记录前后节点的指针，因为记录两个指针要占用16个字节，浪费内存。而是采用了下面的结构：
 
@@ -3352,7 +3354,7 @@ ZipList 中的Entry并不像普通链表那样记录前后节点的指针，因�
 
 
 
-#### **Encoding编码**
+##### **Encoding编码**
 
 encoding编码分为字符串和整数两种
 
@@ -3381,7 +3383,7 @@ encoding编码分为字符串和整数两种
 
 
 
-#### **ZipList的连锁更新问题**
+##### **ZipList的连锁更新问题**
 
 ZipList的每个Entry都包含previous_entry_length来记录上一个节点的大小，长度是1个或5个字节：
 如果前一节点的长度小于254字节，则采用1个字节来保存这个长度值
@@ -3396,7 +3398,7 @@ ZipList这种特殊情况下产生的连续多次空间扩展操作称之为连�
 
 
 
-### QuickList
+#### QuickList
 
 - 问题1：ZipList虽然节省内存，但申请内存必须是连续空间，如果内存占用较多，申请内存效率很低。怎么办？
   - 答：为了缓解这个问题，我们必须限制ZipList的长度和entry大小。
@@ -3425,7 +3427,7 @@ ZipList这种特殊情况下产生的连续多次空间扩展操作称之为连�
 
 
 
-### SkipList
+#### SkipList
 
 SkipList（跳表）首先是**链表**，但与传统链表相比有几点差异：
 
@@ -3448,7 +3450,7 @@ SkipList的特点：
 
 
 
-### RedisObject
+#### RedisObject
 
 Redis中的任意数据类型的键和值都会被封装为一个RedisObject，也叫做Redis对象，源码如下：
 
@@ -3484,9 +3486,9 @@ Redis中会根据存储的数据类型不同，选择不同的编码方式。每
 
 
 
-### 五种数据结构
+#### 五种数据结构
 
-#### String(❁´◡`❁)
+##### String(❁´◡`❁)
 
 String是Redis中最常见的数据存储类型
 
@@ -3507,7 +3509,7 @@ String是Redis中最常见的数据存储类型
 
 
 
-#### List(●'◡'●)
+##### List(●'◡'●)
 
 Redis的List类型可以从首、尾操作列表中的元素
 
@@ -3525,7 +3527,7 @@ Redis的List类型可以从首、尾操作列表中的元素
 
 
 
-#### Set╰(*°▽°*)╯
+##### Set╰(*°▽°*)╯
 
 set是Redis中的单列集合，满足下列特点：
 
@@ -3543,7 +3545,7 @@ set是Redis中的单列集合，满足下列特点：
 
 
 
-#### Zset o(≧▽≦)o 
+##### Zset o(≧▽≦)o 
 
 ZSet也就是SortedSet，其中每一个元素都需要指定一个score值和member值，具有以下特征：
 
@@ -3578,7 +3580,7 @@ ZSet也就是SortedSet，其中每一个元素都需要指定一个score值和me
 
 
 
-#### Hash༼ つ ◕_◕ ༽つ
+##### Hash༼ つ ◕_◕ ༽つ
 
 Hash结构与Redis中的Zset非常类似：
 
@@ -3607,9 +3609,9 @@ Hash结构与Redis中的Zset非常类似：
 
 
 
-## 网络模型
+### 网络模型
 
-### 用户空间和内核空间
+#### 用户空间和内核空间
 
 ![image-20250327210753668](./images/image-20250327210753668.png)
 
@@ -3629,7 +3631,7 @@ Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓�
 
 
 
-### 阻塞IO
+#### 阻塞IO
 
 > [!NOTE]
 >
@@ -3664,7 +3666,7 @@ Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓�
 
 
 
-### 非阻塞IO
+#### 非阻塞IO
 
 非阻塞IO的recvfrom操作会立即返回结果而不是阻塞用户进程。
 
@@ -3687,7 +3689,7 @@ Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓�
 
 
 
-### IO多路复用
+#### IO多路复用
 
 无论是阻塞IO还是非阻塞IO，用户应用在一阶段都需要调用recvfrom来获取数据，差别在于无数据时的处理方案：
 
@@ -3726,7 +3728,7 @@ IO多路复用是利用单个线程来同时监听多个FD，并在某个FD可�
 
 
 
-#### IO多路复用-select
+##### IO多路复用-select
 
 select是Linux最早是由的I/O多路复用技术：
 
@@ -3738,7 +3740,7 @@ select是Linux最早是由的I/O多路复用技术：
 
 
 
-#### IO多路复用-poll
+##### IO多路复用-poll
 
 poll模式对select模式做了简单改进，但性能提升不明显
 
@@ -3759,7 +3761,7 @@ IO流程：
 
 
 
-#### IO多路复用-epoll
+##### IO多路复用-epoll
 
 poll模式是对select和poll的改进，它提供了三个系统调用：
 
@@ -3787,7 +3789,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-#### IO多路复用-事件通知机制
+##### IO多路复用-事件通知机制
 
 当FD有数据可读时，我们调用epoll_wait（或者select、poll）可以得到通知。但是事件通知的模式有两种：
 
@@ -3825,7 +3827,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-### 信号驱动IO
+#### 信号驱动IO
 
 信号驱动IO是与内核建立SIGIO的信号关联并设置回调，当内核有FD就绪时，会发出SIGIO信号通知用户，期间用户应用可以执行其它业务，无需阻塞等待。
 
@@ -3837,7 +3839,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-### 异步IO
+#### 异步IO
 
 这种方式，不仅仅是用户态在试图读取数据后，不阻塞，而且当内核的数据准备完成后，也不会阻塞
 
@@ -3849,7 +3851,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-### 总结
+#### 总结
 
 ![image-20250328181046779](./images/image-20250328181046779.png)
 
@@ -3857,7 +3859,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-## Redis网络模型
+### Redis网络模型
 
 > [!IMPORTANT]
 >
@@ -3888,7 +3890,7 @@ poll模式是对select和poll的改进，它提供了三个系统调用：
 
 
 
-## 通信协议-RESP
+### 通信协议-RESP
 
 Redis是一个CS架构的软件，通信一般分两步（不包括pipeline和PubSub）：
 
@@ -3934,7 +3936,7 @@ Redis是一个CS架构的软件，通信一般分两步（不包括pipeline和Pu
 
 
 
-## 内存策略
+### 内存策略
 
 Redis之所以性能强，最主要的原因就是基于内存存储。然而单节点的Redis其内存大小不宜过大，会影响持久化或主从同步性能。
 
@@ -3951,7 +3953,7 @@ maxmemory 1gb
 
 
 
-### 内存过期
+#### 内存过期
 
 Redis不管有多少种数据类型，本质是一个`KEY-VALUE`的键值型数据库，而这种键值映射底层正式基于HashTable来实现的，在Redis中叫做Dict.
 
@@ -3986,13 +3988,13 @@ Redis的过期KEY删除策略有两种：
 
 
 
-#### **惰性删除**
+##### **惰性删除**
 
 Redis会在每次访问KEY的时候判断当前KEY有没有设置过期时间，如果有，过期时间是否已经到期。
 
 
 
-#### **周期删除**
+##### **周期删除**
 
 通过一个定时任务，周期性的抽样部分过期的key，然后执行删除。
 
@@ -4021,7 +4023,7 @@ Redis会在每次访问KEY的时候判断当前KEY有没有设置过期时间，
 
 
 
-### 内存淘汰
+#### 内存淘汰
 
 对于某些特别依赖于Redis的项目而言，仅仅依靠过期KEY清理是不够的，内存可能很快就达到上限。因此Redis允许设置内存告警阈值，当内存使用达到阈值时就会主动挑选部分KEY删除以释放更多内存。这叫做**内存淘汰**机制。
 
@@ -4072,4 +4074,4 @@ Redis支持8种不同的内存淘汰策略：
 
 ---
 
-# 完结撒花(o゜▽゜)o☆
+## 完结撒花(o゜▽゜)o☆
