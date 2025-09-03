@@ -896,6 +896,7 @@ DispatcherServlet 的初始化主要做了两件事
 
 2. 注册 SpringMVC 的九大组件
 
+<br>
 
 获得SpringMVC容器
 
@@ -903,31 +904,33 @@ SpringMVC的ApplicationContext容器创建时机，Servlet 规范的 init(Servle
 
 ![3e1aedc2-af7f-49b2-9f21-4d6ad385ea57](./images/3e1aedc2-af7f-49b2-9f21-4d6ad385ea57.png)
 
-HttpServletBean 的初始化方法
+查看 HttpServletBean 的初始化方法
 
 ```java
 public final void init() throws ServletException {
  this.initServletBean();
  }
 ```
+!!!warning
+    HttpServletBean的initServletBean方法并没有具体实现，由子类(FrameworkServlet)重写来实现
 
-> HttpServletBean的initServletBean方法并没有具体实现，由子类(FrameworkServlet)重写来实现
+    **模板方法**模式的应用
+
+!!!note "模板方法"
+    模板方法模式定义了一个操作中的算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下重新定义算法中的某些特定步骤。
 
 
-
-FrameworkServlet的initServletBean方法
+查看 FrameworkServlet的initServletBean 方法
 
 ```java
 protected final void initServletBean() throws ServletException {
  this.webApplicationContext = this.initWebApplicationContext();//初始化ApplicationContext
- this.initFrameworkServlet();//模板设计模式，供子类覆盖实现，但是子类DispatcherServlet没做使用
+ this.initFrameworkServlet();//模板方法设计模式，供子类覆盖实现，但是子类DispatcherServlet没有实现具体逻辑
 }
 ```
 
 
-
 initWebApplicationContext方法中获得Spring容器和SpringMVC容器，并将Spring容器作为SpringMVC容器的父容器，子容器中的parent维护着父容器的引用
-
 ```java
 //初始化ApplicationContext是一个及其关键的代码
 protected WebApplicationContext initWebApplicationContext() {
@@ -949,16 +952,16 @@ WebApplicationContextUtils.getWebApplicationContext(this.getServletContext());
     }}
 
 ```
+!!!note
+    - 父容器：Spring 通过ContextLoaderListener为入口产生的applicationContext容器，内部主要维护的是applicationContext.xml（或相应配置类）配置的Bean信息；
 
-> - 父容器：Spring 通过ContextLoaderListener为入口产生的applicationContext容器，内部主要维护的是applicationContext.xml（或相应配置类）配置的Bean信息；
-> 
-> - 子容器：SpringMVC通过DispatcherServlet的init() 方法产生的applicationContext容器，内部主要维护的是spring-mvc.xml（或相应配置类）配置的Bean信息，且内部还通过parent属性维护这父容器的引用。
-> 
-> - Bean的检索顺序：根据上面子父容器的概念，可以知道Controller存在与子容器中，而Controller中要注入Service时，会先从子容器本身去匹配，匹配不成功时在去父容器中去匹配，于是最终从父容器中匹配到的UserService，这样子父容器就可以进行联通了。但是父容器只能从自己容器中进行匹配，不能从子容器中进行匹配。
+    - 子容器：SpringMVC通过DispatcherServlet的init() 方法产生的applicationContext容器，内部主要维护的是spring-mvc.xml（或相应配置类）配置的Bean信息，且内部还通过parent属性维护这父容器的引用。
 
+    - Bean的检索顺序：根据上面父子容器的概念，可以知道Controller存在与子容器中，而Controller中要注入Service时，会先从子容器本身去匹配，匹配不成功时在去父容器中去匹配，于是最终从父容器中匹配到的UserService，这样子父容器就可以进行联通了。但是父容器只能从自己容器中进行匹配，不能从子容器中进行匹配。
 
+<br>
 
-2. 注册组件
+注册组件
 
 在初始化容器initWebApplicationContext方法中执行了onRefresh方法，进而执行了初始化策略initStrategies方法，注册了九个解析器组件
 
@@ -977,31 +980,29 @@ protected void initStrategies(ApplicationContext context) {
 }
 ```
 
+---
 
-
-#### 前端控制器执行主流程
+### 前端控制器执行主流程
 
 ![7ea58f93-0164-4675-b4e7-0491db88910b](./images/7ea58f93-0164-4675-b4e7-0491db88910b.png)
 
+---
+
+## 异常处理机制
+
+### 处理流程
+
+异常分为编译时异常和运行时异常，编译时异常使用 try-catch 进行捕获，捕获后自行处理，而运行时异常是不可预期的，就需要规范编码来避免，在SpringMVC中，不管是编译异常还是运行时异常，都可以最终由SpringMVC提供的异常处理器进行统一处理，这样就避免了捕获异常的繁琐性。
 
 
 
-
-### SpringMVC的异常处理机制
-
-#### SpringMVC 异常的处理流程
-
-异常分为编译时异常和运行时异常，编译时异常我们 try-catch 进行捕获，捕获后自行处理，而运行时异常是不可预期的，就需要规范编码来避免，在SpringMVC中，不管是编译异常还是运行时异常，都可以最终由SpringMVC提供的异常处理器进行统一处理，这样就避免了随时随地捕获处理的繁琐性。
-
-
-
-SpringMVC 处理异常的思路是，一路向上抛，都抛给前端控制器 `DispatcherServlet` ，`DispatcherServlet` 在调用异常处理器`ExceptionResolver`进行处理，如下图：
+SpringMVC 处理异常的思路是，一路向外抛，都抛给前端控制器 `DispatcherServlet` ，然后 `DispatcherServlet` 调用异常处理器`ExceptionResolver`进行处理，如下图：
 
 ![5c8bf1d5-7b5a-41c1-a74a-bd41903714fb](./images/5c8bf1d5-7b5a-41c1-a74a-bd41903714fb.png)
 
 
 
-#### SpringMVC 的异常处理方式
+### 处理方式
 
 SpringMVC 提供了以下三种处理异常的方式：
 
@@ -1010,29 +1011,30 @@ SpringMVC 提供了以下三种处理异常的方式：
 - 自定义异常处理器：实现`HandlerExceptionResolver`接口，自定义异常进行处理；
 
 - 注解方式：使用`@ControllerAdvice` + `@ExceptionHandler` 来处理。
-1. 使用SimpleMappingExceptionResolver处理一些简单异常，配置开启SimpleMappingExceptionResolver，并指定异常捕获后的处理动作，当发生了异常后，会被 SimpleMappingExceptionResolver 处理，跳转到我们配置的错误页面error.html
+
+使用SimpleMappingExceptionResolver处理一些简单异常，配置开启SimpleMappingExceptionResolver，并指定异常捕获后的处理动作，当发生了异常后，会被 SimpleMappingExceptionResolver 处理，跳转到我们配置的错误页面error.html
 
 ```xml
 <!--配置简单异常处理器-->
- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
- <!-- 异常捕获后动作：展示视图 -->    
- <property name="defaultErrorView" value="/error.html"/>
- </bean>
+<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+<!-- 异常捕获后动作：展示视图 -->    
+<property name="defaultErrorView" value="/error.html"/>
+</bean>
 ```
 
 可以在配置SimpleMappingExceptionResolver时，指定一些参数
 
 ```xml
-    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="defaultErrorView" value="/error.html"/>
-        <property name="exceptionMappings">
-            <props>
-                <!-- 配置异常类型对应的展示视图 -->
-                <prop key="java.lang.RuntimeException">/error.html</prop>
-                <prop key="java.io.FileNotFoundException">/io.html</prop>
-            </props>
-        </property>
-    </bean>
+<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="defaultErrorView" value="/error.html"/>
+    <property name="exceptionMappings">
+        <props>
+            <!-- 配置异常类型对应的展示视图 -->
+            <prop key="java.lang.RuntimeException">/error.html</prop>
+            <prop key="java.io.FileNotFoundException">/io.html</prop>
+        </props>
+    </property>
+</bean>
 ```
 
 
@@ -1040,24 +1042,24 @@ SpringMVC 提供了以下三种处理异常的方式：
 注解方式配置简单映射异常处理器
 
 ```java
-    @Bean
-    public SimpleMappingExceptionResolver simpleMappingExceptionResolver(){
-        //创建SimpleMappingExceptionResolver
-        SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
-        //设置默认错误展示视图
-        resolver.setDefaultErrorView("/error.html");
-        //定义Properties设置特殊异常对应的映射视图
-        Properties properties = new Properties();
-        properties.setProperty("java.lang.RuntimeException","/error.html");
-        properties.setProperty("java.io.FileNotFoundException","/io.html");
-        resolver.setExceptionMappings(properties);
-        return resolver;
-    }
+@Bean
+public SimpleMappingExceptionResolver simpleMappingExceptionResolver(){
+    //创建SimpleMappingExceptionResolver
+    SimpleMappingExceptionResolver resolver = new SimpleMappingExceptionResolver();
+    //设置默认错误展示视图
+    resolver.setDefaultErrorView("/error.html");
+    //定义Properties设置特殊异常对应的映射视图
+    Properties properties = new Properties();
+    properties.setProperty("java.lang.RuntimeException","/error.html");
+    properties.setProperty("java.io.FileNotFoundException","/io.html");
+    resolver.setExceptionMappings(properties);
+    return resolver;
+}
 ```
 
+<br>
 
-
-2. 自定义异常处理器，实现HandlerExceptionResolver接口自定义异常处理器，可以完成异常逻辑的处理
+实现HandlerExceptionResolver接口自定义异常处理器，可以完成异常逻辑的处理
 
 ```java
 public class MyExceptionResolver implements HandlerExceptionResolver {
@@ -1071,14 +1073,14 @@ public class MyExceptionResolver implements HandlerExceptionResolver {
     }
 }
 ```
+!!!warning
+    注：该Bean需要由Spring容器管理才能生效
+!!!tip
+    返回Json格式字符串信息：使用 response.getWriter()，写回json数据
 
-> 注：需要交由Spring容器管理
-> 
-> 返回Json格式字符串信息：response.getWriter()，写回json数据
+<br>
 
-
-
-3. 使用注解 @ControllerAdvice + @ExceptionHandler 配置异常
+使用注解 @ControllerAdvice + @ExceptionHandler 配置异常处理器
 
 ```java
 @ControllerAdvice
@@ -1099,19 +1101,21 @@ public class GlobalExceptionHandler {
 }
 ```
 
-> 如果全局异常处理器响应的数据都是Json格式的字符串的话，可以使用@RestControllerAdvice替代
+!!!tip
+    如果全局异常处理器响应的数据都是Json格式的字符串的话，可以使用@RestControllerAdvice替代
+
+---
+
+### 原理浅析
+
+SpringMVC的前置控制器在进行初始化的时候，会初始化处理器异常解析器HandlerExceptionResolver
+
+!!!tip
+    配置了自定义的异常处理器后，默认的异常处理器就不会被加载，当配置或配置了注解@EnableWebMvc后，默认异常处理器和自定的处理器异常解析器都会被注册
 
 
 
-#### 异常处理机制原理剖析
-
-初始化加载的处理器异常解析器，SpringMVC的前置控制器在进行初始化的时候，会初始化处理器异常解析器HandlerExceptionResolver
-
-> 配置了自定义的异常处理器后，默认的异常处理器就不会被加载，当配置 或配置了注解@EnableWebMvc后，默认异常处理器和自定的处理器异常解析器都会被注册
-
-
-
-异常处理器加载完毕后，当发生异常时，就会进行处理，跟踪 DispatcherServlet的 doDispatch() 方法
+异常处理器加载完毕后，当发生异常时，就会进行处理，跟踪 DispatcherServlet 的 doDispatch() 方法
 
 ```java
 protected void doDispatch(HttpServletRequest request, HttpServletResponse response) {
@@ -1149,9 +1153,9 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
     }
 ```
 
+---
 
-
-#### SpringMVC 常用的异常解析器
+### 常用的异常解析器
 
 | 接口或类                                | 说明                                                           |
 | ----------------------------------- | ------------------------------------------------------------ |
@@ -1165,4 +1169,4 @@ private void processDispatchResult(HttpServletRequest request, HttpServletRespon
 ---
 **上一节：**[Spring Web](Spring-Web.md)
 
-**完**
+**(/≧▽≦)/**
