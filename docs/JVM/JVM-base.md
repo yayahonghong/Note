@@ -646,159 +646,192 @@ Java中有五种引用类型：
 
 #### 软引用
 
-![ab087fbc-bf89-4930-a72f-fa0031ea4be0](./images/ab087fbc-bf89-4930-a72f-fa0031ea4be0.png)
+软引用是一种相对较弱的引用类型，用来描述一些有用但并非必需的对象。
 
-> [!Warning]
->
-> 注意：软引用对象也需要被强引用，否则也会被回收
+被软引用关联的对象在内存不足时可能会被垃圾回收器回收
 
-
-
-![f36fa4c2-82b9-4656-88a6-c9def9c7eabc](./images/f36fa4c2-82b9-4656-88a6-c9def9c7eabc.png)
-
-> 注：工具-->Caffeine缓存库
-
-
-
-![d0fd342e-aa80-4425-9eea-4b99839254ba](./images/d0fd342e-aa80-4425-9eea-4b99839254ba.png)
-
+使用SoftReference类来创建软引用对象
 ```java
-public class Demo{
-    public static void main(String[] args){
-        ArrayList<SoftReference> softReferences = new ArrayList<>();
-        ReferenceQueue<byte[]> queues = new ReferenceQueue<byte[]>();
-        for(int i=0;i<10;i++){
-            byte[] bytes = new byte[1024*1024*100];
-            SoftReference stuRef = new SoftReference<byte[]>(bytes,queues);//构造函数传递数据及引用队列
-            softReferences.add(stuRef);
-        }
-
-        softReference<byte[]> ref = null;
-        int count = 0;
-        while((ref = (SoftReference<byte[]>) queues.poll()) != null){
-            count++;
-        }
-        System.out.println(count);
-    }
-}
+byte[] bytes = new byte[1024 * 1024 *100];
+SoftReference<byte[]> softReference = new SoftReference<byte[]>(bytes);
 ```
 
-> 设置启动参数 -Xmx200m
-> 
-> 输出 ：
-> 
-> 9
+!!!warning
+    软引用对象也需要被强引用，否则也会被回收
 
+!!!question "SoftReference本身被回收"
+    SoftReference关联的对象在内存不足时被回收后，SoftReference本身也应该被回收
 
+    软引用与引用队列：
 
-##### 弱引用
+    1. 创建软引用时，可以传入一个引用队列
 
-![c9dc7ed9-5f25-4430-9c77-faa270e8cdf3](./images/c9dc7ed9-5f25-4430-9c77-faa270e8cdf3.png)
+    2. 当软引用关联的对象被回收后，软引用会被加入到引用队列中
 
-```java
-import java.lang.ref.WeakReference;
+    3. 可以通过轮询引用队列来获取需要被回收的软引用对象
 
-public class WeakReferenceDemo {
-    public static void main(String[] args) {
+    ```java
+    ArrayList<SoftReference> softReferences = new ArrayList<>();
+    ReferenceQueue<byte[]> queues = new ReferenceQueue<byte[]>();
+    for (int i = 0; i < 10; i++) {
         byte[] bytes = new byte[1024 * 1024 * 100];
-        WeakReference<byte[]> weakReference = new WeakReference<>(bytes);
-        bytes = null;
-        System.out.println(weakReference.get());
-        System.gc();
-        System.out.println(weakReference.get());
+        SoftReference<byte[]> stuRef = new SoftReference<byte[]>(bytes, queues); // 构造函数传递数据及引用队列
+        softReferences.add(stuRef);
     }
-}
+    SoftReference<byte[]> ref = null;
+    int count = 0;
+    while ((ref = (SoftReference<byte[]>) queues.poll()) != null) {
+        count++;
+    }
+    System.out.println(count);
+    // 输出被回收的软引用数量
+    // 设置启动参数 -Xmx200m
+    // 输出：9
+    ```
+---
 
+#### 弱引用
+
+弱引用与软引用类似，但是弱引用所关联的对象在垃圾回收器扫描时，**无论内存是否充足，都会被回收**。
+
+使用WeakReference类来创建弱引用对象，弱引用主要在ThreadLocal中使用。
+
+```java
+byte[] bytes = new byte[1024 * 1024 * 100];
+WeakReference<byte[]> weakReference = new WeakReference<>(bytes);
+bytes = null;
+System.out.println(weakReference.get());
+System.gc();
+System.out.println(weakReference.get());
+
+// 输出：
+// [B@776ec8df
+// null
 ```
 
-> 输出：
-> 
-> [B@776ec8df
-> null
+---
+
+#### 虚引用和终结器引用
+不能通过虚引用来获取对象的引用，虚引用主要用于在对象被垃圾回收器回收时收到一个系统通知。
+
+终结器引用是Java虚拟机内部使用的一种引用类型，用于实现对象的终结器机制。
+
+---
+
+### 垃圾回收算法
+1. 1960年：标记-清除算法
+
+2. 1963年：复制算法
+
+后续的垃圾回收算法主要是在这两种算法的基础上发展而来的。如标记-整理算法和分代垃圾回收算法。
 
 
+**垃圾回收算法的评价标准**：
 
-##### 虚引用和终结器引用
+- 吞吐量（Throughput）：表示应用程序运行时间与垃圾回收时间的比例
 
-![3edd66aa-08ac-4184-b4e1-dc4cb80b3488](./images/3edd66aa-08ac-4184-b4e1-dc4cb80b3488.png)
+- 最大暂停时间（Stop-the-world）：垃圾回收过程中应用程序暂停的时间
+
+- 堆空间使用率（Heap Footprint）：垃圾回收对堆内存的使用效率
+
+---
+
+#### 标记-清除算法
+
+标记-清除算法分为两个阶段：
+
+1. 标记阶段：从GC Root对象开始，遍历所有可达的对象，并将这些对象标记为“存活”
+
+2. 清除阶段：遍历堆中的所有对象，清除未被标记为“存活”的对象，释放其占用的内存空间
+
+!!!info "评价"
+    优点：实现简单，只需要在第一阶段给每个对象维护标志位，第二阶段删除对象即可
+
+    缺点：
+
+    - 碎片化问题，对象删除后内存中会出现很多细小的可用内存单元，如果需要较大的空间，这些碎片无法被分配
+
+    - 分配速度慢，由于内存碎片存在，需要进行遍历寻找可用空间
+
+---
+
+#### 复制算法
+1. 复制算法将堆内存划分为两块大小相等的区域，称为From区和To区，初始时From区用于分配对象，To区为空闲状态
+
+2. 当需要进行垃圾回收时，只扫描From区，将存活的对象复制到To区，然后清空From区
+
+3. 然后交换From区和To区的角色
+
+!!!info "评价"
+    优点：
+
+    - 吞吐量高
+    - 不会发生碎片化
+
+    缺点：内存使用效率低
+
+---
+
+#### 标记-整理算法
+标记-整理算法主要是为了解决标记-清除算法的碎片化问题。
+
+1. 标记阶段：与标记-清除算法相同，从GC Root对象开始，遍历所有可达的对象，并将这些对象标记为“存活”
+
+2. 整理阶段：将所有存活的对象向一端移动，保持对象的相对顺序不变，然后清除边界外的内存空间
+
+!!!info "评价"
+    优点：
+
+    - 内存使用率高
+    - 不会发生碎片化
+
+    缺点：整理阶段效率不高，需要移动对象和更新引用
+
+---
+
+#### 分代垃圾回收算法
+
+分代垃圾回收算法是目前主流的垃圾回收算法，基于以下两个现象：
+
+1. 大部分对象都是“朝生暮死”的，即在短时间内被创建又被销毁。
+
+2. 存活时间较长的对象，通常会在老年代中占据较大的空间。
+
+基于以上现象，分代垃圾回收算法将堆内存划分为不同的区域，通常分为：
+
+- 新生代（Young Generation）
+
+- 老年代（Old Generation）
+
+![堆区分代](./images/Snipaste_2025-09-04_22-38-40.png)
+
+!!!example "堆区虚拟机参数"
+    - Xms：设置初始堆大小
+    - Xmx：设置最大堆大小
+    - Xmn：设置新生代大小
+    - XX:SurvivorRatio：设置Eden区与Survivor区的比例默认为8
+    - XX:NewRatio：设置新生代与老年代的比例默认为2
+    - XX:+PrintGCDetails：打印GC日志
+
+**回收过程**：
+
+1. 新创建的对象首先分配在新生代的Eden区
+
+2. 当Eden区满时，触发Minor GC（或Young GC），回收新生代中的垃圾对象
+
+3. 在Minor GC过程中，存活的对象会被移动到Survivor的To区，Survivor区使用复制算法进行垃圾回收
+
+4. 每次Minor GC后，其中存活的对象年龄会加1，当对象年龄达到一定阈值（默认15），会被晋升到老年代
+
+5. 当老年代满时，触发Major GC（或Full GC），回收整个堆中的垃圾对象
 
 
+!!!quote "关于对象晋升阈值"
+    “Hotspot 遍历所有对象时，按照年龄从小到大对其所占用的大小进行累积，当累积的某个年龄大小超过了 survivor 区的 50% 时（默认值是 50%，可以通过 `-XX:TargetSurvivorRatio=percent` 来设置，参见 [issue1199](https://github.com/Snailclimb/JavaGuide/issues/1199) ），取这个年龄和 MaxTenuringThreshold 中更小的一个值，作为新的晋升年龄阈值”。
 
-#### 垃圾回收算法
+    ------
 
-![2375c61e-164b-4f36-8228-82b7496567d2](./images/2375c61e-164b-4f36-8228-82b7496567d2.png)
-
-![8b6e96a2-42f6-4f87-904c-b033db08760a](./images/8b6e96a2-42f6-4f87-904c-b033db08760a.png)
-
-![e92ea9e5-453f-4844-abd8-55319796e6b4](./images/e92ea9e5-453f-4844-abd8-55319796e6b4.png)
-
-![426fab77-8775-4325-8757-97006184dd41](./images/426fab77-8775-4325-8757-97006184dd41.png)
-
-![9f5d3bd0-8b06-49e5-a75a-89e33e71122c](./images/9f5d3bd0-8b06-49e5-a75a-89e33e71122c.png)
-
-
-
-##### 标记清除法
-
-![70692ba1-33ae-4880-846b-996e3f732d81](./images/70692ba1-33ae-4880-846b-996e3f732d81.png)
-
-> 优点：实现简单，只需要在第一阶段给每个对象维护标志位，第二阶段删除对象即可
-> 
-> 缺点：
-> 
-> - 碎片化问题，对象删除后内存中会出现很多细小的可用内存单元，如果需要较大的空间，则这些碎片无法被分配
-> 
-> - 分配速度慢，由于内存碎片存在，需要进行遍历寻找可用空间
-
-
-
-##### 复制算法
-
-![5aae0d82-92f5-4737-bb54-d0daee4e677e](./images/5aae0d82-92f5-4737-bb54-d0daee4e677e.png)
-
-> 优点：
-> 
-> - 吞吐量高
-> 
-> - 不会发生碎片化
-> 
-> 缺点：内存使用效率低
-
-
-
-##### 标记整理算法（标记压缩算法）
-
-![673846d3-1d70-45ef-8429-aa27122f9f39](./images/673846d3-1d70-45ef-8429-aa27122f9f39.png)
-
-> 优点：
-> 
-> - 内存使用率高
-> 
-> - 不会发生碎片化
-> 
-> 缺点：整理阶段效率不高
-
-
-
-##### 分代垃圾回收算法
-
-![8f51380a-2653-4b77-ad13-263d968111ed](./images/8f51380a-2653-4b77-ad13-263d968111ed.png)
-
-![46cca94b-06e7-4818-8b74-8f32d597aee4](./images/46cca94b-06e7-4818-8b74-8f32d597aee4.png)
-
-![a63baab8-5d57-4b2c-bc0f-a850240bb543](./images/a63baab8-5d57-4b2c-bc0f-a850240bb543.png)
-
-![3e66eb26-77b3-489e-9a50-202e58906ffb](./images/3e66eb26-77b3-489e-9a50-202e58906ffb.png)
-
-![856e1c23-0d86-4d48-a724-3e0da80e7dc4](./images/856e1c23-0d86-4d48-a724-3e0da80e7dc4.png)
-
-> [!Caution]
->
-> “Hotspot 遍历所有对象时，按照年龄从小到大对其所占用的大小进行累积，当累积的某个年龄大小超过了 survivor 区的 50% 时（默认值是 50%，可以通过 `-XX:TargetSurvivorRatio=percent` 来设置，参见 [issue1199](https://github.com/Snailclimb/JavaGuide/issues/1199) ），取这个年龄和 MaxTenuringThreshold 中更小的一个值，作为新的晋升年龄阈值”。
->
-> ------
->
-> 著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：https://javaguide.cn/java/jvm/jvm-garbage-collection.html
+    著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：https://javaguide.cn/java/jvm/jvm-garbage-collection.html
 
 
 
