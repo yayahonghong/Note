@@ -220,45 +220,27 @@ clinit指令在特定情况下不会出现：
 
 ## 类加载器分类
 
-![29a4a59c-cc42-41bb-a552-f123aa136873](./images/29a4a59c-cc42-41bb-a552-f123aa136873.png)
+JDK8之前的类加载器：
+
+1. 启动类加载器（Bootstrap）
+
+    - 用C++语言实现，无法通过Java代码获取
+
+    - 加载JDK核心类库，比如rt.jar中的类
 
 
+2. 扩展类加载器（Extension）
 
-### 启动类加载器
+    - 用Java语言实现，继承自ClassLoader类
 
-![17478a8d-ac0a-422e-ac4b-8d08788462e9](./images/17478a8d-ac0a-422e-ac4b-8d08788462e9.png)
+    - 加载JDK扩展类库，比如jre/lib/ext目录下的jar包
 
-### 扩展类加载器
+3. 应用程序类加载器（Application）
 
-![2cc2747d-55d9-482a-98b8-76ee5f584c97](./images/2cc2747d-55d9-482a-98b8-76ee5f584c97.png)
+    - 用Java语言实现，继承自ClassLoader类
 
-![75db8ab0-72f2-4c09-bda9-766ed6f275e3](./images/75db8ab0-72f2-4c09-bda9-766ed6f275e3.png)
+    - 加载用户自定义的类和第三方jar包中的类
 
-### 应用程序类加载器
-
-- **类名**：`sun.misc.Launcher$AppClassLoader` (JDK8及之前) 或 `jdk.internal.loader.ClassLoaders$AppClassLoader` (JDK9+)
-- **父类加载器**：扩展类加载器（Extension ClassLoader）
-- **加载范围**：用户自定义的类和第三方jar包中的类
-
-应用程序类加载器主要从以下路径加载类：
-
-1. **-classpath** 或 **-cp** 参数指定的路径
-2. **CLASSPATH** 环境变量指定的路径  
-3. **java.class.path** 系统属性指定的路径
-4. 当前工作目录（如果没有指定classpath）
-
-
-!!!tip "获取应用程序类加载器"
-    ```java
-    // 方法1：通过系统方法获取
-    ClassLoader appClassLoader = ClassLoader.getSystemClassLoader();
-
-    // 方法2：通过当前类获取
-    ClassLoader currentClassLoader = MyClass.class.getClassLoader();
-
-    // 方法3：通过线程上下文获取
-    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    ```
 
 ## JDK8之后的类加载器
 
@@ -834,58 +816,116 @@ System.out.println(weakReference.get());
     著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：https://javaguide.cn/java/jvm/jvm-garbage-collection.html
 
 
-
-![52e4c13c-cb84-42f7-94ac-a98ef8a0d28b](./images/52e4c13c-cb84-42f7-94ac-a98ef8a0d28b.png)
-
-![b4c90638-e405-4bc6-98b7-0fc03ca2df39](./images/b4c90638-e405-4bc6-98b7-0fc03ca2df39.png)
-
-#### 垃圾回收器
-
-![d57acf5f-754e-44aa-a5de-6e5c8e38c048](./images/d57acf5f-754e-44aa-a5de-6e5c8e38c048.png)
+!!!question "为什么要把堆区分代？"
+    - 可调节性强：可以根据应用的特点调整各个区域的大小和比例
+    - 提高回收效率：针对不同区域采用不同的垃圾回收算法，提高整体回收效率
+    - 减少停顿时间：通过分代回收，减少每次垃圾回收的停顿时间
 
 
+### 垃圾回收器
 
-1. 组合一
+垃圾回收器是实现垃圾回收算法的具体工具，不同的垃圾回收器适用于不同的应用场景。
 
-![01895fe5-43a4-409b-9446-16bbe5248f9e](./images/01895fe5-43a4-409b-9446-16bbe5248f9e.png)
+有以下几种常见的垃圾回收器：
 
-![8163c13f-f40c-44e5-8e64-272c503e111b](./images/8163c13f-f40c-44e5-8e64-272c503e111b.png)
+- Serial垃圾回收器
+
+- ParNew垃圾回收器
+
+- Parallel垃圾回收器
+
+- CMS垃圾回收器
+
+- G1垃圾回收器
+
+---
+
+#### Serial
+
+年轻代使用Serial垃圾回收器，老年代使用Serial Old垃圾回收器。
+
+- Serial垃圾回收器是单线程的，适用于单核处理器或者对响应时间要求不高的应用
+!!!example
+    `-XX:+UseSerialGC`开启Serial垃圾回收器
+
+---
+
+#### ParNew + CMS
+
+年轻代使用ParNew垃圾回收器，老年代使用CMS垃圾回收器。
+
+- ParNew垃圾回收器是多线程的（Serial 在多CPU下的优化），适用于多核处理器，可以提高年轻代垃圾回收的效率
 
 
+!!!example
+    `-XX:+UseParNewGC`开启ParNew垃圾回收器
 
-2. 组合二
+- CMS垃圾回收器是并发标记-清除算法，适用于对**响应时间要求较高**的应用，可以减少停顿时间
+!!!info "CMS回收过程"
+    - 初始标记（Initial Mark）：标记与GC Root直接关联的对象，停顿时间短
+    - 并发标记（Concurrent Mark）：与应用线程并发执行，标记所有可达的对象
+    - 重新标记（Remark）：修正并发标记阶段遗漏的对象，停顿时间较短
+    - 并发清除（Concurrent Sweep）：与应用线程并发执行，清除不可达的对象
+    - 并发重置（Concurrent Reset）：重置CMS相关的数据结构，为下一次垃圾回收做准备
 
-![05a57a17-c4b0-4bdc-819a-6fea52f6152d](./images/05a57a17-c4b0-4bdc-819a-6fea52f6152d.png)
+!!!example
+    `-XX:+UseConcMarkSweepGC`开启CMS垃圾回收器
 
-![390698e7-18cb-40f5-8333-85c899828dea](./images/390698e7-18cb-40f5-8333-85c899828dea.png)
+!!!warning "注意"
+    CMS垃圾回收器会产生内存碎片，Full GC时会进行碎片整理，暂停时间较长
 
-![120613c9-05c6-4667-8807-8dc8fe700abb](./images/120613c9-05c6-4667-8807-8dc8fe700abb.png)
+---
 
-![05811edb-5c10-420d-ba0f-5dbdfe186d93](./images/05811edb-5c10-420d-ba0f-5dbdfe186d93.png)
+#### Parallel
+年轻代使用Parallel垃圾回收器，老年代使用Parallel Old垃圾回收器。
+
+- Parallel垃圾回收器是多线程的，适用于多核处理器，可以提高垃圾回收的效率
+!!!example
+    `-XX:+UseParallelGC`开启Parallel垃圾回收器
+
+!!!quote
+    Parallel允许设置最大暂停时间（`-XX:MaxGCPauseMillis`）和最小吞吐量（`-XX:GCTimeRatio`），JVM会根据这些参数动态调整垃圾回收的频率和时间，以达到最佳的性能平衡。
+
+    Oracle官方建议使用该垃圾回收器组合时不要设置`-Xmx`和`-Xms`参数，允许JVM动态调整堆内存大小。
+
+---
+
+#### G1
+
+G1是JDK9之后的默认垃圾回收器，适用于大内存和多核处理器的应用。
+!!!example
+    `-XX:+UseG1GC`开启G1垃圾回收器
+
+其具有如下优势：
+
+- 高吞吐量：通过并行和并发的垃圾回收，提高应用程序的吞吐量
+
+- 可预测的停顿时间：通过分区回收和暂停时间目标，减少垃圾回收对应用程序的影响
+
+- 低内存碎片：通过分区回收和整理，减少内存碎片，提高内存利用率
+
+- 支持大内存：可以处理数百GB甚至TB级别的堆内存
+
+!!!attention
+    JDK9之后建议使用默认的G1垃圾回收器，除非有特殊需求，否则不建议更改
+
+<br>
+
+G1将堆内存划分为多个大小相等的区域（Region），每个区域可以是Eden区、Survivor区或者Old区。Region的大小可以通过`-XX:G1HeapRegionSize`参数设置，范围从1MB到32MB，默认值根据堆大小自动调整。
 
 
+![9f41f0a1-9b82-415b-b50f-2a8050858814](./images/Snipaste_2025-09-05_22-03-36.png)
 
-3. 组合三
+G1的垃圾回收过程主要分为两个阶段：
 
-![c30d14e0-2291-47ab-94b9-da34333805e8](./images/c30d14e0-2291-47ab-94b9-da34333805e8.png)
+1. Young GC：回收年轻代区域（Eden区和Survivor区）的垃圾对象，会导致STW，可通过`-XX:MaxGCPauseMillis`参数设置最大暂停时间（默认200ms）
 
-![4f095d3c-d7c6-41c5-a28e-4d955a5c96c4](./images/4f095d3c-d7c6-41c5-a28e-4d955a5c96c4.png)
-
-![c9d32e5a-f0e8-4166-b560-704d1d318db8](./images/c9d32e5a-f0e8-4166-b560-704d1d318db8.png)
-
+2. Mixed GC：回收年轻代和部分老年代区域的垃圾对象
 
 
-4.G1垃圾回收器
+***Young GC***
 
-![fc247461-199e-4dbf-9f45-d850427ec295](./images/fc247461-199e-4dbf-9f45-d850427ec295.png)
-
-![9f41f0a1-9b82-415b-b50f-2a8050858814](./images/9f41f0a1-9b82-415b-b50f-2a8050858814.png)
-
-![b4604f0c-1d14-4549-b45a-9557a0aaad93](./images/b4604f0c-1d14-4549-b45a-9557a0aaad93.png)
-
-![81d56fed-1a64-4f56-90c9-ea2db2922035](./images/81d56fed-1a64-4f56-90c9-ea2db2922035.png)
-
-1. 新创建的对象会存放在Eden区。当G1判断年轻代区不足（max默认60%），无法分配对象时需要回收时会执行Young GC。
+1. 新创建的对象会存放在Eden区。当G1判断年轻代区不足（max默认60%）时会执行Young GC。
 
 2. 标记出Eden和Survivor区域中的存活对象，
 
@@ -897,33 +937,50 @@ System.out.println(weakReference.get());
 
 6. 部分对象如果大小超过Region的一半，会直接放入老年代，这类老年代被称为Humongous区。比如堆内存是4G，每个Region是2M，只要一个大对象超过了1M就被放入Humongous区，如果对象过大会横跨多个Region。
 
-7. 、多次回收之后，会出现很多Old老年代区，此时总堆占有率达到阈值时（-XX:InitiatingHeapOccupancyPercent默认45%）会触发混合回收MixedGC。回收所有年轻代和部分老年代的对象以及大对象区。采用复制算法来完成。
+7. 多次回收之后，会出现很多Old老年代区，此时总堆占有率达到阈值时（`-XX:InitiatingHeapOccupancyPercent`默认45%）会触发混合回收Mixed GC。
    
-   
+!!!info "G1保证最大暂停时间"
+    G1在进行Young GC的过程中会去记录每次垃圾回收时每个Eden区和Survivor区的平均耗时。
 
-> G1在进行Young GC的过程中会去记录每次垃圾回收时每个Eden区和Survivor区的平均耗时，以作为下次回收时的参考依据。这样就可以根据配置的最大暂停时间计算出本次回收时最多能回收多少个Region区域了。比如 -XX:MaxGCPauseMillis=n（默认200），每个Region回收耗时40ms，那么这次回收最多只能回收4个Region。
+    这样就可以根据配置的最大暂停时间计算出本次回收时最多能回收多少个Region区域了。
 
-
-
-![bac91028-93cc-4f35-9866-b75dee96b94e](./images/bac91028-93cc-4f35-9866-b75dee96b94e.png)
-
-G1对老年代的清理会选择存活度最低的区域来进行回收，这样可以保证回收效率最高，这也是G1（Garbage first）名称的由来。最后清理阶段使用复制算法，不会产生内存碎片。
-
-> 注意：如果清理过程中发现没有足够的空Region存放转移的对象，会出现Full GC。单线程执行标记-整理算法，此时会导致用户线程的暂停。所以尽量保证应该用的堆内存有一定多余的空间。
+    比如 -XX:MaxGCPauseMillis=n（默认200），每个Region回收耗时40ms，那么这次回收最多只能回收4个Region。
 
 
+**Mixed GC**
 
-![441391f1-96ba-4c6d-bb7e-c2f58befe751](./images/441391f1-96ba-4c6d-bb7e-c2f58befe751.png)
+1. Mixed GC会回收年轻代和部分老年代区域的垃圾对象。
 
+2. 清理时会选择存活度最低的Region进行回收，保证回收效率最高。（这是G1名字的由来 Garbage First）
 
+回收过程：
 
-#### 垃圾回收器选择
+- 初始标记（Initial Mark）：标记与GC Root直接关联的对象，停顿时间短
 
-![a0762648-fd06-4997-abbc-cec1677cd6cd](./images/a0762648-fd06-4997-abbc-cec1677cd6cd.png)
+- 并发标记（Concurrent Mark）：与应用线程并发执行，标记所有可达的对象
+
+- 重新标记（Remark）：修正并发标记阶段遗漏的对象，停顿时间较短
+
+- 并发清理（Cleanup）：清理不可达的对象（复制算法），选择存活度最低的Region进行回收
+
+!!!note
+    如果清理过程中发现没有足够的空Region存放转移的对象，会触发 Full GC 单线程执行标记-整理算法，此时会导致用户线程的暂停。所以尽量保证应该用的堆内存有一定多余的空间。
 
 ---
 
+### 垃圾回收器选择
+JDK8及之前：
 
+- 关注暂停时间：ParNew + CMS
 
+- 关注吞吐量：Parallel + Parallel Old
 
+- 单核处理器或对响应时间要求不高：Serial + Serial Old
 
+- 堆内存较大：G1
+
+JDK9及之后：
+
+- 默认G1垃圾回收器，适用于大多数场景
+
+---
