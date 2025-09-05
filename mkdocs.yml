@@ -1,40 +1,113 @@
 # 2025/09/03-18:58
 site_name: YSH的学习笔记
-site_url: https://yourusername.github.io/Note
+site_url: https://yayahonghong.github.io/Note
+
+repo_name: yayahonghong/Note
+repo_url: https://github.com/yayahonghong/Note
+edit_uri: edit/main/docs/
 
 theme:
   name: material
+  language: zh
   features:
-    - navigation.tabs
-    - navigation.sections
-    - toc.integrate
-    - content.code.annotate    # 代码注释
-    - content.tabs.link        # 内容标签页
+    # 导航相关
+    - navigation.tabs          # 顶部标签页导航
+    - navigation.sections      # 左侧导航分组
+    - navigation.path          # 显示导航路径
+    - navigation.top           # 返回顶部按钮
+
+
+    # 搜索相关
+    - search.highlight        # 搜索高亮
+    - search.share           # 搜索分享
+    - search.suggest         # 搜索建议
+
+    # 内容相关
+    - content.code.annotate   # 代码注释
+    - content.code.copy      # 代码复制按钮
+    - content.tabs.link       # 内容标签页
+    - content.tooltips       # 工具提示
+    - content.action.edit    # 编辑按钮
+    - content.action.view    # 查看源码按钮
+
+    # 页脚相关
+    - announce.dismiss       # 公告可关闭
+
   palette:
-    - scheme: default
+    # 亮色主题
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: 切换到深色模式
-    - scheme: slate
+    
+    # 深色主题
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: 切换到浅色模式
+  
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
 
 
 plugins:
-  - search
-
+  - search:
+      lang:
+        - zh
+        - en
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - blog:
+      blog_dir: blog          # 博客目录
+      blog_toc: true         # 显示目录
+      post_date_format: full # 日期格式
+      post_url_date_format: yyyy/MM/dd  # URL中的日期格式
+      post_slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      post_excerpt: optional  # 摘要设置
+      post_excerpt_max_authors: 1
+      post_excerpt_max_categories: 5
+      post_readtime: true    # 显示阅读时间
+      post_readtime_words_per_minute: 265
+      archive: true          # 启用归档
+      archive_name: 归档
+      archive_date_format: yyyy年MM月
+      archive_url_date_format: yyyy/MM
+      categories: true       # 启用分类
+      categories_name: 分类
+      categories_url_format: "category/{slug}"
+      categories_slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      pagination: true       # 启用分页
+      pagination_per_page: 10
+      pagination_url_format: "page/{page}"
+      authors: true          # 启用作者
+      authors_file: "{blog}/.authors.yml"  # 作者配置文件
 markdown_extensions:
   - pymdownx.details      # 支持折叠内容块
   - pymdownx.superfences  # 支持代码块和其他内容
   - admonition           # 支持提示框
-  - toc:                 # 目录配置
-      permalink: true    # 标题锚点
-      toc_depth: 4      # 目录深度
+  - attr_list               # 属性列表
+  - def_list                # 定义列表
+  - footnotes               # 脚注
+  - md_in_html             # HTML中的Markdown
+  - meta                   # 元数据
+  - tables                 # 表格
+  - toc:
+      permalink: true
+      permalink_title: "链接到此段落"
+      toc_depth: 4
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
 
 
 nav:
@@ -72,8 +145,7 @@ nav:
     - Linux: Linux.md
   - 开发工具:
     - Git: Git/Git.md
-  - 随记:
-    - 暂无: null.md
+  - 随记: blog/index.md
   - 其他:
     - 系统相关: 系统相关.md
 

@@ -1,0 +1,11 @@
+authors:
+  ysh:
+    name: YSH
+    description: 小白
+    avatar: https://github.com/yayahonghong.png  # 头像链接
+    url: https://github.com/yayahonghong
+    
+  guest:
+    name: 访客作者
+    description: 客座作者
+    avatar: assets/avatars/guest.png
