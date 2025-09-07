@@ -112,6 +112,7 @@ markdown_extensions:
 
 nav:
   - 首页: index.md
+  - 随记: blog/index.md
   - Java 技术栈:
     - JVM:
       - JVM 基础: JVM/JVM-base.md
@@ -145,7 +146,6 @@ nav:
     - Linux: Linux.md
   - 开发工具:
     - Git: Git/Git.md
-  - 随记: blog/index.md
   - 其他:
     - 系统相关: 系统相关.md
 
