@@ -117,6 +117,8 @@ nav:
     - JVM:
       - JVM 基础: JVM/JVM-base.md
       - JVM 实践: JVM/JVM-practice.md
+      - JVM 进阶: JVM/JVM-advance.md
+      - JVM 原理: JVM/JVM-principle.md
       - JVM: JVM/JVM.md
     - 并发编程: 并发编程/并发编程.md
     - Java 基础: Java.md

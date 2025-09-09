@@ -706,7 +706,7 @@ GC调优的核心分成三部分：
 
 ## 性能调优
 
-着重学习发现问题和诊断问题的方法，目标是准确定位到性能问题的根源。
+本小节着重学习发现问题和诊断问题的方法，目标是准确定位到性能问题的根源。
 
 
 
@@ -722,13 +722,15 @@ GC调优的核心分成三部分：
 
 ### 线程转储的查看方式
 
-线程转储（Thread Dump）提供了对所有运行中的线程当前状态的快照。线程转储可以通过jstack、visualvm等工具获取。其中包含了线程名、优先级、线程ID、线程状态、线程栈信息等等内容，可以用来解决**CPU占用率高、死锁**等问题。
+线程转储（Thread Dump）提供了对所有运行中的线程当前状态的快照。
+
+线程转储可以通过jstack、visualvm等工具获取。其中包含了线程名、优先级、线程ID、线程状态、线程栈信息等等内容，可以用来解决**CPU占用率高、死锁**等问题。
 
 
 
-线程转储（Thread Dump）中的几个核心内容：
+线程转储中的几个核心内容：
 
-- 名称： 线程名称，通过给线程设置合适的名称更容易“见名知意” 
+- 名称： 线程名称，通过给线程设置合适的名称更容易“顾名思义” 
 
 - 优先级（prio）：线程的优先级
 
@@ -738,35 +740,37 @@ GC调优的核心分成三部分：
 
 - 状态：线程的状态，分为：
   
-  - NEW – 新创建的线程，尚未开始执行
-  
-  - RUNNABLE –正在运行或准备执行
-  
-  - BLOCKED – 等待获取监视器锁以进入或重新进入同步块/方法
-  
-  - WAITING – 等待其他线程执行特定操作，没有时间限制
-  
-  - TIMED_WAITING – 等待其他线程在指定时间内执行特定操作
-  
-  - TERMINATED – 已完成执行
+    - NEW – 新创建的线程，尚未开始执行
+
+    - RUNNABLE –正在运行或准备执行
+
+    - BLOCKED – 等待获取监视器锁以进入或重新进入同步块/方法
+
+    - WAITING – 等待其他线程执行特定操作，没有时间限制
+
+    - TIMED_WAITING – 等待其他线程在指定时间内执行特定操作
+
+    - TERMINATED – 已完成执行
 
 - 栈追踪： 显示整个方法的栈帧信息
   
-  
+!!!tip
+    有关线程状态的详细部分，可查看 并发编程部分的笔记
 
 线程转储的可视化在线分析平台：
 
-1. https://jstack.review/ 
+1. [https://jstack.review](https://jstack.review/)
 
-2. https://fastthread.io/
-   
-   
-
-#### 案例1：CPU占用率高问题的解决方案
-
-问题：监控人员通过prometheus的告警发现CPU占用率一直处于很高的情况，通过top命令看到是由于Java程序引起的，希望能快速定位到是哪一部分代码导致了性能问题。
+2. [https://fastthread.io](https://fastthread.io/)
 
 
+---
+
+### 案例1：CPU占用率高问题的解决方案
+
+**问题背景**：监控人员通过prometheus的告警发现CPU占用率一直处于很高的情况，通过top命令看到是由于Java程序引起的，希望能快速定位到是哪一部分代码导致了性能问题。
+
+解决思路：
 
 1. 通过`top –c` 命令找到CPU占用率高的进程，获取它的进程ID。(Linux)
 
@@ -778,15 +782,11 @@ GC调优的核心分成三部分：
 
 5. 找到栈信息对应的源代码，并分析问题产生原因。
 
-> 补充：
-> 
-> 在定位CPU占用率高的问题时，比较需要关注的是状态为RUNNABLE的线程。但实际上，有一些线程执行本地方法时并不会消耗CPU，而只是在等待。但 JVM 仍然会将它们标识成“RUNNABLE”状态。
+<br>
 
+### 案例2：接口响应时间很长的问题
 
-
-#### 案例2：接口响应时间很长的问题
-
-问题：在程序运行过程中，发现有几个接口的响应时间特别长，需要快速定位到是哪一个方法的代码执行过程中出现了性能问题。
+**问题背景**：在程序运行过程中，发现有几个接口的响应时间特别长，需要快速定位到是哪一个方法的代码执行过程中出现了性能问题。
 
 
 
@@ -806,7 +806,7 @@ GC调优的核心分成三部分：
 
 - 所有监控都结束之后，输入`stop`结束监控，重置arthas增强的对象。
   
-  
+<br>
 
 在使用trace定位到性能较低的方法之后，使用`watch`命令监控该方法，可以获得更为详细的方法信息。
 
@@ -816,15 +816,17 @@ GC调优的核心分成三部分：
 
 - `-x` 代表打印的结果中如果有嵌套（比如对象里有属性），最多只展开2层。允许设置的最大值为4。
   
-  
+<br>
 
-#### 案例3：定位偏底层的性能问题
+### 案例3：定位偏底层的性能问题
 
-问题：有一个接口中使用了for循环向ArrayList中添加数据，但是最终发现执行时间比较长，需要定位是由于什么原因导致的性能低下。
+**问题背景**：有一个接口中使用了for循环向ArrayList中添加数据，但是最终发现执行时间比较长，需要定位是由于什么原因导致的性能低下。
 
 
 
-思路：Arthas提供了**性能火焰图**的功能，可以非常直观地显示所有方法中哪些方法执行时间比较长。
+思路：
+
+Arthas提供了**性能火焰图**的功能，可以非常直观地显示所有方法中哪些方法执行时间比较长。
 
 
 
@@ -840,19 +842,17 @@ Arthas的profile命令(Windows不支持)
 
 偏底层的性能问题，特别是由于JDK中某些方法被大量调用导致的性能低下，可以使用火焰图非常直观的找到原因。
 
-这个案例中是由于创建ArrayList时没有**手动指定容量**，导致使用默认的容量而在添加对象过程中发生了多次的扩容，扩容需要将原来数组中的元素复制到新的数组中，消耗了大量的时间。通过火焰图可以看到大量的调用，修复完之后节省了20% ~ 50%的时间。
+这个案例中是由于创建ArrayList时没有手动指定容量，导致使用默认的容量而在添加对象过程中发生了多次的**扩容**，扩容需要将原来数组中的元素复制到新的数组中，消耗了大量的时间。通过火焰图可以看到大量的调用，修复完之后节省了20% ~ 50%的时间。
+
+<br>
+
+### 案例4：线程被耗尽问题
+
+**问题背景**：程序在启动运行一段时间之后，就无法处理任何请求了。将程序重启之后继续运行，依然会出现相同的情况。
 
 
 
-
-
-#### 案例4：线程被耗尽问题
-
-问题：程序在启动运行一段时间之后，就无法接受任何请求了。将程序重启之后继续运行，依然会出现相同的情况。
-
-
-
-解决思路：
+**解决思路**：
 
 线程耗尽问题，一般是由于执行时间过长，分析方法分成两步：
 
@@ -860,9 +860,8 @@ Arthas的profile命令(Windows不支持)
 
 - 如果没有死锁，再使用案例1的打印线程栈的方法检测线程正在执行哪个方法，一般这些大量出现的方法就是慢方法。
   
-  > 死锁：两个或以上的线程因为争夺资源而造成互相等待的现象。
-  
-  
+
+<br>
 
 线程死锁可以通过三种方法**定位问题**：
 
@@ -870,25 +869,35 @@ Arthas的profile命令(Windows不支持)
 
 2. 开发环境中使用visual vm或者Jconsole工具，都可以检测出死锁。使用线程快照生成工具就可以看到死锁的根源。生产环境的服务一般不会允许使用这两种工具连接。
 
-3. 使用fastthread自动检测线程问题。 https://fastthread.io/ 
-   
-   > Fastthread和Gceasy类似，是一款在线的AI自动线程问题检测工具，可以提供线程分析报告。通过报告查看是否存在死锁问题。
-   
-   
+3. 使用[fastthread](https://fastthread.io/)自动检测线程问题。 
 
-#### JMH
+    !!!tip
+        Fastthread和Gceasy类似，是一款在线的AI自动线程问题检测工具，可以提供线程分析报告。通过报告查看是否存在死锁问题。
+   
+---
+
+### JMH
 
 问：你是如何判断一个方法需要耗时多少时间的？
 
-答：我会在方法上打印开始时间和结束时间，他们的差值就是方法的执行耗时。手动通过postman或者jmeter发起一笔请求，在控制台上看输出的时间。
+答：我会在方法上打印开始时间和结束时间，他们的差值就是方法的执行耗时。手动通过postman或者jmeter发起请求，在控制台上看输出的时间。
 
->  这样做是不准确的，第一测试时有些对象创建是**懒加载**的，所以会影响第一次的请求时间，第二因为虚拟机中**JIT即时编译器**会优化你的代码，所以你这个测试得出的时间并不一定是最终用户处理的时间。
-> 
-> *Java程序在运行过程中，JIT即时编译器会实时对代码进行性能优化，所以仅凭少量的测试是无法真实反应运行系统最终给用户提供的性能。*
+!!!danger "注意"
+    这样做是不准确的
+
+    第一测试时有些对象创建是**懒加载**的，所以会影响第一次的请求时间
+
+    第二虚拟机中**JIT即时编译器**会优化你的代码
+
+    所以这个测试得出的时间并不一定是最终用户处理的时间。
+    
+    *Java程序在运行过程中，JIT即时编译器会实时对代码进行性能优化，所以仅凭少量的测试是无法真实反应运行系统最终给用户提供的性能。*
 
 
 
-OpenJDK中提供了一款叫`JMH`（Java Microbenchmark Harness）的工具，可以准确地对Java代码进行基准测试，量化方法的执行性能。官网地址： https://github.com/openjdk/jmh
+OpenJDK中提供了一款叫`JMH`（Java Microbenchmark Harness）的工具，可以准确地对Java代码进行基准测试，量化方法的执行性能。
+
+官网地址： [JMH](https://github.com/openjdk/jmh)
 
 JMH会首先执行预热过程，确保JIT对代码进行优化之后再进行真正的迭代测试，最后输出测试的结果。
 
@@ -896,7 +905,7 @@ JMH会首先执行预热过程，确保JIT对代码进行优化之后再进行�
 
 JMH环境搭建：
 
-- 创建基准测试项目，在CMD窗口中，使用以下命令创建JMH环境项目：
+1. 创建基准测试项目，在CMD窗口中，使用以下命令创建JMH环境项目：
 
 ```shell
  mvn archetype:generate \
@@ -905,24 +914,24 @@ JMH环境搭建：
  -DarchetypeArtifactId=jmh-java-benchmark-archetype \
  -DgroupId=org.sample \
  -DartifactId=test \
- -Dversion=1.
+ -Dversion=1.0
 ```
 
-- 修改POM文件中的JDK版本号和JMH版本号，JMH最新版本号参考Github。
+2. 修改POM文件中的JDK版本号和JMH版本号，JMH最新版本号参考Github。
 
-- 编写测试方法，几个需要注意的点：
+3. 编写测试方法，几个需要注意的点：
   
-  - 死代码问题（无用代码，JIT会跳过不执行）
-  
-  - 黑洞的用法（黑洞消费，避免死代码产生）
+    - 死代码问题（无用代码，JIT会跳过不执行）
 
-- 通过maven的verify命令，检测代码问题并打包成jar包。
+    - 黑洞的用法（黑洞消费，避免死代码产生）
 
-- 通过`java -jar target/benchmarks.jar` 命令执行基准测试。
+4. 通过maven的verify命令，检测代码问题并打包成jar包。
 
-- 测试结果通过 https://jmh.morethan.io/ 生成可视化的结果。
-  
-  
+5. 通过`java -jar target/benchmarks.jar` 命令执行基准测试。
+
+6. 测试结果通过 [https://jmh.morethan.io/](https://jmh.morethan.io/) 生成可视化的结果。
+
+<br>
 
 案例 ：日期格式化方法性能测试
 
@@ -930,160 +939,162 @@ JMH环境搭建：
 
 2. LocalDateTime对象使用的DateTimeFormatter线程安全，并且性能较好，如果能将DateTimeFormatter对象保存下来，性能可以得到进一步的提升。
    
-   
-   
-   
+--- 
 
-#### 综合案例
+### 综合案例
 
 小李的项目中有一个获取用户信息的接口性能比较差，他希望能对这个接口在代码中进行彻底的优化，提升性能。
 
 接口代码优化过程如下（首先需要使用arthas找到接口耗时长的原因）：
 
 ```java
-    //初始代码
-    public List<UserVO> user1(){
-        //1.从数据库获取前端需要的详情数据
-        List<UserDetails> userDetails = userService.getUserDetails();
+//初始代码
+public List<UserVO> user1(){
+    //1.从数据库获取前端需要的详情数据
+    List<UserDetails> userDetails = userService.getUserDetails();
 
-        //2.获取缓存中的用户数据
-        List<User> users = userService.getUsers();
+    //2.获取缓存中的用户数据
+    List<User> users = userService.getUsers();
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
-        ArrayList<UserVO> userVOS = new ArrayList<>();
-        for (UserDetails userDetail : userDetails) {
-            UserVO userVO = new UserVO();
-            //可以使用BeanUtils对象拷贝
-            userVO.setId(userDetail.getId());
-            userVO.setRegister(simpleDateFormat.format(userDetail.getRegister2()));
-            //填充name
-            for (User user : users) {
-                if(user.getId().equals(userDetail.getId())){
-                    userVO.setName(user.getName());
-                }
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
+    ArrayList<UserVO> userVOS = new ArrayList<>();
+    for (UserDetails userDetail : userDetails) {
+        UserVO userVO = new UserVO();
+        //可以使用BeanUtils对象拷贝
+        userVO.setId(userDetail.getId());
+        userVO.setRegister(simpleDateFormat.format(userDetail.getRegister2()));
+        //填充name
+        for (User user : users) {
+            if(user.getId().equals(userDetail.getId())){
+                userVO.setName(user.getName());
             }
-            //加入集合
-            userVOS.add(userVO);
         }
-
-        return userVOS;
-
+        //加入集合
+        userVOS.add(userVO);
     }
 
+    return userVOS;
 
-    //使用HasmMap存放用户名字
-    public List<UserVO> user2(){
-        //1.从数据库获取前端需要的详情数据
-        List<UserDetails> userDetails = userService.getUserDetails();
+}
 
-        //2.获取缓存中的用户数据
-        List<User> users = userService.getUsers();
-        //将list转换成hashmap
-        HashMap<Long, User> map = new HashMap<>();
-        for (User user : users) {
-            map.put(user.getId(),user);
-        }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
-        ArrayList<UserVO> userVOS = new ArrayList<>();
-        for (UserDetails userDetail : userDetails) {
-            UserVO userVO = new UserVO();
-            //可以使用BeanUtils对象拷贝
-            userVO.setId(userDetail.getId());
-            userVO.setRegister(simpleDateFormat.format(userDetail.getRegister2()));
-            //填充name
-            userVO.setName(map.get(userDetail.getId()).getName());
-            //加入集合
-            userVOS.add(userVO);
-        }
+//使用HasmMap存放用户名字
+public List<UserVO> user2(){
+    //1.从数据库获取前端需要的详情数据
+    List<UserDetails> userDetails = userService.getUserDetails();
 
-        return userVOS;
-
+    //2.获取缓存中的用户数据
+    List<User> users = userService.getUsers();
+    //将list转换成hashmap
+    HashMap<Long, User> map = new HashMap<>();
+    for (User user : users) {
+        map.put(user.getId(),user);
     }
 
-
-    //优化日期格式化
-    public List<UserVO> user3(){
-        //1.从数据库获取前端需要的详情数据
-        List<UserDetails> userDetails = userService.getUserDetails();
-
-        //2.获取缓存中的用户数据
-        List<User> users = userService.getUsers();
-        //将list转换成hashmap
-        HashMap<Long, User> map = new HashMap<>();
-        for (User user : users) {
-            map.put(user.getId(),user);
-        }
-
-        //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
-        ArrayList<UserVO> userVOS = new ArrayList<>();
-        for (UserDetails userDetail : userDetails) {
-            UserVO userVO = new UserVO();
-            //可以使用BeanUtils对象拷贝
-            userVO.setId(userDetail.getId());
-            userVO.setRegister(userDetail.getRegister().format(formatter));
-            //填充name
-            userVO.setName(map.get(userDetail.getId()).getName());
-            //加入集合
-            userVOS.add(userVO);
-        }
-
-        return userVOS;
-
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
+    ArrayList<UserVO> userVOS = new ArrayList<>();
+    for (UserDetails userDetail : userDetails) {
+        UserVO userVO = new UserVO();
+        //可以使用BeanUtils对象拷贝
+        userVO.setId(userDetail.getId());
+        userVO.setRegister(simpleDateFormat.format(userDetail.getRegister2()));
+        //填充name
+        userVO.setName(map.get(userDetail.getId()).getName());
+        //加入集合
+        userVOS.add(userVO);
     }
 
-    @GetMapping
-    //使用stream流改写for循环
-    public List<UserVO> user4(){
-        //1.从数据库获取前端需要的详情数据
-        List<UserDetails> userDetails = userService.getUserDetails();
+    return userVOS;
 
-        //2.获取缓存中的用户数据
-        List<User> users = userService.getUsers();
-        //将list转换成hashmap
-        Map<Long, User> map = users.stream().collect(Collectors.toMap(User::getId, o -> o));
+}
 
-        //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
-        return userDetails.stream().map(userDetail -> {
-            UserVO userVO = new UserVO();
-            //可以使用BeanUtils对象拷贝
-            userVO.setId(userDetail.getId());
-            userVO.setRegister(userDetail.getRegister().format(formatter));
-            //填充name
-            userVO.setName(map.get(userDetail.getId()).getName());
-            return userVO;
-        }).collect(Collectors.toList());
 
+//优化日期格式化
+public List<UserVO> user3(){
+    //1.从数据库获取前端需要的详情数据
+    List<UserDetails> userDetails = userService.getUserDetails();
+
+    //2.获取缓存中的用户数据
+    List<User> users = userService.getUsers();
+    //将list转换成hashmap
+    HashMap<Long, User> map = new HashMap<>();
+    for (User user : users) {
+        map.put(user.getId(),user);
     }
 
-    //使用并行流优化性能
-    public List<UserVO> user5(){
-        //1.从数据库获取前端需要的详情数据
-        List<UserDetails> userDetails = userService.getUserDetails();
-
-        //2.获取缓存中的用户数据
-        List<User> users = userService.getUsers();
-        //将list转换成hashmap
-        Map<Long, User> map = users.parallelStream().collect(Collectors.toMap(User::getId, o -> o));
-
-        //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
-        return userDetails.parallelStream().map(userDetail -> {
-            UserVO userVO = new UserVO();
-            //可以使用BeanUtils对象拷贝
-            userVO.setId(userDetail.getId());
-            userVO.setRegister(userDetail.getRegister().format(formatter));
-            //填充name
-            userVO.setName(map.get(userDetail.getId()).getName());
-            return userVO;
-        }).collect(Collectors.toList());
-
+    //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
+    ArrayList<UserVO> userVOS = new ArrayList<>();
+    for (UserDetails userDetail : userDetails) {
+        UserVO userVO = new UserVO();
+        //可以使用BeanUtils对象拷贝
+        userVO.setId(userDetail.getId());
+        userVO.setRegister(userDetail.getRegister().format(formatter));
+        //填充name
+        userVO.setName(map.get(userDetail.getId()).getName());
+        //加入集合
+        userVOS.add(userVO);
     }
+
+    return userVOS;
+
+}
+
+
+//使用stream流改写for循环
+public List<UserVO> user4(){
+    //1.从数据库获取前端需要的详情数据
+    List<UserDetails> userDetails = userService.getUserDetails();
+
+    //2.获取缓存中的用户数据
+    List<User> users = userService.getUsers();
+    //将list转换成hashmap
+    Map<Long, User> map = users.stream().collect(Collectors.toMap(User::getId, o -> o));
+
+    //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
+    return userDetails.stream().map(userDetail -> {
+        UserVO userVO = new UserVO();
+        //可以使用BeanUtils对象拷贝
+        userVO.setId(userDetail.getId());
+        userVO.setRegister(userDetail.getRegister().format(formatter));
+        //填充name
+        userVO.setName(map.get(userDetail.getId()).getName());
+        return userVO;
+    }).collect(Collectors.toList());
+
+}
+
+//使用并行流优化性能
+public List<UserVO> user5(){
+    //1.从数据库获取前端需要的详情数据
+    List<UserDetails> userDetails = userService.getUserDetails();
+
+    //2.获取缓存中的用户数据
+    List<User> users = userService.getUsers();
+    //将list转换成hashmap
+    Map<Long, User> map = users.parallelStream().collect(Collectors.toMap(User::getId, o -> o));
+
+    //3.遍历详情集合，从缓存中获取用户名，生成VO进行填充
+    return userDetails.parallelStream().map(userDetail -> {
+        UserVO userVO = new UserVO();
+        //可以使用BeanUtils对象拷贝
+        userVO.setId(userDetail.getId());
+        userVO.setRegister(userDetail.getRegister().format(formatter));
+        //填充name
+        userVO.setName(map.get(userDetail.getId()).getName());
+        return userVO;
+    }).collect(Collectors.toList());
+
+}
 ```
-
-
-
-
+!!!warning "注意"
+    在大多数情况下，对于简单的遍历操作，传统的 for 循环性能通常更好（尤其是在数据量小的情况下）。
+    
+    但 Stream 的真正优势不在于极致的微秒级性能，而在于更高的抽象层次、可读性、可维护性，以及在处理复杂数据操作和并行化方面的巨大潜力。
 
 ---
+
+**上一节**： [JVM基础](JVM-base.md)
+
+**下一节**： [并发编程](concurrent-programming.md)
