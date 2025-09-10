@@ -123,7 +123,11 @@ nav:
       - JVM 进阶: JVM/JVM-advance.md
       - JVM 原理: JVM/JVM-principle.md
       - JVM 总结: JVM/JVM-summary.md
-    - 并发编程: 并发编程/并发编程.md
+    - Java 并发编程: 
+      - Overview: 并发编程/Overview.md
+      - 进程与线程: 并发编程/进程与线程.md
+      - Java线程: 并发编程/Java线程.md
+      - 并发编程详解: 并发编程/并发编程详解.md
     - Java 基础: Java.md
   - Spring 全家桶:
     - Spring 核心: 
