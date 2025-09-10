@@ -101,6 +101,9 @@ markdown_extensions:
   - md_in_html             # HTML中的Markdown
   - meta                   # 元数据
   - tables                 # 表格
+  - pymdownx.tasklist:      # 任务列表 
+      custom_checkbox: true
+      clickable_checkbox: false
   - toc:
       permalink: true
       permalink_title: "链接到此段落"
@@ -119,7 +122,7 @@ nav:
       - JVM 实践: JVM/JVM-practice.md
       - JVM 进阶: JVM/JVM-advance.md
       - JVM 原理: JVM/JVM-principle.md
-      - JVM: JVM/JVM.md
+      - JVM 总结: JVM/JVM-summary.md
     - 并发编程: 并发编程/并发编程.md
     - Java 基础: Java.md
   - Spring 全家桶:
