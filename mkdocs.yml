@@ -118,6 +118,8 @@ nav:
   - 首页: index.md
   - 随笔: blog/index.md
   - Java 技术栈:
+    - Java 基础:
+      - Java: Java.md
     - JVM:
       - JVM 基础: JVM/JVM-base.md
       - JVM 实践: JVM/JVM-practice.md
@@ -128,8 +130,8 @@ nav:
       - Overview: 并发编程/Overview.md
       - 进程与线程: 并发编程/进程与线程.md
       - Java线程: 并发编程/Java线程.md
-      - 并发编程详解: 并发编程/并发编程详解.md
-    - Java 基础: Java.md
+      - 锁: 并发编程/锁.md
+      - 并发编程三要素: 并发编程/并发编程三要素.md
   - Spring 全家桶:
     - Spring 核心: 
       - Overview: Spring/index.md
