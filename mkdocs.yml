@@ -71,9 +71,10 @@ plugins:
       post_slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
-      post_excerpt: optional  # 摘要设置
+      post_excerpt: required  # 摘要设置
       post_excerpt_max_authors: 1
       post_excerpt_max_categories: 5
+      post_excerpt_separator: <!-- more -->
       post_readtime: true    # 显示阅读时间
       post_readtime_words_per_minute: 265
       archive: true          # 启用归档
@@ -115,7 +116,7 @@ markdown_extensions:
 
 nav:
   - 首页: index.md
-  - 随记: blog/index.md
+  - 随笔: blog/index.md
   - Java 技术栈:
     - JVM:
       - JVM 基础: JVM/JVM-base.md

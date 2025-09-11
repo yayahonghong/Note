@@ -1,21 +1,16 @@
 ---
 title: 欢迎来到我的随记
-description: 这是我的第一篇随记，介绍了我的学习计划和技术栈
 authors:
   - ysh
 date: 2025-09-05
 categories:
   - 随笔
-  - 技术
 tags:
   - 博客
-  - Java
-  - Spring
 slug: hello-world
 ---
 
 # 欢迎来到我的随记
-
 
 <!-- more -->  <!-- 摘要分割线 -->
 
