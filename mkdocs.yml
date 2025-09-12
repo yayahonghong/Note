@@ -132,6 +132,9 @@ nav:
       - Java线程: 并发编程/Java线程.md
       - 锁: 并发编程/锁.md
       - 并发编程三要素: 并发编程/并发编程三要素.md
+      - 乐观锁: 并发编程/乐观锁.md
+      - 不可变类: 并发编程/不可变类.md
+      - 并发工具: 并发编程/并发工具.md
   - Spring 全家桶:
     - Spring 核心: 
       - Overview: Spring/index.md
