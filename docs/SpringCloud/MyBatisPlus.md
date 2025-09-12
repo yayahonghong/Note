@@ -1,6 +1,6 @@
 # MyBatis-Plus 数据访问增强
 
-> MyBatis-Plus 是 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变
+MyBatis-Plus 是 MyBatis 的增强工具，在 MyBatis 的基础上只做增强不做改变
 
 ## 快速入门
 
@@ -78,7 +78,7 @@ public class User {
 
 ## 常用配置
 
-```yml
+```yaml
 mybatis-plus:
   type-aliases-package: com.ysh.entity # 别名扫描包
   mapper-locations: classpath:mapper/**/*.xml # mapper扫描路径
@@ -90,6 +90,8 @@ mybatis-plus:
       id-type: assign_id # 主键类型为雪花算法
       update-strategy: not_null # 更新策略:只更新不为null的值
 ```
+
+具体可参考官方文档：[使用配置](https://www.baomidou.com)
 
 ## 条件构造器
 
@@ -237,7 +239,7 @@ void testSaveBatch() {
 !!! tip "性能优化"
     在 MySQL 连接参数中添加 `rewriteBatchedStatements=true` 可以将多条插入语句合并为一条，大幅提升性能。
 
-```yml
+```yaml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mp?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8
@@ -280,7 +282,7 @@ alter table address add deleted bit default b'0' null comment '逻辑删除';
 ```
 
 2. 配置逻辑删除：
-```yml
+```yaml
 mybatis-plus:
   global-config:
     db-config:
@@ -295,6 +297,8 @@ mybatis-plus:
     - 建议采用数据迁移方案替代逻辑删除
 
 ### 通用枚举
+
+通用枚举可以简化枚举字段的读写操作。
 
 1. 定义枚举类：
 ```java
@@ -315,7 +319,7 @@ public enum UserStatus {
 ```
 
 2. 配置枚举处理器：
-```yml
+```yaml
 mybatis-plus:
   configuration:
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
@@ -363,7 +367,7 @@ void testPageQuery() {
 
 创建通用的分页查询和返回实体，简化分页开发：
 
-??? example "分页实体封装"
+!!!example "分页实体封装"
     
     **PageQuery.java**
     ```java

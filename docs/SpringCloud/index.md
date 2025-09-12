@@ -5,8 +5,8 @@
 ## 📚 学习路径
 
 ### 基础篇
-- [Spring Cloud 概述与微服务架构](SpringCloud-Overview.md)
-- [MyBatis-Plus 数据访问层](SpringCloud-MyBatisPlus.md)
+- [Spring Cloud 概述与微服务架构](Overview.md)
+- [MyBatis-Plus 数据访问层](MyBatisPlus.md)
 
 ### 核心组件篇
 - [服务注册与发现](SpringCloud-Discovery.md)
@@ -15,7 +15,7 @@
 - [API 网关](SpringCloud-Gateway.md)
 
 ### 基础设施篇
-- [Docker 容器化部署](SpringCloud-Docker.md)
+- [Docker 容器化部署](Docker.md)
 - [消息队列 MQ](SpringCloud-MQ.md)
 - [分布式搜索 Elasticsearch](SpringCloud-ES.md)
 

@@ -151,8 +151,9 @@ nav:
     - Spring Boot: SpringBoot/SpringBoot.md
     - SpringCloud 微服务:
       - Overview: SpringCloud/index.md
-      - 概述: SpringCloud/SpringCloud-Overview.md
-      - MyBatis-Plus: SpringCloud/SpringCloud-MyBatisPlus.md
+      - 概述: SpringCloud/Overview.md
+      - MyBatis-Plus: SpringCloud/MyBatisPlus.md
+      - Docker: SpringCloud/Docker.md
   - 数据库技术:
     - MySQL: MySQL/MySQL.md
     - Redis: Redis/Redis.md
