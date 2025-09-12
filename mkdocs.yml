@@ -119,7 +119,11 @@ nav:
   - 随笔: blog/index.md
   - Java 技术栈:
     - Java 基础:
-      - Java: Java.md
+      - 反射: Java/反射.md
+      - 代理: Java/代理.md
+      - 不可变集合: Java/不可变集合.md
+      - 函数式编程: Java/函数式编程.md
+      - IO: Java/IO.md
     - JVM:
       - JVM 基础: JVM/JVM-base.md
       - JVM 实践: JVM/JVM-practice.md
