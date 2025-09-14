@@ -154,6 +154,8 @@ nav:
       - 概述: SpringCloud/Overview.md
       - MyBatis-Plus: SpringCloud/MyBatisPlus.md
       - Docker: SpringCloud/Docker.md
+      - MQ: SpringCloud/MQ.md
+      - Elasticsearch: SpringCloud/Elasticsearch.md
   - 数据库技术:
     - MySQL: MySQL/MySQL.md
     - Redis: Redis/Redis.md
