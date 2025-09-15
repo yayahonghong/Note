@@ -1,5 +1,5 @@
 ---
-title: LLM之RAG
+title: RAG
 authors:
   - ysh
 date: 2025-09-06
@@ -7,7 +7,7 @@ categories:
   - AI
 slug: rag
 ---
-## 什么是RAG
+
 RAG（Retrieval-Augmented Generation）是一种结合检索和生成的技术，用于提升语言模型的回答准确性和上下文相关性。
 <!-- more -->
 
