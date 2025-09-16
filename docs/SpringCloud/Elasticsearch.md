@@ -1,13 +1,9 @@
 [Elasticsearch：官方分布式搜索和分析引擎 | Elastic](https://www.elastic.co/cn/elasticsearch)
 
 
-数据库的模糊搜索功能单一，匹配条件非常苛刻，必须恰好包含用户搜索的关键字。而在搜索引擎中，用户输入出现个别错字，或者用拼音搜索、同义词搜索都能正确匹配到数据。
+数据库的模糊搜索功能单一，匹配条件非常苛刻，必须恰好包含用户搜索的关键字。
 
-
-
-在面临海量数据的搜索，或者有一些复杂搜索需求的时候，推荐使用专门的搜索引擎来实现搜索功能。
-
-
+而在搜索引擎中，用户输入出现个别错字，或者用拼音搜索、同义词搜索都能正确匹配到数据。在面临海量数据的搜索，或者有一些复杂搜索需求的时候，推荐使用专门的搜索引擎来实现搜索功能。
 
 Elasticsearch是由elastic公司开发的一套搜索引擎技术，它是elastic技术栈中的一部分。完整的技术栈包括：
 
@@ -17,7 +13,7 @@ Elasticsearch是由elastic公司开发的一套搜索引擎技术，它是elasti
 
 整套技术栈被称为ELK，经常用来做日志收集、系统监控和状态分析等等
 
-
+<br>
 
 ## 安装
 
@@ -111,8 +107,7 @@ elasticsearch之所以有如此高性能的搜索表现，正是因为底层的�
 
 ![image-20250219192134064](./images/image-20250219192134064.png)
 
-
-
+<br>
 
 **正向索引**：
 
@@ -146,7 +141,7 @@ Elasticsearch的关键就是倒排索引，而倒排索引依赖于对文档内�
 
 运行一个命令即可：
 
-```Shell
+```bash
 docker exec -it es容器名 ./bin/elasticsearch-plugin  install https://release.infinilabs.com/analysis-ik/stable/elasticsearch-analysis-ik-7.12.1.zip
 ```
 
@@ -154,9 +149,11 @@ docker exec -it es容器名 ./bin/elasticsearch-plugin  install https://release.
 
 然后重启es容器：
 
-```Shell
+```bash
 docker restart es容器名
 ```
+
+<br>
 
 **方案二**：离线安装
 
@@ -168,7 +165,7 @@ docker volume inspect es-plugins
 
 将插件复制到容器挂载的目录，重启容器即可
 
-
+<br>
 
 #### 使用
 
@@ -177,39 +174,41 @@ IK分词器包含两种模式：
 -  `ik_smart`：智能语义切分 
 -  `ik_max_word`：最细粒度切分 
 
+<br>
 
-
-我们在Kibana的DevTools上来测试分词器，首先测试Elasticsearch官方提供的标准分词器：
+我们在Kibana的DevTools上测试分词器，首先测试Elasticsearch官方提供的标准分词器：
 
 ```JSON
 POST /_analyze
 {
   "analyzer": "standard",
-  "text": "黑马程序员学习java太棒了"
+  "text": "Elasticsearch是一个基于Lucene的搜索服务器"
 }
 ```
 
-> 标准分词器适用于英文分词，中文分词效果不好
->
-> 建议使用`ik_smart`模式
+!!!note
+    标准分词器适用于英文分词，中文分词效果不好
 
+    中文建议使用`ik_smart`模式
 
+<br>
 
-##### 拓展词典
+#### 拓展词典
 
 随着互联网的发展，“造词运动”也越发的频繁。出现了很多新的词语，在原有的词汇列表中并不存在。
 
 所以要想正确分词，IK分词器的词库也需要不断的更新，IK分词器提供了扩展词汇的功能。
 
-1）打开IK分词器config目录：
+1.打开IK分词器config目录：
 
 ![image-20250219195305871](./images/image-20250219195305871.png)
 
-> 注意，如果采用在线安装的通过，默认是没有config目录的
+!!!tip
+    注意，如果采用在线安装的通过，默认是没有config目录的，需要自己创建
 
 
 
-2）在IKAnalyzer.cfg.xml配置文件内容添加：
+2.在IKAnalyzer.cfg.xml配置文件内容添加：
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -223,24 +222,26 @@ POST /_analyze
 </properties>
 ```
 
-3）在IK分词器的config目录新建一个 `ext.dic`，可以参考config目录下复制一个配置文件进行修改
+3.在IK分词器的config目录新建一个 `ext.dic`，可以参考config目录下复制一个配置文件进行修改
 
 ```Plain
-传智播客
+一坤年
 泰裤辣
 ```
 
+<br>
+
+## 基础概念
+
+### 文档和字段
+
+Elasticsearch是面向**文档（Document）**存储的，可以是数据库中的一条商品数据，一个订单信息。
 
 
-#### 基础概念
 
-##### 文档和字段
+文档数据会被序列化为`json`格式后存储在`elasticsearch`，因此，原本数据库中的一行数据就是ES中的一个JSON文档
 
-elasticsearch是面向**文档（Document）**存储的，可以是数据库中的一条商品数据，一个订单信息。
-
-
-
-文档数据会被序列化为`json`格式后存储在`elasticsearch`，因此，原本数据库中的一行数据就是ES中的一个JSON文档；而数据库中每行数据都包含很多列，这些列就转换为JSON文档中的**字段（Field）**。
+而数据库中每行数据都包含很多列，这些列就转换为JSON文档中的**字段（Field）**。
 
 ```json
 {
@@ -262,20 +263,16 @@ elasticsearch是面向**文档（Document）**存储的，可以是数据库中�
 
 ```
 
+<br>
 
+### 索引和映射
 
-##### 索引和映射
+随着业务发展，需要在es中存储的文档也会越来越多，比如有商品的文档、用户的文档、订单文档等等，所有文档都散乱存放显然非常混乱，也不方便管理。
 
-随着业务发展，需要在es中存储的文档也会越来越多，比如有商品的文档、用户的文档、订单文档等等,所有文档都散乱存放显然非常混乱，也不方便管理。
-
-因此，我们要将类型相同的文档集中在一起管理，称为**索引（Index）**
-
-> 索引类似于数据库中“表”的概念
-
+因此，我们要将类型相同的文档集中在一起管理，称为**索引（Index）**（索引类似于数据库中“表”的概念）
 
 
 数据库的表会有约束信息，用来定义表的结构、字段的名称、类型等信息。因此，索引库中就有**映射（mapping）**，是索引中文档的字段约束信息，类似表的结构约束。
-
 
 
 MySQL 与 Elasticsearch
@@ -296,25 +293,27 @@ MySQL 与 Elasticsearch
 
 ![image-20250219200655300](./images/image-20250219200655300.png)
 
+<br>
 
+---
 
-### 索引库操作
+## 索引库操作
 
-#### Mapping映射属性
+### Mapping映射属性
 
 Mapping是对索引库中文档的约束，常见的Mapping属性包括：
 
 - `type`：字段数据类型，常见的简单类型有： 
-  - 字符串：`text`（可分词的文本）、`keyword`（精确值，不应分词，例如：品牌、国家、ip地址）
-  - 数值：`long`、`integer`、`short`、`byte`、`double`、`float`、
-  - 布尔：`boolean`
-  - 日期：`date`
-  - 对象：`object`
+    - 字符串：`text`（可分词的文本）、`keyword`（精确值，不应分词，例如：品牌、国家、ip地址）
+    - 数值：`long`、`integer`、`short`、`byte`、`double`、`float`、
+    - 布尔：`boolean`
+    - 日期：`date`
+    - 对象：`object`
 - `index`：是否创建索引（是否参与搜索），默认为`true`
 - `analyzer`：使用哪种分词器
 - `properties`：该字段的子字段
 
-
+<br>
 
 例如下面的json文档：
 
@@ -345,14 +344,15 @@ Mapping是对索引库中文档的约束，常见的Mapping属性包括：
 |   score    |   `float`    | 只看数组中元素类型 |        ✔         |        ❌         |     ——     |
 |    name    |  `keyword`   | 字符串，但是不分词 |        ✔         |        ❌         |     ——     |
 
+<br>
 
-
-#### CRUD
+### CRUD
 
 - 创建索引库和mapping
 
 ```json
 PUT /<索引库名称>
+
 {
   "mappings": {
     "properties": {
@@ -397,9 +397,9 @@ DELETE /索引库名
 
 - 修改索引库
 
-倒排索引结构虽然不复杂，但是一旦数据结构改变（比如改变了分词器），就需要重新创建倒排索引，这简直是灾难。因此索引库**一旦创建，无法修改mapping**。
+倒排索引结构虽然不复杂，但是一旦数据结构改变（比如改变了分词器），就需要重新创建倒排索引，这简直是灾难。因此索引库**一旦创建，就无法再修改mapping中原有字段的属性**。
 
-虽然无法修改mapping中已有的字段，但是却允许添加新的字段到mapping中，因为不会对倒排索引产生影响。因此修改索引库能做的就是向索引库中添加新字段，或者更新索引库的基础属性
+虽然无法修改mapping中已有的字段，但是却允许添加新的字段到mapping中，因为不会对倒排索引产生影响。因此修改索引库能做的就是向索引库中添加新字段，或者更新索引库的基础属性。
 
 ```
 PUT /索引库名/_mapping
@@ -412,18 +412,19 @@ PUT /索引库名/_mapping
 }
 ```
 
+<br>
 
+---
 
+## 文档操作
 
-
-### 文档操作
-
-#### CRUD
+### CRUD
 
 - 新增文档
 
 ```json
 POST /索引库名/_doc/文档id
+
 {
     "字段1": "值1",
     "字段2": "值2",
@@ -439,8 +440,8 @@ eg.
 ```json
 POST /heima/_doc/1
 {
-    "info": "黑马程序员Java讲师",
-    "email": "zy@itcast.cn",
+    "info": "Elasticsearch是一个基于Lucene的搜索服务器",
+    "email": "example@example.com",
     "name": {
         "firstName": "云",
         "lastName": "赵"
@@ -470,23 +471,25 @@ DELETE /索引库名/_doc/文档id
 
 修改有两种方式：
 
-​	全量修改：直接覆盖原来的文档
+​全量修改：直接覆盖原来的文档
 
-​	局部修改：修改文档中的部分字段
+局部修改：修改文档中的部分字段
 
+<br>
 
-
-1. 全量修改
+1.全量修改
 
 全量修改是覆盖原来的文档，其本质是两步操作：
 
 - 根据指定的id删除文档
 - 新增一个相同id的文档
 
-> **注意**：如果根据id删除时，id不存在，第二步的新增也会执行，也就从修改变成了新增操作了。
+!!!warning "注意"
+    如果根据id删除时，id不存在，第二步的新增也会执行，但操作从修改变成了新增。
 
 ```json
 PUT /{索引库名}/_doc/文档id
+
 {
     "字段1": "值1",
     "字段2": "值2",
@@ -496,12 +499,13 @@ PUT /{索引库名}/_doc/文档id
 
 
 
-2. 局部修改
+2.局部修改
 
 局部修改是只修改指定id匹配的文档中的部分字段。
 
 ```json
 POST /{索引库名}/_update/文档id
+
 {
     "doc": {
          "字段名": "新的值",
@@ -509,16 +513,15 @@ POST /{索引库名}/_update/文档id
 }
 ```
 
-> 请求方式不同，路径中的`_doc`变成了`_update`
+<br>
 
-
-
-#### 批处理
+### 批处理
 
 批处理采用POST请求，基本语法如下：
 
 ```json
 POST _bulk
+
 { "index" : { "_index" : "test", "_id" : "1" } }
 { "field1" : "value1" }
 { "delete" : { "_index" : "test", "_id" : "2" } }
@@ -529,74 +532,77 @@ POST _bulk
 ```
 
 - `index`代表新增操作
-  - `_index`：指定索引库名
-  - `_id`指定要操作的文档id
-  - `{ "field1" : "value1" }`：则是要新增的文档内容
+    - `_index`：指定索引库名
+    - `_id`指定要操作的文档id
+    - `{ "field1" : "value1" }`：则是要新增的文档内容
 - `delete`代表删除操作
-  - `_index`：指定索引库名
-  - `_id`指定要操作的文档id
+    - `_index`：指定索引库名
+    - `_id`指定要操作的文档id
 - `update`代表更新操作
-  - `_index`：指定索引库名
-  - `_id`指定要操作的文档id
-  - `{ "doc" : {"field2" : "value2"} }`：要更新的文档字段
+    - `_index`：指定索引库名
+    - `_id`指定要操作的文档id
+    - `{ "doc" : {"field2" : "value2"} }`：要更新的文档字段
 
+<br>
 
+---
 
+## JavaRestClient
 
-
-### JavaRestClient
-
-#### RestAPI
+### RestAPI
 
 ES官方提供了各种不同语言的客户端，用来操作ES。这些客户端的本质就是组装DSL语句，通过http请求发送给ES。
 
-官方文档地址：
+[官方文档地址](https://www.elastic.co/guide/en/elasticsearch/client/index.html)
 
-https://www.elastic.co/guide/en/elasticsearch/client/index.html
+由于ES目前提供了全新版本的客户端，老版本的客户端已经被标记为过时。此处采用老版本客户端作为示例[image-20250220170629116](./images/image-20250220170629116.png)
 
-由于ES目前最新版本是8.8，提供了全新版本的客户端，老版本的客户端已经被标记为过时。而我们采用的是7.12版本，因此只能使用老版本客户端![image-20250220170629116](./images/image-20250220170629116.png)
+<br>
 
-
-
-#### 初始化RestClient
+### 初始化RestClient
 
 在elasticsearch提供的API中，与elasticsearch一切交互都封装在一个名为`RestHighLevelClient`的类中，必须先完成这个对象的初始化，建立与elasticsearch的连接。
 
 1. 引入`es`的`RestHighLevelClient`依赖：
 
-```XML
-<dependency>
-   <groupId>org.elasticsearch.client</groupId>
-   <artifactId>elasticsearch-rest-high-level-client</artifactId>
-</dependency>
-```
+    ```XML
+    <dependency>
+        <groupId>org.elasticsearch.client</groupId>
+        <artifactId>elasticsearch-rest-high-level-client</artifactId>
+    </dependency>
+    ```
 
-2. 因为SpringBoot默认的ES版本是`7.17.10`，所以我们需要覆盖默认的ES版本：
+2. 因为SpringBoot提供了默认的ES版本，我们需要覆盖默认的ES版本：
 
-```XML
-  <properties>
-      <maven.compiler.source>11</maven.compiler.source>
-      <maven.compiler.target>11</maven.compiler.target>
-      <elasticsearch.version>7.12.1</elasticsearch.version>
-  </properties>
-```
+    ```XML
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <elasticsearch.version>7.12.1</elasticsearch.version>
+    </properties>
+    ```
 
 3. 初始化RestHighLevelClient：
 
-```Java
-RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
-        HttpHost.create("Localhost:9200")
-));
-```
+    ```Java
+    RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(
+            HttpHost.create("Localhost:9200")
+    ));
+    ```
 
+<br>
 
-
-#### 索引库操作
+### 索引库操作
 
 - 创建索引库
-
-![image-20250220173018219](./images/image-20250220173018219.png)
-
+```java
+void testCreateIndex() throws IOException {
+    CreateIndexRequest request = new CreateIndexRequest("items");
+    // MAPPING_TEMPLATE是一个json字符串，定义了索引库的映射
+    request.source(MAPPING_TEMPLATE, XContentType.JSON);
+    client.indices().create(request, RequestOptions.DEFAULT);
+}
+```
 
 
 - 删除索引库
@@ -626,8 +632,6 @@ void testGetIndex() throws IOException {
 
 
 
-
-
 JavaRestClient操作elasticsearch的流程基本类似。核心是`client.indices()`方法来获取索引库的操作对象。
 
 索引库操作的基本步骤：
@@ -637,9 +641,9 @@ JavaRestClient操作elasticsearch的流程基本类似。核心是`client.indice
 - 准备请求参数（ `Create`时需要，其它是无参，可以省略）
 - 发送请求。调用`RestHighLevelClient#indices().xxx()`方法，xxx是`create`、`exists`、`delete`
 
+<br>
 
-
-#### 文档操作
+### 文档操作
 
 - 新增文档
 
@@ -695,9 +699,6 @@ void testGetDocumentById() throws IOException {
 }
 ```
 
-> 与其它操作相比，多了一步解析响应的操作
-
-
 
 - 更新文档
 
@@ -715,7 +716,7 @@ void testGetDocumentById() throws IOException {
 
 
 
-**批量操作**
+- 批量操作
 
 批处理与前面讲的文档的CRUD步骤基本一致：
 
@@ -770,27 +771,28 @@ void testBulk() throws IOException {
     }
 ```
 
+<br>
 
+---
 
+## DSL查询
 
-
-### DSL查询
-
-Elasticsearch提供了基于JSON的DSL（[Domain Specific Language](https://www.elastic.co/guide/en/elasticsearch/reference/7.12/query-dsl.html)）语句来定义查询条件，其JavaAPI就是在组织DSL条件。
+Elasticsearch提供了基于JSON的DSL（[Domain Specific Language](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/query-dsl.html)）语句来定义查询条件，其JavaAPI就是在组织DSL条件。
 
 Elasticsearch的查询可以分为两大类：
 
 - **叶子查询（Leaf** **query** **clauses）**：一般是在特定的字段里查询特定值，属于简单查询，很少单独使用。
 - **复合查询（Compound** **query** **clauses）**：以逻辑方式组合多个叶子查询或者更改叶子查询的行为方式。
 
+<br>
 
-
-#### 入门
+### 入门
 
 语法结构
 
 ```json
 GET /{索引库名}/_search
+
 {
   "query": {
     "查询类型": {
@@ -813,40 +815,35 @@ GET /items/_search
 }
 ```
 
-> 虽然是match_all，但是响应结果中并不会包含索引库中的所有文档，而是仅有10条。
->
-> 这是因为处于安全考虑，elasticsearch设置了默认的查询页数。
+!!!tip
+    虽然是match_all，但是响应结果中并不会包含索引库中的所有文档，而是仅有10条。
+    这是因为处于安全考虑，elasticsearch设置了默认的查询页数。
 
+<br>
 
+### 叶子查询
 
-#### 叶子查询
+叶子查询的类型也可以做进一步细分，详情可以查看[官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/query-dsl.html)
 
-叶子查询的类型也可以做进一步细分，详情可以查看官方文档：
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.12/query-dsl.html
-
-如图：![image-20250221173042885](./images/image-20250221173042885.png)
 
 例如：
 
 - **全文检索查询（Full Text Queries）**：利用分词器对用户输入搜索条件先分词，得到词条，然后再利用倒排索引搜索词条。例如：
-  - `match`：
-  - `multi_match`
+    - `match`：
+    - `multi_match`
 - **精确查询（Term-level queries）**：不对用户输入搜索条件分词，根据字段内容精确值匹配。但只能查找keyword、数值、日期、boolean类型的字段。例如：
-  - `ids`
-  - `term`
-  - `range`
+    - `ids`
+    - `term`
+    - `range`
 - **地理坐标查询：**用于搜索地理位置，搜索方式很多，例如：
-  - `geo_bounding_box`：按矩形搜索
-  - `geo_distance`：按点和半径搜索
+    - `geo_bounding_box`：按矩形搜索
+    - `geo_distance`：按点和半径搜索
 
+<br>
 
+#### 全文检索查询
 
-##### 全文检索查询
-
-全文检索的种类也很多，详情可以参考官方文档：
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.12/full-text-queries.html
+全文检索的种类也很多，详情可以参考[官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/full-text-queries.html)
 
 以全文检索中的`match`为例，语法如下：
 
@@ -881,9 +878,9 @@ GET /{索引库名}/_search
 
 ![image-20250221173632434](./images/image-20250221173632434.png)
 
+<br>
 
-
-##### 精确查询
+#### 精确查询
 
 精确查询，英文是`Term-level query`，顾名思义，词条级别的查询。也就是说不会对用户输入的搜索条件再分词，而是作为一个词条，与搜索的字段内容精确值匹配。因此推荐查找`keyword`、数值、日期、`boolean`类型的字段。
 
@@ -927,27 +924,27 @@ GET /{索引库名}/_search
 - `lte`：小于等于
 - `lt`：小于
 
+<br>
 
-
-#### 复合查询
+### 复合查询
 
 复合查询大致可以分为两类：
 
 - 第一类：基于逻辑运算组合叶子查询，实现组合条件，例如
-  - bool
+    - bool
 - 第二类：基于某种算法修改查询时的文档相关性算分，从而改变文档排名。例如：
-  - function_score
-  - dis_max
+    - function_score
+    - dis_max
 
-其它复合查询及相关语法可以参考官方文档：
+其它复合查询及相关语法可以参考[官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/compound-queries.html)
 
-https://www.elastic.co/guide/en/elasticsearch/reference/7.12/compound-queries.html
+<br>
 
+#### bool查询
 
+bool查询，即布尔查询。就是利用逻辑运算来组合一个或多个查询子句的组合。
 
-##### bool查询
-
-bool查询，即布尔查询。就是利用逻辑运算来组合一个或多个查询子句的组合。bool查询支持的逻辑运算有：
+bool查询支持的逻辑运算有：
 
 - must：必须匹配每个子查询，类似“与”
 - should：选择性匹配子查询，类似“或”
@@ -958,7 +955,7 @@ bool查询，即布尔查询。就是利用逻辑运算来组合一个或多个�
 
 
 
-例如黑马商城的搜索页面：
+例如搜索页面：
 
 ![img](./images/1740132347702-1.png)
 
@@ -983,11 +980,11 @@ GET /items/_search
 }
 ```
 
+<br>
 
+### 排序和分页
 
-#### 排序和分页
-
-##### 排序
+#### 排序
 
 elasticsearch默认是根据相关度算分（`_score`）来排序，但是也支持自定义方式对搜索结果排序。不过分词字段无法排序，能参与排序字段类型有：`keyword`类型、数值类型、地理坐标类型、日期类型等。
 
@@ -1025,9 +1022,9 @@ GET /items/_search
 }
 ```
 
+<br>
 
-
-##### 分页
+#### 分页
 
 lasticsearch中通过修改`from`、`size`参数来控制要返回的分页结果：
 
@@ -1054,9 +1051,9 @@ GET /items/_search
 }
 ```
 
+<br>
 
-
-##### 深度分页
+#### 深度分页
 
 elasticsearch的数据一般会采用分片存储，也就是把一个索引中的数据分成N份，存储到不同节点上。这种存储方式比较有利于数据扩展，但给分页带来了一些麻烦。 
 
@@ -1087,9 +1084,11 @@ GET /items/_search
 
 试想一下，假如我们现在要查询的是第999页数据呢，是不是要找第9990~10000的数据，那岂不是需要把每个分片中的前10000名数据都查询出来，汇总在一起，在内存中排序？如果查询的分页深度更深呢，需要一次检索的数据岂不是更多？
 
+<br>
+
 由此可知，当查询分页深度较大时，汇总数据过多，对内存和CPU会产生非常大的压力。
 
-因此elasticsearch会禁止`from+ size`超过10000的请求。
+因此elasticsearch会禁止`from + size`超过10000的请求。
 
 针对深度分页，elasticsearch提供了两种解决方案：
 
@@ -1097,26 +1096,21 @@ GET /items/_search
 - `scroll`：原理将排序后的文档id形成快照，保存下来，基于快照做分页。官方已经不推荐使用。
 
 
-
-详情见文档：
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.12/paginate-search-results.html
+[详情见文档](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/paginate-search-results.html)
 
 
 
-> **总结：**
->
-> 大多数情况下，我们采用普通分页就可以了。查看百度、京东等网站，会发现其分页都有限制。例如百度最多支持77页，每页不足20条。京东最多100页，每页最多60条。
->
-> 因此，一般我们采用限制分页深度的方式即可，无需实现深度分页。
+!!!note
+    大多数情况下，我们采用普通分页就可以了。查看百度、京东等网站，会发现其分页都有限制。例如百度最多支持77页，每页不足20条。京东最多100页，每页最多60条。
+    因此，一般我们采用限制分页深度的方式即可，无需实现深度分页。
 
 
+<br>
 
 
+### 高亮显示
 
-#### 高亮显示
-
-我们在百度，京东搜索时，关键字会变成红色，比较醒目，这叫高亮显示
+我们在百度，京东搜索时，关键字会变成红色，比较醒目，这叫做高亮显示
 
 实现高亮的思路就是：
 
@@ -1149,15 +1143,14 @@ GET /{索引库名}/_search
 }
 ```
 
-> **注意**：
->
-> - 搜索必须有查询条件，而且是全文检索类型的查询条件，例如`match`
-> - 参与高亮的字段必须是`text`类型的字段
-> - 默认情况下参与高亮的字段要与搜索字段一致，除非添加：`required_field_match=false`
+!!!warning "注意"
+    - 搜索必须有查询条件，而且是全文检索类型的查询条件，例如`match`
+    - 参与高亮的字段必须是`text`类型的字段
+    - 默认情况下参与高亮的字段要与搜索字段一致，除非添加：`required_field_match=false`
 
+<br>
 
-
-#### 总结
+### 总结
 
 查询的DSL是一个大的JSON对象，包含下列属性：
 
@@ -1166,11 +1159,11 @@ GET /{索引库名}/_search
 - `sort`：排序条件
 - `highlight`：高亮条件
 
+<br>
 
+---
 
-
-
-### RestClient查询
+## RestClient查询
 
 文档的查询依然使用 `RestHighLevelClient`对象，查询的基本步骤如下：
 
@@ -1179,14 +1172,14 @@ GET /{索引库名}/_search
 - 发起请求
 - 解析响应，响应结果相对复杂，需要逐层解析
 
+<br>
 
-
-#### 入门
+### 入门
 
 1. 创建`SearchRequest`对象
 2. 准备`request.source()`，也就是DSL。
-   1. `QueryBuilders`来构建查询条件
-   2. 传入`request.source()` 的` query() `方法
+    - `QueryBuilders`来构建查询条件
+    - 传入`request.source()` 的` query() `方法
 3. 发送请求，得到结果
 4. 解析结果（参考JSON结果，从外到内，逐层解析）
 
@@ -1224,11 +1217,11 @@ void testMatchAll() throws IOException {
   - `hits`：搜索结果的文档数组，其中的每个文档都是一个json对象 
     - `_source`：文档中的原始数据，也是json对象
 
+<br>
 
+### 构建查询条件
 
-#### 构建查询条件
-
-所有的查询条件都是由QueryBuilders来构建的
+所有的查询条件都是使用QueryBuilders来构建的
 
 ```java
 @Test
@@ -1245,17 +1238,17 @@ void testSearch() throws IOException {
 }
 ```
 
+<br>
 
-
-#### 分页和排序
+### 分页和排序
 
 `requeset.source()`就是整个请求JSON参数，所以排序、分页都是基于这个来设置
 
 ![image-20250221195212813](./images/image-20250221195212813.png)
 
+<br>
 
-
-#### 高亮显示
+### 高亮显示
 
 高亮查询与前面的查询有两点不同：
 
@@ -1268,7 +1261,7 @@ void testSearch() throws IOException {
 
 
 
-**解析高亮**结果
+**解析高亮结果**
 
 - 获取高亮结果。`hit.getHighlightFields()`，返回值是一个`Map`，key是高亮字段名称，值是`HighlightField`对象，代表高亮值
 
@@ -1276,7 +1269,7 @@ void testSearch() throws IOException {
 
 - 从`HighlightField`中获取`Fragments`，并且转为字符串。这部分就是真正的高亮字符串了
 
-  > **注意**Fragments实际上返回数组，需要将数组拼接得到高亮字符串(ES会将过长的字符串拆分成多个片段)
+    > **注意**Fragments实际上返回数组，需要将数组拼接得到高亮字符串(ES会将过长的字符串拆分成多个片段)
 
 - 最后用高亮的结果替换Bean中非高亮结果
 
@@ -1313,11 +1306,11 @@ private void handleResponse(SearchResponse response) {
 }
 ```
 
+<br>
 
+---
 
-
-
-### 数据聚合
+## 数据聚合
 
 聚合（`aggregations`）可以让我们极其方便的实现对数据的统计、分析、运算。
 
@@ -1329,29 +1322,28 @@ private void handleResponse(SearchResponse response) {
 
 实现这些统计功能的比数据库的sql要方便的多，而且查询速度非常快，可以实现近实时搜索效果。
 
-官方文档：
-
-https://www.elastic.co/guide/en/elasticsearch/reference/7.12/search-aggregations.html
+[官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/8.19/search-aggregations.html)
 
 
 
 聚合常见的有三类：
 
 -  **桶（`Bucket`）**聚合：用来对文档做分组 
-  - `TermAggregation`：按照文档字段值分组，例如按照品牌值分组、按照国家分组
-  - `Date Histogram`：按照日期阶梯分组，例如一周为一组，或者一月为一组
+    - `TermAggregation`：按照文档字段值分组，例如按照品牌值分组、按照国家分组
+    - `Date Histogram`：按照日期阶梯分组，例如一周为一组，或者一月为一组
 -  **度量（`Metric`）**聚合：用以计算一些值，比如：最大值、最小值、平均值等 
-  - `Avg`：求平均值
-  - `Max`：求最大值
-  - `Min`：求最小值
-  - `Stats`：同时求`max`、`min`、`avg`、`sum`等
--  **管道（`pipeline`）**聚合：其它聚合的结果为基础做进一步运算 
+    - `Avg`：求平均值
+    - `Max`：求最大值
+    - `Min`：求最小值
+    - `Stats`：同时求`max`、`min`、`avg`、`sum`等
+-  **管道（`pipeline`）**聚合：以其它聚合的结果为基础做进一步运算 
 
-> **注意：**参加聚合的字段必须是keyword、日期、数值、布尔类型
+!!!warning "注意"
+    参加聚合的字段必须是keyword、日期、数值、布尔类型
 
+<br>
 
-
-#### DSL语法
+### DSL语法
 
 - **桶聚合**
 
@@ -1376,12 +1368,10 @@ GET /items/_search
 
 - `size`：设置`size`为0，就是每页查0条，则结果中就不包含文档，只包含聚合结果
 - `aggs`：定义聚合
-  - `category_agg`：聚合名称，自定义，但不能重复
-    - `terms`：聚合的类型，按分类聚合，所以用`term`
-      - `field`：参与聚合的字段名称
-      - `size`：希望返回的聚合结果的最大数量
-
-
+    - `category_agg`：聚合名称，自定义，但不能重复
+        - `terms`：聚合的类型，按分类聚合，所以用`term`
+            - `field`：参与聚合的字段名称
+            - `size`：希望返回的聚合结果的最大数量
 
 
 
@@ -1457,9 +1447,9 @@ GET /items/_search
 - order：指定聚合结果排序方式
 - field：指定聚合字段
 
+<br>
 
-
-#### RestClient实现
+### RestClient实现
 
 利用`request.source()`方法来设置聚合
 
