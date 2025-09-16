@@ -9,20 +9,20 @@
 - [MyBatis-Plus 数据访问层](MyBatisPlus.md)
 
 ### 核心组件篇
-- [服务注册与发现](SpringCloud-Discovery.md)
-- [负载均衡与服务调用](SpringCloud-LoadBalance.md)
-- [服务保护与熔断降级](SpringCloud-CircuitBreaker.md)
-- [API 网关](SpringCloud-Gateway.md)
+- [服务注册与发现](服务治理.md)
+- [负载均衡与服务调用](OpenFeign.md)
+- [服务保护与熔断降级](服务保护.md)
+- [API 网关](网关.md)
 
 ### 基础设施篇
 - [Docker 容器化部署](Docker.md)
-- [消息队列 MQ](SpringCloud-MQ.md)
-- [分布式搜索 Elasticsearch](SpringCloud-ES.md)
+- [消息队列 MQ](MQ.md)
+- [分布式搜索 Elasticsearch](Elasticsearch.md)
 
 ### 实战与面试篇
-- [项目实战案例](SpringCloud-Practice.md)
+<!-- - [项目实战案例](SpringCloud-Practice.md)
 - [面试题总结](SpringCloud-Interview.md)
-- [Redis 集群配置](SpringCloud-Redis.md)
+- [Redis 集群配置](SpringCloud-Redis.md) -->
 
 ## 🎯 学习建议
 

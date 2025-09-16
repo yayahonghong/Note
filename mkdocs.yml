@@ -152,6 +152,11 @@ nav:
     - SpringCloud 微服务:
       - Overview: SpringCloud/index.md
       - 概述: SpringCloud/Overview.md
+      - 单体架构与微服务: SpringCloud/单体架构与微服务.md
+      - 服务拆分: SpringCloud/服务拆分.md
+      - 服务治理: SpringCloud/服务治理.md
+      - OpenFeign: SpringCloud/OpenFeign.md
+      - 网关: SpringCloud/网关.md
       - MyBatis-Plus: SpringCloud/MyBatisPlus.md
       - Docker: SpringCloud/Docker.md
       - MQ: SpringCloud/MQ.md

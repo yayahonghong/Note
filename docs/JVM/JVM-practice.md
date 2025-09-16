@@ -1096,5 +1096,3 @@ public List<UserVO> user5(){
 ---
 
 **上一节**： [JVM基础](JVM-base.md)
-
-**下一节**： [并发编程](concurrent-programming.md)
