@@ -70,5 +70,3 @@ Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发
 - **服务调用**：Ribbon + Feign
 
 ---
-
-**下一节：** [MyBatis-Plus 数据访问层](SpringCloud-MyBatisPlus.md)

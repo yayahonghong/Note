@@ -19,11 +19,6 @@
 - [消息队列 MQ](MQ.md)
 - [分布式搜索 Elasticsearch](Elasticsearch.md)
 
-### 实战与面试篇
-<!-- - [项目实战案例](SpringCloud-Practice.md)
-- [面试题总结](SpringCloud-Interview.md)
-- [Redis 集群配置](SpringCloud-Redis.md) -->
-
 ## 🎯 学习建议
 
 1. **按顺序学习**：建议按照上述路径顺序学习

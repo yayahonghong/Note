@@ -418,5 +418,3 @@ void testPageQuery() {
     ```
 
 ---
-
-**下一节：** [微服务基础设施](SpringCloud-Discovery.md)

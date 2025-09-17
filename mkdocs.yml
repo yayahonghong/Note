@@ -157,6 +157,8 @@ nav:
       - 服务治理: SpringCloud/服务治理.md
       - OpenFeign: SpringCloud/OpenFeign.md
       - 网关: SpringCloud/网关.md
+      - 配置中心: SpringCloud/配置中心.md
+      - 服务保护: SpringCloud/服务保护.md
       - MyBatis-Plus: SpringCloud/MyBatisPlus.md
       - Docker: SpringCloud/Docker.md
       - MQ: SpringCloud/MQ.md
