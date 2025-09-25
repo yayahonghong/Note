@@ -4133,8 +4133,85 @@ Redis支持8种不同的内存淘汰策略：
     - 在更新数据时，将更新操作发送到消息队列中，由专门的消费者线程来处理更新缓存和数据库的操作。
     - 该方案只能保证数据的最终一致性，而且有消息丢失的风险，但可以提高系统的吞吐量和可用性。
 
+### 持久化
+
+Redis提供了两种持久化机制：
+
+- RDB
+- AOF
+
+RDB（Redis DataBase）是Redis默认的持久化机制，它会在指定的时间间隔内将内存中的数据快照保存到磁盘上。RDB文件是一个二进制文件，包含了Redis数据库的完整状态。
+```bash
+redis-cli
+
+save    # 手动触发RDB持久化，会阻塞主进程
+bgsave  # fork子进程异步触发RDB持久化，不会阻塞主进程（写时复制，主进程执行写操作时才拷贝数据）
+```
+
+AOF（Append Only File）是Redis的另一种持久化机制，它会将每个写操作以日志的形式追加到AOF文件中。AOF文件是一个文本文件，包含了所有对Redis数据库的写操作。
+```conf
+appendonly yes          # 开启AOF持久化
+appendfilename "appendonly.aof"  # AOF文件名
+appendfsync everysec     # 每秒同步到磁盘
+```
+
+!!!note
+    appendfsync配置的是AOF文件同步到磁盘的频率，写命令首先会被放入操作系统的缓冲区，然后由操作系统负责将数据写入磁盘。appendfsync配置的就是操作系统将数据写入磁盘的频率。
+
+    支持的选项有：
+
+    - always：每次有写操作时都同步到磁盘，性能最差
+    - everysec：每秒同步到磁盘，性能较好，数据丢失风险较低（默认）
+    - no：完全依赖操作系统，性能最好，但数据丢失风险最高
+
+!!!info
+    AOF文件占用较大，可通过`bgrewriteaof`命令重写AOF文件，删除冗余命令，减小文件大小。
 
 
----
+
+### Redis的key过期后是否会被立即删除
+
+并不会，Redis有两种删除策略：惰性删除和定期删除
+
+- 惰性删除：每次访问key时，检查是否过期，过期则删除
+- 定期删除：每隔一段时间，随机检查部分key，删除过期
+
+Redis中两种删除策略结合使用，确保过期key最终被删除，但不会立即删除，避免性能问题。
+
+
+### Redis内存淘汰（Redis内存不足）
+
+Redis提供了多种内存淘汰策略，常用的有：
+
+- noeviction：不淘汰任何key，内存满时写操作报错（默认）
+- volatile-ttl：对设置了TTL的key，比较key的剩余TTL值，TTL越小越先被淘汰
+- allkeys-random：对所有key，随机淘汰
+- volatile-random：对设置了TTL的key，随机淘汰
+- allkeys-lru：对所有key，基于LRU算法淘汰
+- volatile-lru：对设置了TTL的key，基于LRU算法淘汰
+- allkeys-lfu：对所有key，基于LFU算法淘汰
+- volatile-lfu：对设置了TTL的key，基于LFU算法淘汰（推荐）
+
+
+!!!info "LRU和LFU算法"
+    **LRU**（最近最少使用）
+
+    - 通过记录每个key的最后访问时间，来判断哪个key最久未被使用，从而进行淘汰。
+
+    **LFU**（最不经常使用）
+
+    - 通过记录每个key的访问频率，来判断哪个key最少被使用，从而进行淘汰。
+
+
+### Redis分布式锁
+
+Redis分布式锁是通过Redis的setnx命令实现的，基本原理如下：
+1. 客户端尝试通过setnx命令设置一个唯一的key，如果设置成功，表示获取锁成功
+2. 客户端设置一个过期时间，防止死锁
+3. 客户端执行完业务逻辑后，删除key，释放锁
+
+Redission是一个基于Redis实现的分布式锁库，提供了更完善的分布式锁功能，包括自动续期、锁重入等。
+
+
 
 ## 完结撒花(o゜▽゜)o☆

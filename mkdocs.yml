@@ -140,7 +140,7 @@ nav:
       - 不可变类: 并发编程/不可变类.md
       - 并发工具: 并发编程/并发工具.md
   - Spring 全家桶:
-    - Spring 核心: 
+    - Spring 核心:
       - Overview: Spring/index.md
       - 概述: Spring/Spring-Overview.md
       - 基于XML的Spring应用: Spring/Spring-XML.md
@@ -167,7 +167,9 @@ nav:
   - 数据库技术:
     - MySQL: 
       - SQL: MySQL/SQL.md
+      - 存储引擎: MySQL/存储引擎.md
       - 架构: MySQL/架构.md
+      - 索引: MySQL/索引.md
     - Redis: Redis/Redis.md
   - 网络与中间件:
     - Netty: Netty/Netty.md
