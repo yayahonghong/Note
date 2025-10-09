@@ -1707,7 +1707,6 @@ auto-aof-rewrite-min-size 64mb
 
 #### 分片集群
 
-以上内容详见笔记[SpringCloud-Redis](./../SpringCloud/SpringCloud微服务.md)
 
 
 

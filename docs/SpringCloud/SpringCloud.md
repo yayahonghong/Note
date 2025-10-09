@@ -1071,7 +1071,7 @@ Redis提供了`哨兵`（`Sentinel`）机制来监控主从集群监控状态，
 - **状态监控**：`Sentinel` 会不断检查`master`和`slave`是否按预期工作
 - **故障恢复（failover）**：如果`master`故障，`Sentinel`会将一个`slave`提升为`master`。当故障实例恢复后会成为`slave`
 - **状态通知**：`Sentinel`充当`Redis`客户端的服务发现来源，当集群发生`failover`时，会将最新集群信息推送给`Redis`的客户端
-
+ 
 
 
 

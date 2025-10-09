@@ -170,6 +170,11 @@ nav:
       - 存储引擎: MySQL/存储引擎.md
       - 架构: MySQL/架构.md
       - 索引: MySQL/索引.md
+      - SQL优化: MySQL/SQL优化.md
+      - 视图: MySQL/视图.md
+      - 存储过程: MySQL/存储过程.md
+      - 触发器: MySQL/触发器.md
+      - 锁: MySQL/锁.md
     - Redis: Redis/Redis.md
   - 网络与中间件:
     - Netty: Netty/Netty.md
