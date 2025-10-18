@@ -175,6 +175,8 @@ nav:
       - 存储过程: MySQL/存储过程.md
       - 触发器: MySQL/触发器.md
       - 锁: MySQL/锁.md
+      - MySQL管理: MySQL/MySQL管理.md
+      - 运维: MySQL/运维.md
     - Redis: Redis/Redis.md
   - 网络与中间件:
     - Netty: Netty/Netty.md
