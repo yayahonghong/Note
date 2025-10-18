@@ -1,0 +1,3918 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/JVM/JVM-advance/">
+      
+      
+        <link rel="prev" href="../JVM-practice/">
+      
+      
+        <link rel="next" href="../JVM-principle/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>JVM 进阶 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#jvm进阶" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              JVM 进阶
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GraalVM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#简介" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux社区版graalvm环境搭建" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux社区版GraalVM环境搭建
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm的两种运行模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM的两种运行模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用graalvm-aot模式制作本地镜像并运行" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用GraalVM AOT模式制作本地镜像并运行
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm存在的问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM存在的问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#什么场景下需要使用graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      什么场景下需要使用GraalVM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm企业级应用-serverless架构" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM企业级应用-Serverless架构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm的内存参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM的内存参数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm内存快照文件的获取aot模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM内存快照文件的获取(AOT模式)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行时数据的获取" class="md-nav__link">
+    <span class="md-ellipsis">
+      运行时数据的获取
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#新一代gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      新一代GC
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="新一代GC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#垃圾回收器的技术演进" class="md-nav__link">
+    <span class="md-ellipsis">
+      垃圾回收器的技术演进
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shenandoah-gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shenandoah GC
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zgc" class="md-nav__link">
+    <span class="md-ellipsis">
+      ZGC
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#揭秘java工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      揭秘Java工具
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="揭秘Java工具">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#java-agent技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java Agent技术
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Java Agent技术">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#两种模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      两种模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#静态加载模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      静态加载模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#动态加载模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      动态加载模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#环境搭建" class="md-nav__link">
+    <span class="md-ellipsis">
+      环境搭建
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例1简化版arthas" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例1：简化版Arthas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="案例1：简化版Arthas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#获取运行时信息--jmx技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      获取运行时信息- JMX技术
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例2application-performance-monitorapm系统" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例2：Application performance monitor（APM）系统
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GraalVM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#简介" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linux社区版graalvm环境搭建" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linux社区版GraalVM环境搭建
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm的两种运行模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM的两种运行模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用graalvm-aot模式制作本地镜像并运行" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用GraalVM AOT模式制作本地镜像并运行
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm存在的问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM存在的问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#什么场景下需要使用graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      什么场景下需要使用GraalVM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm企业级应用-serverless架构" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM企业级应用-Serverless架构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm的内存参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM的内存参数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#graalvm内存快照文件的获取aot模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM内存快照文件的获取(AOT模式)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行时数据的获取" class="md-nav__link">
+    <span class="md-ellipsis">
+      运行时数据的获取
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#新一代gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      新一代GC
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="新一代GC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#垃圾回收器的技术演进" class="md-nav__link">
+    <span class="md-ellipsis">
+      垃圾回收器的技术演进
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shenandoah-gc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shenandoah GC
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zgc" class="md-nav__link">
+    <span class="md-ellipsis">
+      ZGC
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#揭秘java工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      揭秘Java工具
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="揭秘Java工具">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#java-agent技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java Agent技术
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Java Agent技术">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#两种模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      两种模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#静态加载模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      静态加载模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#动态加载模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      动态加载模式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#环境搭建" class="md-nav__link">
+    <span class="md-ellipsis">
+      环境搭建
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例1简化版arthas" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例1：简化版Arthas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="案例1：简化版Arthas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#获取运行时信息--jmx技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      获取运行时信息- JMX技术
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例2application-performance-monitorapm系统" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例2：Application performance monitor（APM）系统
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/JVM/JVM-advance.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/JVM/JVM-advance.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="jvm进阶">JVM进阶<a class="headerlink" href="#jvm进阶" title="链接到此段落">&para;</a></h1>
+<h2 id="graalvm">GraalVM<a class="headerlink" href="#graalvm" title="链接到此段落">&para;</a></h2>
+<h3 id="简介">简介<a class="headerlink" href="#简介" title="链接到此段落">&para;</a></h3>
+<p>GraalVM是Oracle官方推出的一款<strong>高性能JDK</strong>，使用它享受比OpenJDK或者OracleJDK更好的性能。</p>
+<p>GraalVM的官方网址： <a href="https://www.graalvm.org/">https://www.graalvm.org/</a></p>
+<ul>
+<li>
+<p>更低的CPU、内存使用率。</p>
+</li>
+<li>
+<p>更快的启动速度，无需预热即可获得最好的性能。</p>
+</li>
+<li>
+<p>更好的安全性、更小的可执行文件。</p>
+</li>
+<li>
+<p>支持多种框架Spring Boot、Micronaut、Helidon 和 Quarkus。</p>
+</li>
+<li>
+<p>多家云平台支持。</p>
+</li>
+<li>
+<p>通过Truffle框架运行JS、Python、Ruby等其他语言。</p>
+</li>
+</ul>
+<h3 id="linux社区版graalvm环境搭建">Linux社区版GraalVM环境搭建<a class="headerlink" href="#linux社区版graalvm环境搭建" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>使用<code>arch</code>命令查看Linux架构</p>
+</li>
+<li>
+<p>根据架构下载社区版的<a href="https://www.graalvm.org/downloads/">GraalVM</a></p>
+</li>
+<li>
+<p>安装GraalVM，安装方式与安装JDK相同。</p>
+</li>
+<li>
+<p>使用java -version和HelloWorld测试GraalVM。</p>
+</li>
+</ol>
+<h3 id="graalvm的两种运行模式">GraalVM的两种运行模式<a class="headerlink" href="#graalvm的两种运行模式" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>JIT（ Just-In-Time ）模式 ，<strong>即时编译</strong>模式</p>
+<p>JIT模式的处理方式与Oracle JDK类似，满足两个特点：</p>
+<ul>
+<li>
+<p>一次编写，随处运行。</p>
+</li>
+<li>
+<p>预热之后，通过内置的Graal即时编译器优化热点代码，生成比Hotspot JIT更高性能的机器码。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>AOT（Ahead-Of-Time）模式 ，<strong>提前编译</strong>模式</p>
+<p>AOT 编译器通过源代码，为特定平台创建可执行文件。比如，在Windows下编译完成之后，会生成exe文件。通过这种方式，达到启动之后获得最高性能的目的。但是不具备跨平台特性，不同平台使用需要单独编译。这种模式生成的文件称之为Native Image本地镜像。</p>
+</li>
+</ol>
+<p><img alt="dbbea821-d2e7-496b-b5a6-4d44be877775" src="../images/dbbea821-d2e7-496b-b5a6-4d44be877775.png" /></p>
+<hr />
+<h3 id="使用graalvm-aot模式制作本地镜像并运行">使用GraalVM AOT模式制作本地镜像并运行<a class="headerlink" href="#使用graalvm-aot模式制作本地镜像并运行" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>安装Linux环境本地镜像制作需要的<a href="https://www.graalvm.org/latest/reference-manual/native-image/">依赖库</a> </p>
+</li>
+<li>
+<p>使用<code>native-image 类名</code> 制作本地镜像。（需要先将类源文件编译成class文件）</p>
+</li>
+<li>
+<p>运行本地镜像可执行文件。</p>
+</li>
+</ol>
+<hr />
+<h3 id="graalvm存在的问题">GraalVM存在的问题<a class="headerlink" href="#graalvm存在的问题" title="链接到此段落">&para;</a></h3>
+<p>GraalVM的AOT模式虽然在启动速度、内存和CPU开销上非常有优势，但是使用这种技术会带来几个问题：</p>
+<ol>
+<li>
+<p>跨平台问题，在不同平台下运行需要编译多次。编译平台的依赖库等环境要与运行平台保持一致。</p>
+</li>
+<li>
+<p>使用框架之后，编译本地镜像的时间比较长，同时也需要消耗大量的CPU和内存。</p>
+</li>
+<li>
+<p>AOT 编译器在编译时，需要知道运行时所有可访问的所有类。但是Java中有一些技术可以在运行时创建类，例如反射、动态代理等。这些技术在很多框架比如Spring中大量使用，所以框架需要对AOT编译器进行适配解决类似的问题。</p>
+</li>
+</ol>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>
+<p>使用公有云的Docker等容器化平台进行在线编译，确保编译环境和运行环境是一致的，同时解决了编译资源问题。</p>
+</li>
+<li>
+<p>使用SpringBoot3等整合了GraalVM AOT模式的框架版本。</p>
+</li>
+</ol>
+<p><strong>案例</strong>：使用SpringBoot3搭建GraalVM环境</p>
+<p>步骤：</p>
+<ol>
+<li>
+<p>使用 https://start.spring.io/ 在线生成器构建项目，添加依赖 <code>GraalVM Native Support</code></p>
+</li>
+<li>
+<p>编写业务代码。</p>
+</li>
+<li>
+<p>执行<code>mvn -Pnative clean native:compile</code> 命令生成本地镜像。</p>
+</li>
+<li>
+<p>运行本地镜像</p>
+</li>
+</ol>
+<hr />
+<h3 id="什么场景下需要使用graalvm">什么场景下需要使用GraalVM<a class="headerlink" href="#什么场景下需要使用graalvm" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>对性能要求比较高的场景，可以选择使用收费的企业版提升性能。</p>
+</li>
+<li>
+<p>公有云的部分服务是按照CPU和内存使用量进行计费的，使用GraalVM可以有效地降低费用。</p>
+</li>
+</ol>
+<hr />
+<h3 id="graalvm企业级应用-serverless架构">GraalVM企业级应用-Serverless架构<a class="headerlink" href="#graalvm企业级应用-serverless架构" title="链接到此段落">&para;</a></h3>
+<p>传统的系统架构中，服务器等基础设施的运维、安全、高可用等工作都需要企业自行完成，存在两个主要问题：</p>
+<ol>
+<li>
+<p>开销大，包括了人力的开销、机房建设的开销。</p>
+</li>
+<li>
+<p>资源浪费，面对一些突发的流量冲击，比如秒杀等活动，必须提前规划好容量准备好大量的服务器，这些服务器在其他时候会处于闲置的状态，造成大量的浪费。</p>
+</li>
+</ol>
+<p><br></p>
+<p>随着虚拟化技术、云原生技术的愈发成熟，云服务商提供了一套称为Serverless无服务器化的架构。企业无需进行服务器的任何配置和部署，完全由云服务商提供。比较典型的有亚马逊AWS、阿里云等。</p>
+<p>Serverless架构中第一种常见的服务是<strong>函数计算</strong>（Function as a Service），将<strong>一个应用拆分成多个函数</strong>，每个函数会以事件驱动的方式触发。典型代表有AWS的Lambda、阿里云的FC。</p>
+<p>函数计算的服务资源比较受限，比如AWS的Lambda服务一般无法支持超过15分钟的函数执行，所以云服务商提供了另外一套方案：<strong>基于容器的Serverless应用</strong>，无需手动配置K8s中的Pod、Service等内容，只需选择镜像就可自动生成应用服务。</p>
+<p>同样，Serverless应用的计费标准中包含CPU和内存使用量，所以使用GraalVM AOT模式编译出来的本地镜像可以节省更多的成本。</p>
+<p><img alt="22f2260a-64e7-4ad1-8e9a-90c73a3b9052" src="../images/22f2260a-64e7-4ad1-8e9a-90c73a3b9052.png" /></p>
+<hr />
+<h3 id="graalvm的内存参数">GraalVM的内存参数<a class="headerlink" href="#graalvm的内存参数" title="链接到此段落">&para;</a></h3>
+<p>由于GraalVM是一款独立的JDK，所以大部分HotSpot中的虚拟机参数都不适用。</p>
+<p>常用的参数参考：<a href="https://www.graalvm.org/22.3/reference-manual/native-image/optimizations-and-performance/MemoryManagement/">官方手册</a>。</p>
+<ul>
+<li>
+<p>社区版只能使用串行垃圾回收器（Serial GC），使用串行垃圾回收器的默认最大 Java 堆大小会设置为物理内存大小的 80%，调整方式为使用<code>-Xmx 最大堆大小</code>。如果希望在<strong>编译期</strong>就指定该大小，可以在编译时添加参数<code>-R:MaxHeapSize=最大堆大小</code>。</p>
+</li>
+<li>
+<p>G1垃圾回收器只能在企业版中使用，开启方式为添加<code>--gc=G1</code>参数，有效降低垃圾回收的延迟。</p>
+</li>
+<li>
+<p>另外提供一个Epsilon GC，开启方式：<code>--gc=epsilon</code> ，它不会产生任何的垃圾回收行为所以没有额外的内存、CPU开销。如果在公有云上运行的程序生命周期短暂不产生大量的对象，可以使用该垃圾回收器，以节省最大的资源。</p>
+</li>
+<li>
+<p><code>-XX:+PrintGC -XX:+VerboseGC</code> 参数打印垃圾回收详细信息。</p>
+</li>
+</ul>
+<hr />
+<h3 id="graalvm内存快照文件的获取aot模式">GraalVM内存快照文件的获取(AOT模式)<a class="headerlink" href="#graalvm内存快照文件的获取aot模式" title="链接到此段落">&para;</a></h3>
+<p>步骤：</p>
+<ol>
+<li>
+<p><strong>编译程序时</strong>，添加<code>--enable-monitoring=heapdump</code>参数到pom文件的对应插件(<code>native-maven-plugin</code>)中。</p>
+</li>
+<li>
+<p><strong>运行中</strong>使用<code>kill -SIGUSR1 进程ID</code> 命令，创建内存快照文件。</p>
+</li>
+<li>
+<p>使用MAT分析内存快照文件。</p>
+</li>
+</ol>
+<hr />
+<h3 id="运行时数据的获取">运行时数据的获取<a class="headerlink" href="#运行时数据的获取" title="链接到此段落">&para;</a></h3>
+<p><strong>JDK Flight Recorder</strong> (JFR)是一个内置于 JVM 中的工具，可以收集正在运行中的 Java 应用程序的诊断和分析数据，比如线程、异常等内容。GraalVM本地镜像也支持使用JFR生成运行时数据，导出的数据可以使用VisualVM分析。</p>
+<p>步骤：</p>
+<ol>
+<li>
+<p>编译程序时，添加<code>--enable-monitoring=jfr</code>参数添加到pom文件的对应插件中。</p>
+</li>
+<li>
+<p>运行程序，添加<code>-XX:StartFlightRecording=filename=recording.jfr,duration=10s</code>参数。</p>
+</li>
+<li>
+<p>使用VisualVM分析JFR记录文件。</p>
+</li>
+</ol>
+<hr />
+<h2 id="新一代gc">新一代GC<a class="headerlink" href="#新一代gc" title="链接到此段落">&para;</a></h2>
+<h3 id="垃圾回收器的技术演进">垃圾回收器的技术演进<a class="headerlink" href="#垃圾回收器的技术演进" title="链接到此段落">&para;</a></h3>
+<p><img alt="cf623dd6-29a9-4cfb-bb00-78b3db203502" src="../images/cf623dd6-29a9-4cfb-bb00-78b3db203502.png" /></p>
+<p><img alt="66f0624f-5688-4b82-8a6b-06afdfd3e754" src="../images/66f0624f-5688-4b82-8a6b-06afdfd3e754.png" /></p>
+<h3 id="shenandoah-gc">Shenandoah GC<a class="headerlink" href="#shenandoah-gc" title="链接到此段落">&para;</a></h3>
+<p>Shenandoah 是由<strong>Red Hat</strong>开发的一款低延迟的垃圾收集器，Shenandoah 并发执行大部分 GC 工作，包括并发的整理，堆大小对STW的时间基本没有影响。</p>
+<p>Shenandoah的<strong>使用方法</strong></p>
+<ol>
+<li>
+<p><strong>下载</strong> <a href="https://builds.shipilev.net/openjdk-jdk-shenandoah/">Shenandoah</a></p>
+<div class="admonition info">
+<p class="admonition-title">选择方式如下</p>
+<p><code>{aarch64, arm32-hflt, mipsel, mips64el, ppc64le, s390x, x86_32, x86_64}</code>：架构，使用arch命令选择对应的的架构。</p>
+<p><code>{server,zero}</code>：虚拟机类型，选择server，包含所有GC的功能。</p>
+<p><code>{release, fastdebug, Slowdebug, optimization}</code>：不同的优化级别，选择release，性能最高。</p>
+<p><code>{gcc*-glibc*, msvc*}</code>：编译器的版本，选择较高的版本性能好一些，如果兼容性有问题（无法启动），选择较低的版本。</p>
+</div>
+</li>
+<li>
+<p><strong>配置</strong> 将OpenJDK配置到环境变量中，使用<code>java –version</code>进行测试。</p>
+</li>
+<li>
+<p><strong>添加参数</strong>，运行Java程序。
+   <code>-XX:+UseShenandoahGC</code>开启Shenandoah GC
+   <code>-Xlog:gc</code> 打印GC日志</p>
+</li>
+</ol>
+<h3 id="zgc">ZGC<a class="headerlink" href="#zgc" title="链接到此段落">&para;</a></h3>
+<p>ZGC 是一种可扩展的低延迟垃圾回收器。ZGC 在垃圾回收过程中，STW的时间不会超过一毫秒，适合需要低延迟的应用。支持几百兆到16TB 的堆大小，堆大小对STW的时间基本没有影响。 </p>
+<p>ZGC降低了停顿时间，能降低接口的最大耗时，提升用户体验。但是吞吐量不佳，所以如果Java服务比较关注QPS（每秒的查询次数）那么G1是比较不错的选择。</p>
+<p><img alt="779c6c21-70a5-4032-a03a-b1582f037698" src="../images/779c6c21-70a5-4032-a03a-b1582f037698.png" /></p>
+<p><strong>ZGC的使用方法</strong>:</p>
+<p>OracleJDK和OpenJDK中都支持ZGC，阿里的DragonWell龙井JDK也支持ZGC但属于其自行对OpenJDK 11的ZGC进行优化的版本。</p>
+<blockquote>
+<p>建议使用JDK17之后的版本，延迟较低同时无需手动配置并行线程数。</p>
+</blockquote>
+<ul>
+<li>
+<p>分代 ZGC 添加如下参数启用 <code>-XX:+UseZGC -XX:+ZGenerational</code> </p>
+</li>
+<li>
+<p>非分代 ZGC 通过命令行选项启用 <code>-XX:+UseZGC</code></p>
+</li>
+</ul>
+<p><strong>ZGC的参数设置</strong>:</p>
+<p>ZGC在设计上做到了自适应，根据运行情况自动调整参数，让用户手动配置的参数最少化。</p>
+<ul>
+<li>
+<p>自动设置年轻代大小，无需设置-Xmn参数。</p>
+</li>
+<li>
+<p>自动晋升阈值（复制中存活多少次才搬运到老年代），无需设置<code>-XX:TenuringThreshold</code>。</p>
+</li>
+<li>
+<p>JDK17之后支持自动的并行线程数，无需设置<code>-XX:ConcGCThreads</code>。</p>
+</li>
+</ul>
+<p><strong>需要设置的参数</strong>：</p>
+<p><code>-Xmx 值</code> 最大堆内存大小</p>
+<pre><code>这是ZGC最重要的一个参数，必须设置。ZGC在运行过程中会使用一部分内存用来处理垃圾回收，所以尽量保证堆中有足够的空间。设置多少值取决于对象分配的速度，根据测试情况来决定。
+</code></pre>
+<p><strong>可以设置的参数</strong>：</p>
+<p><code>-XX:SoftMaxHeapSize=值</code></p>
+<pre><code>ZGC会尽量保证堆内存小于该值，这样在内存靠近这个值时会尽早地进行垃圾回收，但是依然有可能会超过该值。例如，-Xmx5g -XX:SoftMaxHeapSize=4g 这个参数设置，ZGC会尽量保证堆内存小于4GB，最多不会超过5GB。
+</code></pre>
+<p><strong>ZGC的调优</strong></p>
+<p>ZGC 中可以使用Linux的<strong>Huge Page大页技术</strong>优化性能，提升吞吐量、降低延迟。</p>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>安装过程需要 root 权限，所以ZGC默认没有开启此功能。</p>
+</div>
+<p>操作步骤：</p>
+<ol>
+<li>
+<p>计算所需页数，Linux x86架构中大页大小为2MB，根据所需堆内存的大小估算大页数量。比如堆空间需要16G，预留2G（JVM需要额外的一些非堆空间），那么页数就是18G / 2MB = 9216。</p>
+</li>
+<li>
+<p>配置系统的大页池以具有所需的页数（需要root权限）：<code>$ echo 9216 &gt; /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages</code></p>
+</li>
+<li>
+<p>添加参数<code>-XX:+UseLargePages</code> 启动程序进行测试</p>
+</li>
+</ol>
+<h3 id="总结">总结<a class="headerlink" href="#总结" title="链接到此段落">&para;</a></h3>
+<p>ZGC和Shenandoah设计的目标都是追求较短的停顿时间，他们具体的使用场景如下：</p>
+<p>两种垃圾回收器在并行回收时都会使用垃圾回收线程占用CPU资源</p>
+<p>① 在内存足够的情况下，ZGC垃圾回收表现的效果会更好，停顿时间更短。</p>
+<p>② 在内存不是特别充足的情况下，Shenandoah GC表现更好，并行垃圾回收的时间较短，用户请求的执行效率比较高。</p>
+<hr />
+<h2 id="揭秘java工具">揭秘Java工具<a class="headerlink" href="#揭秘java工具" title="链接到此段落">&para;</a></h2>
+<p>Java工具的介绍在Java的世界中，除了Java编写的业务系统之外，还有一类程序也需要Java程序员参与编写，这类程序就是Java工具。</p>
+<p>常见的Java工具有以下几类：</p>
+<ol>
+<li>
+<p>诊断类工具，如Arthas、VisualVM等。</p>
+</li>
+<li>
+<p>开发类工具，如Idea、Eclipse。</p>
+</li>
+<li>
+<p>APM应用性能监测工具，如Skywalking、Zipkin等。</p>
+</li>
+<li>
+<p>热部署工具，如Jrebel等。</p>
+</li>
+</ol>
+<h3 id="java-agent技术">Java Agent技术<a class="headerlink" href="#java-agent技术" title="链接到此段落">&para;</a></h3>
+<p>Java Agent技术是JDK提供的用来编写Java工具的技术，使用这种技术生成一种特殊的jar包，这种jar包可以让Java程序运行其中的代码。</p>
+<h4 id="两种模式">两种模式<a class="headerlink" href="#两种模式" title="链接到此段落">&para;</a></h4>
+<p>Java Agent技术实现了让Java程序执行独立的Java Agent程序中的代码，执行方式有两种：</p>
+<ul>
+<li>
+<p>静态加载模式</p>
+</li>
+<li>
+<p>动态加载模式</p>
+</li>
+</ul>
+<h4 id="静态加载模式">静态加载模式<a class="headerlink" href="#静态加载模式" title="链接到此段落">&para;</a></h4>
+<p>静态加载模式可以在程序启动的一开始就执行我们需要执行的代码，适合用APM等性能监测系统从一开始就监控程序的执行性能。静态加载模式需要在Java Agent的项目中编写一个premain的方法，并打包成jar包。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">viod</span><span class="w"> </span><span class="nf">premain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span>
+</code></pre></div>
+<p>接下来使用以下命令启动Java程序，此时Java虚拟机将会加载agent中的代码并执行。</p>
+<div class="highlight"><pre><span></span><code>java<span class="w"> </span>-javaagent:./agent.jar<span class="w"> </span>-jar<span class="w"> </span>test.jar
+</code></pre></div>
+<blockquote>
+<p>permain方法会在主线程中执行</p>
+</blockquote>
+<h4 id="动态加载模式">动态加载模式<a class="headerlink" href="#动态加载模式" title="链接到此段落">&para;</a></h4>
+<p>动态加载模式可以随时让java agent代码执行，适用于Arthas等诊断系统。动态加载模式需要在Java Agent的项目中编写一个agentmain的方法，并打包成jar包。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span>
+</code></pre></div>
+<p>接下来使用以下代码就可以让java agent代码在指定的java进程中执行了:</p>
+<div class="highlight"><pre><span></span><code><span class="n">VirtualMachine</span><span class="w"> </span><span class="n">vm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VirtualMachine</span><span class="p">.</span><span class="na">attach</span><span class="p">(</span><span class="s">&quot;24200&quot;</span><span class="p">);</span><span class="c1">//动态连接到24200进程ID的java程序</span>
+<span class="n">vm</span><span class="p">.</span><span class="na">loadAgent</span><span class="p">(</span><span class="s">&quot;test.jar&quot;</span><span class="p">);</span><span class="c1">//加载java agent</span>
+</code></pre></div>
+<blockquote>
+<p>agentmain方法会在独立的线程中执行</p>
+</blockquote>
+<h4 id="环境搭建">环境搭建<a class="headerlink" href="#环境搭建" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>静态加载</li>
+</ul>
+<p>步骤：</p>
+<ol>
+<li>
+<p>创建maven项目，添加<code>maven-assembly-plugin</code>插件，此插件可以打包出java agent的jar包。</p>
+</li>
+<li>
+<p>编写类和premain方法，premain方法中打印一行信息。</p>
+</li>
+<li>
+<p>编写<code>MANIFEST.MF</code>文件，此文件主要用于描述java agent的配置属性，比如使用哪一个类的premain方法。</p>
+</li>
+<li>
+<p>使用maven-assembly-plugin进行打包。</p>
+</li>
+<li>
+<p>创建spring boot应用，并静态加载上一步打包完的java agent。</p>
+</li>
+</ol>
+<p><br></p>
+<ul>
+<li>动态加载</li>
+</ul>
+<p>步骤：</p>
+<ol>
+<li>
+<p>创建maven项目，添加maven-assembly-plugin插件，此插件可以打包出java agent的jar包。</p>
+</li>
+<li>
+<p>编写类和agentmain方法， agentmain方法中打印一行信息。</p>
+</li>
+<li>
+<p>编写MANIFEST.MF文件，此文件主要用于描述java agent的配置属性，比如使用哪一个类的agentmain方法。</p>
+</li>
+<li>
+<p>使用maven-assembly-plugin进行打包。</p>
+</li>
+<li>
+<p>编写main方法，动态连接到运行中的java程序。</p>
+</li>
+</ol>
+<h3 id="案例1简化版arthas">案例1：简化版Arthas<a class="headerlink" href="#案例1简化版arthas" title="链接到此段落">&para;</a></h3>
+<p>编写一个简化版的Arthas程序，具备以下几个功能：</p>
+<ol>
+<li>
+<p>查看内存使用情况</p>
+</li>
+<li>
+<p>生成堆内存快照</p>
+</li>
+<li>
+<p>打印栈信息</p>
+</li>
+<li>
+<p>打印类加载器</p>
+</li>
+<li>
+<p>打印类的源码</p>
+</li>
+<li>
+<p>打印方法执行的参数和耗时</p>
+</li>
+</ol>
+<h4 id="获取运行时信息--jmx技术">获取运行时信息- JMX技术<a class="headerlink" href="#获取运行时信息--jmx技术" title="链接到此段落">&para;</a></h4>
+<p>JDK从1.5开始提供了Java Management Extensions (JMX) 技术，通过Mbean对象的写入和获取，实现：</p>
+<ul>
+<li>
+<p>运行时配置的获取和更改</p>
+</li>
+<li>
+<p>应用程序运行信息的获取（线程栈、内存、类信息等）</p>
+</li>
+</ul>
+<p>获取JVM默认提供的Mbean可以通过如下的方式，例如获取内存信息：</p>
+<div class="highlight"><pre><span></span><code><span class="n">List</span><span class="o">&lt;</span><span class="n">MemoryPoolMXBean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mxBeanList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ManagementFactory</span><span class="p">.</span><span class="na">getMemoryPoolMXBeans</span><span class="p">();</span>
+
+<span class="n">mxBeanList</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">filter</span><span class="p">(</span><span class="n">bean</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">bean</span><span class="p">.</span><span class="na">getType</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">MemoryType</span><span class="p">.</span><span class="na">HEAP</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span>
+<span class="w">                        </span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">();</span>
+<span class="w">                            </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\tname:&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">getName</span><span class="p">())</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\tused:\t\t&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">getUsage</span><span class="p">().</span><span class="na">getUsed</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;m\n&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\tcommitted:\t&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">getUsage</span><span class="p">().</span><span class="na">getCommitted</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;m\n&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\tmax:\t\t&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="na">getUsage</span><span class="p">().</span><span class="na">getMax</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;m\n&quot;</span><span class="p">)</span>
+<span class="w">                                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;================================================&quot;</span><span class="p">);</span>
+<span class="w">                            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">sb</span><span class="p">);</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                </span><span class="p">);</span>
+</code></pre></div>
+<p>生成内存快照</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 生成内存快照</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">heapDump</span><span class="p">(){</span>
+<span class="w">        </span><span class="n">SimpleDateFormat</span><span class="w"> </span><span class="n">dateFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleDateFormat</span><span class="p">(</span><span class="s">&quot;yyyy-MM-dd-HH-mm&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">HotSpotDiagnosticMXBean</span><span class="w"> </span><span class="n">bean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ManagementFactory</span><span class="p">.</span><span class="na">getPlatformMXBean</span><span class="p">(</span><span class="n">HotSpotDiagnosticMXBean</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;开始生成内存快照...&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">bean</span><span class="p">.</span><span class="na">dumpHeap</span><span class="p">(</span><span class="n">dateFormat</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Date</span><span class="p">())</span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.hprof&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">IOException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p>获取线程信息</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 获取线程运行信息</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">printThreadInfo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ThreadMXBean</span><span class="w"> </span><span class="n">threadMXBean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ManagementFactory</span><span class="p">.</span><span class="na">getThreadMXBean</span><span class="p">();</span>
+
+<span class="w">        </span><span class="n">ThreadInfo</span><span class="o">[]</span><span class="w"> </span><span class="n">threadInfos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadMXBean</span><span class="p">.</span><span class="na">dumpAllThreads</span><span class="p">(</span>
+<span class="w">                </span><span class="n">threadMXBean</span><span class="p">.</span><span class="na">isObjectMonitorUsageSupported</span><span class="p">(),</span><span class="w"> </span><span class="n">threadMXBean</span><span class="p">.</span><span class="na">isSynchronizerUsageSupported</span><span class="p">());</span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ThreadInfo</span><span class="w"> </span><span class="n">threadInfo</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">threadInfos</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">StringBuilder</span><span class="w"> </span><span class="n">sb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">();</span>
+<span class="w">            </span><span class="n">sb</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;name:&quot;</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">threadInfo</span><span class="p">.</span><span class="na">getThreadName</span><span class="p">())</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\nthreadID:&quot;</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">threadInfo</span><span class="p">.</span><span class="na">getThreadId</span><span class="p">())</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\nthreadState:&quot;</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">threadInfo</span><span class="p">.</span><span class="na">getThreadState</span><span class="p">());</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">sb</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">StackTraceElement</span><span class="o">[]</span><span class="w"> </span><span class="n">stackTraceElements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">threadInfo</span><span class="p">.</span><span class="na">getStackTrace</span><span class="p">();</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StackTraceElement</span><span class="w"> </span><span class="n">stackTraceElement</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">stackTraceElements</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;\t&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">stackTraceElement</span><span class="p">.</span><span class="na">toString</span><span class="p">());</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p>获取类和类加载器的信息–Instumentation对象</p>
+<p>Java Agent中可以获得Java虚拟机提供的Instumentation对象：</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">premain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">agentmain</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">agentArgs</span><span class="p">,</span><span class="w"> </span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+</code></pre></div>
+<p>该对象有以下几个作用：</p>
+<ul>
+<li>
+<p>redefine，重新设置类的字节码信息。</p>
+</li>
+<li>
+<p>retransform，根据现有类的字节码信息进行增强。3、获取所有已加载的类信息。</p>
+</li>
+</ul>
+<p>Oracle官方手册： https://docs.oracle.com/javase/17/docs/api/java/lang/instrument/Instrumentation.html</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">printAllClassLoader</span><span class="p">(</span><span class="n">Instrumentation</span><span class="w"> </span><span class="n">inst</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 创建一个集合，用于存储所有加载的类加载器</span>
+<span class="w">        </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">ClassLoader</span><span class="o">&gt;</span><span class="w"> </span><span class="n">classLoaders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// 获取所有已加载的类</span>
+<span class="w">        </span><span class="n">Class</span><span class="o">[]</span><span class="w"> </span><span class="n">classes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inst</span><span class="p">.</span><span class="na">getAllLoadedClasses</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 遍历每个类</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Class</span><span class="w"> </span><span class="n">clazz</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">classes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 获取类的类加载器</span>
+<span class="w">            </span><span class="n">ClassLoader</span><span class="w"> </span><span class="n">classLoader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clazz</span><span class="p">.</span><span class="na">getClassLoader</span><span class="p">();</span>
+<span class="w">            </span><span class="c1">// 如果类加载器不为空，则加入集合</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">classLoader</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">classLoaders</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">classLoader</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// 将类加载器的名称进行处理</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">classLoaders</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">map</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// 如果类加载器为空，返回字符串 &quot;BootstrapClassLoader&quot;</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;BootstrapClassLoader&quot;</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="c1">// 否则返回类加载器的名称</span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}).</span><span class="na">filter</span><span class="p">(</span><span class="n">Objects</span><span class="p">::</span><span class="n">nonNull</span><span class="p">)</span>
+<span class="w">                </span><span class="c1">// 去重并排序</span>
+<span class="w">                </span><span class="p">.</span><span class="na">distinct</span><span class="p">().</span><span class="na">sorted</span><span class="p">(</span><span class="n">String</span><span class="p">::</span><span class="n">compareTo</span><span class="p">)</span>
+<span class="w">                </span><span class="c1">// 收集结果并以换行符连接</span>
+<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">joining</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">));</span>
+
+<span class="w">        </span><span class="c1">// 输出所有类加载器的名称</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p>打印类的源码打印类的源码需要分为以下几个步骤</p>
+<ol>
+<li>
+<p>获得内存中的类的字节码信息。利用Instrumentation提供的转换器来获取字节码信息。</p>
+</li>
+<li>
+<p>通过反编译工具(jd-core)将字节码信息还原成源代码信息。</p>
+</li>
+</ol>
+<p><br></p>
+<p>打印方法执行的参数和耗时- <strong>ASM</strong></p>
+<p>ASM是一个通用的 Java <strong>字节码</strong>操作和分析框架。它可用于直接以二进制形式修改现有类或动态生成类。ASM重点关注性能。让操作尽可能小且尽可能快，所以它非常适合在动态系统中使用。ASM的缺点是代码复杂。</p>
+<p><a href="https://asm.ow2.io/">ASM的官方网址</a></p>
+<p><br></p>
+<p>打印方法执行的参数和耗时– <strong>Byte Buddy</strong></p>
+<blockquote>
+<p>底层基于ASM，使用更简单</p>
+</blockquote>
+<p><a href="https://bytebuddy.net/">Byte Buddy官网</a></p>
+<hr />
+<h3 id="案例2application-performance-monitorapm系统">案例2：Application performance monitor（APM）系统<a class="headerlink" href="#案例2application-performance-monitorapm系统" title="链接到此段落">&para;</a></h3>
+<p>APM应用程序性能监控系统是采集运行程序的实时数据并使用可视化的方式展示，使用APM可以确保系统可用性，优化服务性能和响应时间，持续改善用户体验。常用的APM系统有Apache Skywalking、Zipkin等。</p>
+<p><a href="https://skywalking.apache.org/">Skywalking官方网站</a></p>
+<div class="admonition question">
+<p class="admonition-title">Arthas这款工具用到了什么Java技术，有没有了解过？</p>
+<p>Arthas主要使用了Java Agent技术，这种技术可以让运行中的Java程序执行Agent中编写代码。</p>
+<p>Arthas使用了Agent中的动态加载模式，可以选择让某个特定的Java进程加载Agent并执行其中的监控代码。</p>
+<p>监控方面主要使用的就是JMX提供的一些监控指标，同时使用字节码增强技术，对某些类和某些方法进行增强，从而监控方法的执行耗时、参数等内容。</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">APM系统是如何获取到Java程序运行中的性能数据的？</p>
+<p>APM系统比如Skywalking主要使用了Java Agent技术，这种技术可以让运行中的Java程序执行Agent中编写代码。</p>
+<p>Skywalking编写了Java Agent，使用了Agent中的静态加载模式，使用字节码增强技术，对某些类和某些方法进行增强，从而监控方法的执行耗时、参数等内容。</p>
+<p>比如对Controller层方法增强，获取接口调用的时长信息，对数据库连接增强，获取数据库查询的时长、SQL语句等信息。</p>
+</div>
+<hr />
+<p><strong>上一节</strong>： <a href="../JVM-practice/">JVM实践</a></p>
+<p><strong>下一节</strong>： <a href="../JVM-principle/">JVM原理</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4247 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/MySQL/%E8%BF%90%E7%BB%B4/">
+      
+      
+        <link rel="prev" href="../MySQL%E7%AE%A1%E7%90%86/">
+      
+      
+        <link rel="next" href="../../Redis/SQL%E4%B8%8ENoSQL/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>运维 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#日志" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              运维
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      日志
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="日志">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#错误日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#二进制日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      二进制日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      查询日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#慢查询日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      慢查询日志
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#主从复制" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从复制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主从复制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#概述" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      原理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#搭建主从" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建主从
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="搭建主从">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主节点" class="md-nav__link">
+    <span class="md-ellipsis">
+      主节点
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#从节点" class="md-nav__link">
+    <span class="md-ellipsis">
+      从节点
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#分库分表" class="md-nav__link">
+    <span class="md-ellipsis">
+      分库分表
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="分库分表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#概述_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#拆分策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      拆分策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#垂直拆分" class="md-nav__link">
+    <span class="md-ellipsis">
+      垂直拆分
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#水平拆分" class="md-nav__link">
+    <span class="md-ellipsis">
+      水平拆分
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#实现技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      实现技术
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat概述" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat概述
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MyCat配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemaxml" class="md-nav__link">
+    <span class="md-ellipsis">
+      schema.xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rulexml" class="md-nav__link">
+    <span class="md-ellipsis">
+      rule.xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverxml" class="md-nav__link">
+    <span class="md-ellipsis">
+      server.xml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat分片" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat分片
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MyCat分片">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全局表" class="md-nav__link">
+    <span class="md-ellipsis">
+      全局表
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分片规则" class="md-nav__link">
+    <span class="md-ellipsis">
+      分片规则
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat管理" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#读写分离" class="md-nav__link">
+    <span class="md-ellipsis">
+      读写分离
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      日志
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="日志">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#错误日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      错误日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#二进制日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      二进制日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      查询日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#慢查询日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      慢查询日志
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#主从复制" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从复制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主从复制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#概述" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      原理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#搭建主从" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建主从
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="搭建主从">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主节点" class="md-nav__link">
+    <span class="md-ellipsis">
+      主节点
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#从节点" class="md-nav__link">
+    <span class="md-ellipsis">
+      从节点
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#分库分表" class="md-nav__link">
+    <span class="md-ellipsis">
+      分库分表
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="分库分表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#概述_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#拆分策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      拆分策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#垂直拆分" class="md-nav__link">
+    <span class="md-ellipsis">
+      垂直拆分
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#水平拆分" class="md-nav__link">
+    <span class="md-ellipsis">
+      水平拆分
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#实现技术" class="md-nav__link">
+    <span class="md-ellipsis">
+      实现技术
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat概述" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat概述
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MyCat配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schemaxml" class="md-nav__link">
+    <span class="md-ellipsis">
+      schema.xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rulexml" class="md-nav__link">
+    <span class="md-ellipsis">
+      rule.xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverxml" class="md-nav__link">
+    <span class="md-ellipsis">
+      server.xml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat分片" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat分片
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MyCat分片">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全局表" class="md-nav__link">
+    <span class="md-ellipsis">
+      全局表
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分片规则" class="md-nav__link">
+    <span class="md-ellipsis">
+      分片规则
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mycat管理" class="md-nav__link">
+    <span class="md-ellipsis">
+      MyCat管理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#读写分离" class="md-nav__link">
+    <span class="md-ellipsis">
+      读写分离
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/MySQL/运维.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/MySQL/运维.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+  <h1>运维</h1>
+
+<h2 id="日志">日志<a class="headerlink" href="#日志" title="链接到此段落">&para;</a></h2>
+<h3 id="错误日志">错误日志<a class="headerlink" href="#错误日志" title="链接到此段落">&para;</a></h3>
+<p>错误日志是 MySQL 中最重要的日志之一，它记录了当 mysqld 启动和停止时，以及服务器在运行过程中发生任何严重错误时的相关信息。</p>
+<p>该日志是默认开启的，默认存放目录 /var/log/，默认的日志文件名为 mysqld.log 。查看日志位置</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%log_error%&#39;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="二进制日志">二进制日志<a class="headerlink" href="#二进制日志" title="链接到此段落">&para;</a></h3>
+<p>二进制日志（BINLOG）记录了所有的 DDL（数据定义语言）语句和 DML（数据操纵语言）语句，但不包括数据查询（SELECT、SHOW）语句</p>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>灾难时的数据恢复；</li>
+<li>MySQL的主从复制。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="c1">-- 查看日志目录</span>
+<span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%log_bin%&#39;</span><span class="p">;</span>
+</code></pre></div>
+<p><code>log_bin_basename</code>：当前数据库服务器的binlog日志的基础名称(前缀)，具体的binlog文 件名需要再该basename的基础上加上编号(编号从000001开始)。 </p>
+<p><code>log_bin_index</code>：binlog的索引文件，里面记录了当前服务器关联的binlog文件有哪些。</p>
+<p><strong>日志格式</strong></p>
+<p>MySQL服务器中提供了多种格式来记录二进制日志</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 查看日志格式</span>
+<span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%binlog_format%&#39;</span><span class="p">;</span>
+
+<span class="c1">-- 在配置文件中修改 binlog_format 的值即可修改日志格式</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">日志格式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">STATEMENT</td>
+<td>基于<strong>SQL语句</strong>的日志记录，记录的是SQL语句，对数据进行修改的SQL都会记录在日志文件中。</td>
+</tr>
+<tr>
+<td style="text-align: center;">ROW</td>
+<td>基于行的日志记录，记录的是每一行的数据变更。（默认）</td>
+</tr>
+<tr>
+<td style="text-align: center;">MIXED</td>
+<td>混合了STATEMENT和ROW两种格式，默认采用STATEMENT，在某些特殊情况下会自动切换为ROW进行记录。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>查看二进制日志</strong></p>
+<div class="highlight"><pre><span></span><code>mysqlbinlog<span class="w">  </span><span class="o">[</span><span class="w"> </span>参数选项<span class="w"> </span><span class="o">]</span><span class="w">  </span>logfilename
+参数选项：
+<span class="w">    </span>-d<span class="w">      </span>指定数据库名称，只列出指定的数据库相关操作。
+<span class="w">    </span>-o<span class="w">      </span>忽略掉日志中的前n行命令。
+<span class="w">    </span>-v<span class="w">      </span>将行事件<span class="o">(</span>数据变更<span class="o">)</span>重构为SQL语句
+<span class="w">    </span>-vv<span class="w">     </span>将行事件<span class="o">(</span>数据变更<span class="o">)</span>重构为SQL语句，并输出注释信息
+</code></pre></div>
+<p><strong>删除日志</strong></p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reset master</td>
+<td>删除全部 binlog 日志，删除之后，日志编号，将 从 binlog.000001重新开始</td>
+</tr>
+<tr>
+<td>purge master logs to 'binlog.*'</td>
+<td>删除 * 编号之前的所有日志</td>
+</tr>
+<tr>
+<td>purge master logs before 'yyyy-mm-dd hh24:mi:ss'</td>
+<td>删除日志为 "yyyy-mm-dd hh24:mi:ss" 之前 产生的所有日志</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>也可以在mysql的配置文件中配置二进制日志的过期时间，二进制日志过期会自动删除。</p>
+<div class="highlight"><pre><span></span><code><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%binlog_expire_logs_seconds%&#39;</span><span class="p">;</span>
+</code></pre></div>
+</div>
+<h3 id="查询日志">查询日志<a class="headerlink" href="#查询日志" title="链接到此段落">&para;</a></h3>
+<p>查询日志中记录了客户端的所有操作语句，而二进制日志不包含查询数据的SQL语句。默认情况下，查询日志是未开启的。</p>
+<p>在配置文件中开启查询日志</p>
+<div class="highlight"><pre><span></span><code><span class="o">#</span><span class="err">该选项用来开启查询日志</span><span class="w"> </span><span class="err">，</span><span class="w"> </span><span class="err">可选值</span><span class="w"> </span><span class="err">：</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="err">或者</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="err">；</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="err">代表关闭，</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="err">代表开启</span><span class="w"> </span>
+<span class="n">general_log</span><span class="o">=</span><span class="mi">1</span>
+<span class="w"> </span><span class="o">#</span><span class="err">设置日志的文件名</span><span class="w"> </span><span class="err">，</span><span class="w"> </span><span class="err">如果没有指定，</span><span class="w"> </span><span class="err">默认的文件名为</span><span class="w"> </span><span class="n">host_name</span><span class="p">.</span><span class="n">log</span><span class="w"> </span>
+<span class="n">general_log_file</span><span class="o">=</span><span class="n">mysql_query</span><span class="p">.</span><span class="n">log</span>
+</code></pre></div>
+<h3 id="慢查询日志">慢查询日志<a class="headerlink" href="#慢查询日志" title="链接到此段落">&para;</a></h3>
+<p>慢查询日志记录了所有执行时间超过参数 <code>long_query_time</code> 设置值并且扫描记录数不小于  <code>min_examined_row_limit</code> 的所有的SQL语句的日志，默认未开启。</p>
+<p>在配置文件中开启慢查询日志  </p>
+<div class="highlight"><pre><span></span><code><span class="o">##</span><span class="w"> </span><span class="err">慢查询日志</span>
+<span class="n">slow_query_log</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">##</span><span class="w"> </span><span class="err">慢查询时间阈值</span>
+<span class="n">long_query_time</span><span class="o">=</span><span class="mi">2</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>默认情况下，不会记录管理语句，也不会记录不使用索引进行查找的查询。可以使用 log_slow_admin_statements 和更改此行为 log_queries_not_using_indexes</p>
+<div class="highlight"><pre><span></span><code><span class="o">#</span><span class="err">记录执行较慢的管理语句</span>
+<span class="n">log_slow_admin_statements</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
+<span class="o">#</span><span class="err">记录执行较慢的未使用索引的语句</span>
+<span class="n">log_queries_not_using_indexes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+</code></pre></div>
+</div>
+<h2 id="主从复制">主从复制<a class="headerlink" href="#主从复制" title="链接到此段落">&para;</a></h2>
+<h3 id="概述">概述<a class="headerlink" href="#概述" title="链接到此段落">&para;</a></h3>
+<p>主从复制是指将主数据库的 DDL 和 DML 操作通过二进制日志传到从库服务器中，然后在从库上对这些日志重新执行（也叫重做），从而使得从库和主库的数据保持同步。</p>
+<p><img alt="image-20250503155305821" src="../images/image-20250503155305821.png" /></p>
+<p>MySQL 主从复制的优点主要包含以下三个方面： </p>
+<ul>
+<li>主库出现问题，可以快速切换到从库提供服务。 </li>
+<li>实现读写分离，降低主库的访问压力。 </li>
+<li>可以在从库中执行备份，以避免备份期间影响主库服务。</li>
+</ul>
+<h3 id="原理">原理<a class="headerlink" href="#原理" title="链接到此段落">&para;</a></h3>
+<p>MySQL主从复制的核心就是 <strong>二进制日志</strong></p>
+<p><img alt="image-20250503155436205" src="../images/image-20250503155436205.png" /></p>
+<p><strong>过程</strong>：</p>
+<ol>
+<li>Master 主库在事务提交时，会把数据变更记录在二进制日志文件 Binlog 中。</li>
+<li>从库读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。 </li>
+<li>slave重做中继日志中的事件，将改变反映它自己的数据。</li>
+</ol>
+<h3 id="搭建主从">搭建主从<a class="headerlink" href="#搭建主从" title="链接到此段落">&para;</a></h3>
+<h4 id="主节点">主节点<a class="headerlink" href="#主节点" title="链接到此段落">&para;</a></h4>
+<p>主节点配置：</p>
+<div class="highlight"><pre><span></span><code><span class="o">##</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="err">服务</span><span class="n">ID</span><span class="err">，保证整个集群环境中唯一，取值范围：</span><span class="mi">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="o">^</span><span class="mi">32</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="err">，默认为</span><span class="mi">1</span>
+<span class="n">server</span><span class="o">-</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="o">##</span><span class="w"> </span><span class="err">是否只读</span><span class="p">,</span><span class="mi">1</span><span class="w"> </span><span class="err">代表只读</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="err">代表读写</span>
+<span class="k">read</span><span class="o">-</span><span class="k">only</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="o">##</span><span class="w"> </span><span class="err">忽略的数据</span><span class="p">,</span><span class="w"> </span><span class="err">指不需要同步的数据库</span>
+<span class="o">##</span><span class="w"> </span><span class="n">binlog</span><span class="o">-</span><span class="k">ignore</span><span class="o">-</span><span class="n">db</span><span class="o">=</span><span class="n">mysql</span>
+
+<span class="o">##</span><span class="w"> </span><span class="err">指定同步的数据库</span>
+<span class="o">##</span><span class="w"> </span><span class="n">binlog</span><span class="o">-</span><span class="k">do</span><span class="o">-</span><span class="n">db</span><span class="o">=</span><span class="n">db01</span>
+</code></pre></div>
+<p>创建远程连接用户</p>
+<div class="highlight"><pre><span></span><code><span class="o">##</span><span class="w"> </span><span class="err">创建用户，并设置密码，该用户可在任意主机连接该</span><span class="n">MySQL服务</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;itcast&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;Root@123456&#39;</span><span class="p">;</span>
+
+<span class="o">##</span><span class="w"> </span><span class="err">为用户分配主从复制权限</span>
+<span class="k">GRANT</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w">  </span><span class="n">SLAVE</span><span class="w">  </span><span class="k">ON</span><span class="w">  </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w">  </span><span class="k">TO</span><span class="w">  </span><span class="s1">&#39;itcast&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="p">;</span>
+</code></pre></div>
+<p>查看二进制日志坐标 <code>show master status;</code>，用于从节点配置</p>
+<ul>
+<li>file : 从哪个日志文件开始推送日志文件  </li>
+<li>position ： 从哪个位置开始推送日志 </li>
+<li>binlog_ignore_db : 指定不需要同步的数据库</li>
+</ul>
+<h4 id="从节点">从节点<a class="headerlink" href="#从节点" title="链接到此段落">&para;</a></h4>
+<p>配置文件</p>
+<div class="highlight"><pre><span></span><code><span class="o">##</span><span class="w"> </span><span class="n">mysql</span><span class="w"> </span><span class="err">服务</span><span class="n">ID</span><span class="err">，保证整个集群环境中唯一，取值范围：</span><span class="mi">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="o">^</span><span class="mi">32</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="err">，和主库不一样即可</span>
+<span class="n">server</span><span class="o">-</span><span class="n">id</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="o">##</span><span class="w"> </span><span class="err">是否只读</span><span class="p">,</span><span class="mi">1</span><span class="w"> </span><span class="err">代表只读</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="err">代表读写</span>
+<span class="k">read</span><span class="o">-</span><span class="k">only</span><span class="o">=</span><span class="mi">1</span>
+</code></pre></div>
+<p>连接主节点</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 8.0.23版本</span>
+<span class="n">CHANGE</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w"> </span><span class="k">SOURCE</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">SOURCE_HOST</span><span class="o">=</span><span class="s1">&#39;主节点IP&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">SOURCE_USER</span><span class="o">=</span><span class="s1">&#39;主节点授权用户&#39;</span><span class="p">,</span><span class="w"> </span>
+<span class="n">SOURCE_PASSWORD</span><span class="o">=</span><span class="s1">&#39;密码&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">SOURCE_LOG_FILE</span><span class="o">=</span><span class="s1">&#39;binlog.000004&#39;</span><span class="p">,</span><span class="w"> </span>
+<span class="n">SOURCE_LOG_POS</span><span class="o">=</span><span class="mi">663</span><span class="p">;</span>
+</code></pre></div>
+<p>开启同步</p>
+<div class="highlight"><pre><span></span><code><span class="k">start</span><span class="w"> </span><span class="n">replica</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="o">#</span><span class="mi">8</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">22</span><span class="err">之后</span>
+<span class="k">start</span><span class="w">  </span><span class="n">slave</span><span class="w"> </span><span class="p">;</span><span class="w">  </span><span class="o">#</span><span class="mi">8</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">22</span><span class="err">之前</span>
+</code></pre></div>
+<h2 id="分库分表">分库分表<a class="headerlink" href="#分库分表" title="链接到此段落">&para;</a></h2>
+<h3 id="概述_1">概述<a class="headerlink" href="#概述_1" title="链接到此段落">&para;</a></h3>
+<p>随着互联网及移动互联网的发展，应用系统的数据量也是成指数式增长，若采用单数据库进行数据存储，存在以下性能瓶颈： </p>
+<ol>
+<li>IO瓶颈：热点数据太多，数据库缓存不足，产生大量磁盘IO，效率较低。 请求数据太多，带宽不够，网络IO瓶颈。 </li>
+<li>CPU瓶颈：排序、分组、连接查询、聚合统计等SQL会耗费大量的CPU资源，请求数太多，CPU达到瓶颈。</li>
+</ol>
+<p>为了解决上述问题，我们需要对数据库进行分库分表处理。</p>
+<p><img alt="image-20250503162116914" src="../images/image-20250503162116914.png" /></p>
+<h4 id="拆分策略">拆分策略<a class="headerlink" href="#拆分策略" title="链接到此段落">&para;</a></h4>
+<p>分库分表的形式，主要是两种：垂直拆分和水平拆分。</p>
+<p><img alt="image-20250503162438453" src="../images/image-20250503162438453.png" /></p>
+<h4 id="垂直拆分">垂直拆分<a class="headerlink" href="#垂直拆分" title="链接到此段落">&para;</a></h4>
+<p><strong>垂直分库</strong>：以表为依据，根据业务将不同表拆分到不同库中。</p>
+<p>特点： </p>
+<ul>
+<li>每个库的表结构都不一样。 </li>
+<li>每个库的数据也不一样。 </li>
+<li>所有库的并集是全量数据。</li>
+</ul>
+<p><img alt="image-20250503162659590" src="../images/image-20250503162659590.png" /></p>
+<p><strong>垂直分表</strong>：以字段为依据，根据字段属性将不同字段拆分到不同表中。</p>
+<p>特点： </p>
+<ul>
+<li>每个表的结构都不一样。 </li>
+<li>每个表的数据也不一样，一般通过一列（主键/外键）关联。 </li>
+<li>所有表的并集是全量数据。</li>
+</ul>
+<p><img alt="image-20250503162751773" src="../images/image-20250503162751773.png" /></p>
+<h4 id="水平拆分">水平拆分<a class="headerlink" href="#水平拆分" title="链接到此段落">&para;</a></h4>
+<p><strong>水平分库</strong>：以字段为依据，按照一定策略，将一个库的数据拆分到多个库中。</p>
+<p>特点： </p>
+<ul>
+<li>每个库的表结构都一样。 </li>
+<li>每个库的数据都不一样。 </li>
+<li>所有库的并集是全量数据。</li>
+</ul>
+<p><img alt="image-20250503162930557" src="../images/image-20250503162930557.png" /></p>
+<p><strong>水平分表</strong>：以字段为依据，按照一定策略，将一个表的数据拆分到多个表中。</p>
+<p>特点： </p>
+<ul>
+<li>每个表的表结构都一样。 </li>
+<li>每个表的数据都不一样。 </li>
+<li>所有表的并集是全量数据。</li>
+</ul>
+<p><img alt="image-20250503163023657" src="../images/image-20250503163023657.png" /></p>
+<h3 id="实现技术">实现技术<a class="headerlink" href="#实现技术" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>shardingJDBC：基于AOP原理，在应用程序中对本地执行的SQL进行拦截，解析、改写、路由处理。需要自行编码配置实现，只支持java语言，性能较高。 </li>
+<li><strong>MyCat</strong>：数据库分库分表中间件，不用调整代码即可实现分库分表，支持多种语言，性能不及前者。</li>
+</ul>
+<p><img alt="image-20250503163224451" src="../images/image-20250503163224451.png" /></p>
+<h3 id="mycat概述">MyCat概述<a class="headerlink" href="#mycat概述" title="链接到此段落">&para;</a></h3>
+<p><a href="https://www.mycat.org.cn/">| MYCAT官方网站—中国开源分布式数据库中间件</a></p>
+<p><strong>安装后目录介绍</strong></p>
+<p>bin : 存放可执行文件，用于启动停止mycat</p>
+<p>conf：存放mycat的配置文件 </p>
+<p>lib：存放mycat的项目依赖包（jar） </p>
+<p>logs：存放mycat的日志文件</p>
+<p><img alt="image-20250503164149672" src="../images/image-20250503164149672.png" /></p>
+<p>在MyCat的逻辑结构主要负责逻辑库、逻辑表、分片规则、分片节点等逻辑结构的处理，而具体的数据 存储还是在物理结构，也就是数据库服务器中存储的。</p>
+<h3 id="mycat配置">MyCat配置<a class="headerlink" href="#mycat配置" title="链接到此段落">&para;</a></h3>
+<h4 id="schemaxml">schema.xml<a class="headerlink" href="#schemaxml" title="链接到此段落">&para;</a></h4>
+<p>schema.xml 作为MyCat中最重要的配置文件之一 , 涵盖了MyCat的逻辑库 、 逻辑表 、 分片规 则、分片节点及数据源的配置。</p>
+<p>主要包含以下三组标签： </p>
+<ul>
+<li>schema标签 </li>
+<li>datanode标签 </li>
+<li>datahost标签</li>
+</ul>
+<p><br></p>
+<p>1.schema标签</p>
+<p>定义逻辑库，一个MyCat实例中, 可以有多个逻辑库 , 可以通 过 schema 标签来划分不同的逻辑库。MyCat中的逻辑库的概念，等同于MySQL中的database概念。</p>
+<p><strong>主要属性</strong>：</p>
+<ul>
+<li>name：指定自定义的逻辑库库名 </li>
+<li>checkSQLschema：在SQL语句操作时指定了数据库名称，执行时是否自动去除；true：自动去 除，false：不自动去除 </li>
+<li>sqlMaxLimit：如果未指定limit进行查询，列表查询模式查询多少条记录</li>
+</ul>
+<p><strong>子标签</strong>：</p>
+<ul>
+<li>
+<p>table定义逻辑表</p>
+<p><strong>主要属性</strong>：</p>
+<ul>
+<li>name：定义逻辑表表名，在该逻辑库下唯一 </li>
+<li>dataNode：定义逻辑表所属的dataNode，该属性需要与dataNode标签中name对应；多个 dataNode逗号分隔 </li>
+<li>rule：分片规则的名字，分片规则名字是在rule.xml中定义的 </li>
+<li>primaryKey：逻辑表对应真实表的主键 </li>
+<li>type：逻辑表的类型，目前逻辑表只有全局表和普通表，如果未配置，就是普通表；全局表，配置为 global</li>
+</ul>
+</li>
+</ul>
+<p>2.datanode标签</p>
+<p><strong>主要属性</strong>： </p>
+<ul>
+<li>name：定义数据节点名称 </li>
+<li>dataHost：数据库实例主机名称，引用自 dataHost 标签中name属性 </li>
+<li>database：定义分片所属数据库</li>
+</ul>
+<p>3.datahost标签</p>
+<p><strong>主要属性</strong>：</p>
+<ul>
+<li>name：唯一标识，供上层标签使用 </li>
+<li>maxCon/minCon：最大连接数/最小连接数 </li>
+<li>balance：负载均衡策略，取值 0,1,2,3 </li>
+<li>writeType：写操作分发方式（0：写操作转发到第一个writeHost，第一个挂了，切换到第二 个；1：写操作随机分发到配置的writeHost） </li>
+<li>dbDriver：数据库驱动，支持 native、jdbc</li>
+</ul>
+<h4 id="rulexml">rule.xml<a class="headerlink" href="#rulexml" title="链接到此段落">&para;</a></h4>
+<p>rule.xml中定义所有拆分表的规则, 在使用过程中可以灵活的使用分片算法, 或者对同一个分片算法使用不同的参数, 它让分片过程可配置化。</p>
+<p>主要包含两类标签：</p>
+<ul>
+<li>tableRule</li>
+<li>Function</li>
+</ul>
+<h4 id="serverxml">server.xml<a class="headerlink" href="#serverxml" title="链接到此段落">&para;</a></h4>
+<p>server.xml配置文件包含了MyCat的系统配置信息</p>
+<p>主要有两个重要的标签：</p>
+<ul>
+<li>system</li>
+<li>user</li>
+</ul>
+<p>1.system标签</p>
+<p>主要配置MyCat中的系统配置信息</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;serverPort&quot;</span><span class="nt">&gt;</span>8066<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- MyCat服务端口 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;managerPort&quot;</span><span class="nt">&gt;</span>9066<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 管理端口 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;charset&quot;</span><span class="nt">&gt;</span>utf8<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 默认字符集 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;nonePasswordLogin&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 是否允许空密码登录(0禁止) --&gt;</span>
+
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;processorBufferPoolType&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 0:NIO,1:AIO --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;processorBufferLocalPercent&quot;</span><span class="nt">&gt;</span>100<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 线程池缓冲百分比 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;frontSocketSoRcvbuf&quot;</span><span class="nt">&gt;</span>1048576<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 前端接收缓冲 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;frontSocketSoSndbuf&quot;</span><span class="nt">&gt;</span>4194304<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 前端发送缓冲 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;processors&quot;</span><span class="nt">&gt;</span>16<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 处理线程数 --&gt;</span>
+
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;defaultSqlParser&quot;</span><span class="nt">&gt;</span>druidparser<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- SQL解析器 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sequnceHandlerType&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 全局序列类型 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;useOffHeapForMerge&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 是否使用堆外内存 --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;memoryPageSize&quot;</span><span class="nt">&gt;</span>1m<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 内存页大小 --&gt;</span>
+
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;heartbeatTimeout&quot;</span><span class="nt">&gt;</span>1000<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 心跳超时(ms) --&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;idleTimeout&quot;</span><span class="nt">&gt;</span>1800000<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 连接空闲超时(ms) --&gt;</span>
+</code></pre></div>
+<p>2.user标签</p>
+<p>配置MyCat中的用户、访问密码，以及用户针对于逻辑库、逻辑表的权限信息</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;user</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;test&quot;</span><span class="w"> </span><span class="na">defaultAccount=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="nt">&gt;</span>test123<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;schemas&quot;</span><span class="nt">&gt;</span>TESTDB<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 可访问的schema --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;readOnly&quot;</span><span class="nt">&gt;</span>false<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 是否只读 --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;benchmark&quot;</span><span class="nt">&gt;</span>1000<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 权重 --&gt;</span>
+
+<span class="w">    </span><span class="cm">&lt;!-- 表级权限控制 --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;privileges</span><span class="w"> </span><span class="na">check=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;schema</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TESTDB&quot;</span><span class="w"> </span><span class="na">dml=</span><span class="s">&quot;0110&quot;</span><span class="nt">&gt;</span>
+<span class="w">            </span><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;t_user&quot;</span><span class="w"> </span><span class="na">dml=</span><span class="s">&quot;1111&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/schema&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/privileges&gt;</span>
+<span class="nt">&lt;/user&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>dml四位数字分别对应：insert(1位),update(2位),select(3位),delete(4位)</p>
+<p>例如dml="0110"表示允许update和select</p>
+</div>
+<h3 id="mycat分片">MyCat分片<a class="headerlink" href="#mycat分片" title="链接到此段落">&para;</a></h3>
+<h4 id="全局表">全局表<a class="headerlink" href="#全局表" title="链接到此段落">&para;</a></h4>
+<p>全局表（Global Table）是 MyCat 中的一种特殊表类型，指在所有数据节点（分片节点）上都<strong>完全冗余存储</strong>的<strong>相同数据表</strong>。全局表主要用于解决跨分片 JOIN 的性能问题。</p>
+<p><strong>特点</strong>：</p>
+<ol>
+<li><strong>全节点冗余</strong>：所有数据节点都存储相同数据</li>
+<li><strong>实时同步</strong>：任何节点的修改都会同步到所有节点</li>
+<li><strong>跨分片JOIN优化</strong>：避免跨分片JOIN操作</li>
+<li><strong>读操作本地化</strong>：查询操作可在任意节点本地执行</li>
+<li><strong>写操作广播</strong>：写入操作会广播到所有节点</li>
+</ol>
+<div class="admonition example">
+<p class="admonition-title">使用场景</p>
+<ol>
+<li><strong>数据字典表</strong>：如地区编码、系统参数等</li>
+<li><strong>配置表</strong>：系统配置、业务配置等</li>
+<li><strong>小数据量表</strong>：数据量小且更新不频繁的表</li>
+<li><strong>高频关联表</strong>：经常需要与其他表JOIN的维度表</li>
+</ol>
+</div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;t_area&quot;</span><span class="w"> </span><span class="na">primaryKey=</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;global&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn1,dn2,dn3&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<h4 id="分片规则">分片规则<a class="headerlink" href="#分片规则" title="链接到此段落">&para;</a></h4>
+<h5 id="范围分片">范围分片<a class="headerlink" href="#范围分片" title="链接到此段落">&para;</a></h5>
+<p>根据指定的字段及其配置的范围与数据节点的对应情况， 来决定该数据属于哪一个分片。</p>
+<p><img alt="image-20250506221553409" src="../images/image-20250506221553409.png" /></p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;TB_ORDER&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn1,dn2,dn3&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;auto-sharding-long&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+</code></pre></div>
+<h5 id="取模分片">取模分片<a class="headerlink" href="#取模分片" title="链接到此段落">&para;</a></h5>
+<p>根据指定的字段值与节点数量进行求模运算，根据运算结果， 来决定该数据属于哪一个分片。</p>
+<p><img alt="image-20250506221740000" src="../images/image-20250506221740000.png" /></p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- schema.xml --&gt;</span>
+<span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tb_log&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn4,dn5,dn6&quot;</span><span class="w"> </span><span class="na">primaryKey=</span><span class="s">&quot;id&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;mod-long&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+
+
+<span class="cm">&lt;!-- rule.xml --&gt;</span>
+<span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;mod-long&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>id<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>mod-long<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/tableRule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;mod-long&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionByMod&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;count&quot;</span><span class="nt">&gt;</span>3<span class="nt">&lt;/property&gt;</span><span class="cm">&lt;!-- 节点数量 --&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/function&gt;</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>该分片规则，主要针对于<strong>数字</strong>类型的字段适用</p>
+</div>
+<h5 id="一致性hash分片">一致性hash分片<a class="headerlink" href="#一致性hash分片" title="链接到此段落">&para;</a></h5>
+<p>一致性哈希（Consistent Hashing）是MyCat提供的一种特殊分片算法，它解决了传统哈希分片在节点扩容/缩容时需要大量数据迁移的问题。</p>
+<p><strong>特点</strong>：</p>
+<ol>
+<li><strong>虚拟节点环</strong>：将哈希空间组织成环形结构</li>
+<li><strong>数据定位</strong>：通过哈希计算确定数据在环上的位置</li>
+<li><strong>节点映射</strong>：物理节点均匀映射到哈希环上</li>
+<li><strong>扩容影响小</strong>：节点变化只影响相邻节点数据</li>
+</ol>
+<hr />
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">特性</th>
+<th style="text-align: center;">一致性哈希</th>
+<th style="text-align: center;">传统哈希</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">扩容影响</td>
+<td style="text-align: center;">只影响相邻节点</td>
+<td style="text-align: center;">影响所有节点</td>
+</tr>
+<tr>
+<td style="text-align: center;">数据迁移量</td>
+<td style="text-align: center;">约1/N（N为节点数）</td>
+<td style="text-align: center;">几乎全部数据</td>
+</tr>
+<tr>
+<td style="text-align: center;">数据均衡性</td>
+<td style="text-align: center;">依赖虚拟节点数</td>
+<td style="text-align: center;">完全均衡</td>
+</tr>
+<tr>
+<td style="text-align: center;">实现复杂度</td>
+<td style="text-align: center;">较高</td>
+<td style="text-align: center;">简单</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>配置</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- schema.xml --&gt;</span>
+<span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;t_order&quot;</span><span class="w"> </span><span class="na">primaryKey=</span><span class="s">&quot;order_id&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn1,dn2,dn3&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;sharding-by-murmur&quot;</span><span class="nt">/&gt;</span>
+
+
+<span class="cm">&lt;!-- rule.xml --&gt;</span>
+<span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-murmur&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>order_id<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>murmur<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="nt">&lt;/tableRule&gt;</span>
+
+<span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;murmur&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionByMurmurHash&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;seed&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 哈希种子，默认0 --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;count&quot;</span><span class="nt">&gt;</span>3<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 物理节点数 --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;virtualBucketTimes&quot;</span><span class="nt">&gt;</span>160<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 虚拟节点倍数 --&gt;</span>
+<span class="nt">&lt;/function&gt;</span>
+</code></pre></div>
+<h5 id="枚举分片">枚举分片<a class="headerlink" href="#枚举分片" title="链接到此段落">&para;</a></h5>
+<p>通过在<strong>配置文件</strong>中配置可能的枚举值, 指定数据分布到不同数据节点上, 本规则适用于按照省份、性 别、状态拆分数据等业务</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tb_user&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn4,dn5,dn6&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;sharding-by-intfile-enumstatus&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+</code></pre></div>
+<h5 id="应用指定">应用指定<a class="headerlink" href="#应用指定" title="链接到此段落">&para;</a></h5>
+<p>运行阶段由应用自主决定路由到那个分片 , 直接根据字符子串（必须是数字）计算分片号</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tb_app&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn4,dn5,dn6&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;sharding-by-substring&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+
+
+
+<span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-substring&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>id<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>sharding-by-substring<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/tableRule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-substring&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionDirectBySubString&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;startIndex&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- zero-based --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;size&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partitionCount&quot;</span><span class="nt">&gt;</span>3<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;defaultPartition&quot;</span><span class="nt">&gt;</span>0<span class="nt">&lt;/property&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/function&gt;</span>
+</code></pre></div>
+<h5 id="固定分片hash算法">固定分片hash算法<a class="headerlink" href="#固定分片hash算法" title="链接到此段落">&para;</a></h5>
+<p>固定分片哈希算法（PartitionByLong）是 MyCat 中最常用的分片算法之一，它通过对分片字段值进行固定范围的哈希计算来确定数据分布。</p>
+<ol>
+<li><strong>固定范围分片</strong>：通过配置确定每个分片的数值范围</li>
+<li><strong>简单高效</strong>：直接基于数值计算，性能优异</li>
+<li><strong>均匀分布</strong>：数据在分片间均匀分布（取决于分片键）</li>
+<li><strong>可预测性</strong>：可以准确预判数据所在分片位置</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-long&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>user_id<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>mod-long<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="nt">&lt;/tableRule&gt;</span>
+
+<span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;mod-long&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionByLong&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partitionCount&quot;</span><span class="nt">&gt;</span>2,1<span class="nt">&lt;/property&gt;</span><span class="w">  </span><span class="cm">&lt;!-- 分片数量配置 --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partitionLength&quot;</span><span class="nt">&gt;</span>512,256<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- 分片范围配置 --&gt;</span>
+<span class="nt">&lt;/function&gt;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>partitionCount</th>
+<th>是</th>
+<th>分区间数量配置</th>
+<th>"2,1" 表示2个分区，第1个分区1份</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>partitionLength</td>
+<td>是</td>
+<td>每个分区的范围长度</td>
+<td>"512,256" 表示第1分区每份512，第2分区每份256</td>
+</tr>
+<tr>
+<td>hashSlice</td>
+<td>否</td>
+<td>哈希取模部分字符串</td>
+<td>"0:2" 表示取前2个字符</td>
+</tr>
+</tbody>
+</table>
+<h5 id="字符串hash解析算法">字符串hash解析算法<a class="headerlink" href="#字符串hash解析算法" title="链接到此段落">&para;</a></h5>
+<p>截取字符串中的指定位置的子字符串, 进行hash算法， 算出分片。</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tb_strhash&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn4,dn5&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;sharding-by-stringhash&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+
+
+
+<span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-stringhash&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>name<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>sharding-by-stringhash<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/tableRule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-stringhash&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionByString&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partitionLength&quot;</span><span class="nt">&gt;</span>512<span class="nt">&lt;/property&gt;</span><span class="w"> </span><span class="cm">&lt;!-- zero-based --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partitionCount&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;hashSlice&quot;</span><span class="nt">&gt;</span>0:2<span class="nt">&lt;/property&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/function&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>hashSlice: hash运算位 , 根据子字符串的hash运算 ; 0 代表 str.length() , -1 代表 str.length()-1 , 大于0只代表数字自身 ; 可以理解 为substring（start，end），start为0则只表示0</p>
+</div>
+<h5 id="按天分片">按天分片<a class="headerlink" href="#按天分片" title="链接到此段落">&para;</a></h5>
+<p>按照日期及对应的时间周期来分片。</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="k">table</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;tb_datepart&quot;</span><span class="w"> </span><span class="n">dataNode</span><span class="o">=</span><span class="ss">&quot;dn4,dn5,dn6&quot;</span><span class="w"> </span><span class="k">rule</span><span class="o">=</span><span class="ss">&quot;sharding-by-date&quot;</span><span class="w"> </span><span class="o">/&gt;</span>
+
+
+
+<span class="w"> </span><span class="o">&lt;</span><span class="n">tableRule</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;sharding-by-date&quot;</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="k">rule</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="n">columns</span><span class="o">&gt;</span><span class="n">create_time</span><span class="o">&lt;/</span><span class="n">columns</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="n">algorithm</span><span class="o">&gt;</span><span class="n">sharding</span><span class="o">-</span><span class="k">by</span><span class="o">-</span><span class="nb">date</span><span class="o">&lt;/</span><span class="n">algorithm</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;/</span><span class="k">rule</span><span class="o">&gt;</span>
+<span class="w"> </span><span class="o">&lt;/</span><span class="n">tableRule</span><span class="o">&gt;</span>
+
+<span class="w"> </span><span class="o">&lt;</span><span class="k">function</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;sharding-by-date&quot;</span><span class="w"> </span><span class="k">class</span><span class="o">=</span><span class="ss">&quot;io.mycat.route.function.PartitionByDate&quot;</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">property</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;dateFormat&quot;</span><span class="o">&gt;</span><span class="n">yyyy</span><span class="o">-</span><span class="n">MM</span><span class="o">-</span><span class="n">dd</span><span class="o">&lt;/</span><span class="n">property</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">property</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;sBeginDate&quot;</span><span class="o">&gt;</span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="o">&lt;/</span><span class="n">property</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">property</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;sEndDate&quot;</span><span class="o">&gt;</span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">30</span><span class="o">&lt;/</span><span class="n">property</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">property</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;sPartionDay&quot;</span><span class="o">&gt;</span><span class="mi">10</span><span class="o">&lt;/</span><span class="n">property</span><span class="o">&gt;</span>
+<span class="w"> </span><span class="o">&lt;/</span><span class="k">function</span><span class="o">&gt;</span>
+<span class="w"> </span><span class="o">&lt;!</span><span class="c1">--</span>
+<span class="w">    </span><span class="err">从开始时间开始，每</span><span class="mi">10</span><span class="err">天为一个分片，到达结束时间之后，会重复开始分片插入</span>
+<span class="w">     </span><span class="err">配置表的</span><span class="w"> </span><span class="n">dataNode</span><span class="w"> </span><span class="err">的分片，必须和分片规则数量一致，例如</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="w"> </span><span class="err">到</span><span class="w"> </span><span class="mi">2022</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span><span class="w"> </span><span class="err">，每</span>
+<span class="mi">10</span><span class="err">天一个分片，一共需要</span><span class="mi">37</span><span class="err">个分片。</span>
+<span class="w"> </span><span class="c1">--&gt;</span>
+</code></pre></div>
+<h5 id="按月分片">按月分片<a class="headerlink" href="#按月分片" title="链接到此段落">&para;</a></h5>
+<p>使用场景为按照月份来分片, 每个自然月为一个分片。</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;tb_monthpart&quot;</span><span class="w"> </span><span class="na">dataNode=</span><span class="s">&quot;dn4,dn5,dn6&quot;</span><span class="w"> </span><span class="na">rule=</span><span class="s">&quot;sharding-by-month&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+
+
+<span class="w"> </span><span class="nt">&lt;tableRule</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sharding-by-month&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;rule&gt;</span>
+<span class="w">        </span><span class="nt">&lt;columns&gt;</span>create_time<span class="nt">&lt;/columns&gt;</span>
+<span class="w">        </span><span class="nt">&lt;algorithm&gt;</span>partbymonth<span class="nt">&lt;/algorithm&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/rule&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/tableRule&gt;</span>
+
+<span class="nt">&lt;function</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;partbymonth&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;io.mycat.route.function.PartitionByMonth&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;dateFormat&quot;</span><span class="nt">&gt;</span>yyyy-MM-dd<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sBeginDate&quot;</span><span class="nt">&gt;</span>2022-01-01<span class="nt">&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sEndDate&quot;</span><span class="nt">&gt;</span>2022-03-31<span class="nt">&lt;/property&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/function&gt;</span>
+<span class="w"> </span><span class="err">&lt;</span>!--<span class="w"> </span>
+<span class="w">    </span>从开始时间开始，一个月为一个分片，到达结束时间之后，会重复开始分片插入
+<span class="w">    </span>配置表的<span class="w"> </span>dataNode<span class="w"> </span>的分片，必须和分片规则数量一致，例如<span class="w"> </span>2022-01-01<span class="w"> </span>到<span class="w"> </span>2022-12-31<span class="w"> </span>，一
+共需要12个分片。--
+</code></pre></div>
+<h3 id="mycat管理">MyCat管理<a class="headerlink" href="#mycat管理" title="链接到此段落">&para;</a></h3>
+<p><img alt="image-20250507100135937" src="../images/image-20250507100135937.png" /></p>
+<p>Mycat默认开通2个端口，可以在server.xml中进行修改。 </p>
+<ul>
+<li>8066 数据访问端口，即进行 DML 和 DDL 操作。 </li>
+<li>9066 数据库管理端口，即 mycat 服务管理控制功能，用于管理mycat的整个集群状态 连接MyCat的管理控制台</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>mysql<span class="w">   </span>-h<span class="w">  </span><span class="m">192</span>.168.200.210<span class="w">  </span>-p<span class="w">  </span><span class="m">9066</span><span class="w">   </span>-uroot<span class="w">   </span>-p123456
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">命令</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>show @@version;</code></td>
+<td style="text-align: center;">查看MyCat版本</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@server;</code></td>
+<td style="text-align: center;">查看服务器状态</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@threadpool;</code></td>
+<td style="text-align: center;">查看线程池状态</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@processor;</code></td>
+<td style="text-align: center;">查看处理器状态</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@connection;</code></td>
+<td style="text-align: center;">查看连接状态</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@backend;</code></td>
+<td style="text-align: center;">查看后端连接状态</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">命令</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>show @@datanode;</code></td>
+<td style="text-align: center;">查看数据节点信息</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@datanode where schema=?'</code></td>
+<td style="text-align: center;">查看指定schema的节点</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>reload @@datanode</code></td>
+<td style="text-align: center;">重载数据节点配置</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>switch @@datasource name:index</code></td>
+<td style="text-align: center;">切换数据源(主从切换)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">命令</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>show @@sql;</code></td>
+<td style="text-align: center;">查看当前执行的SQL</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@sql.slow;</code></td>
+<td style="text-align: center;">查看慢SQL</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@sql.sum;</code></td>
+<td style="text-align: center;">查看SQL执行统计</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>show @@sql.where id=?</code></td>
+<td style="text-align: center;">查看指定SQL详情</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>kill @@connection id1,id2,...</code></td>
+<td style="text-align: center;">终止指定连接</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">命令</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><code>reload @@config</code></td>
+<td style="text-align: center;">重载所有配置文件</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>reload @@config_all</code></td>
+<td style="text-align: center;">重载所有配置并清理缓存</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>reload @@route</code></td>
+<td style="text-align: center;">重载路由配置</td>
+</tr>
+<tr>
+<td style="text-align: center;"><code>reload @@user</code></td>
+<td style="text-align: center;">重载用户权限</td>
+</tr>
+</tbody>
+</table>
+<p>MyCat官方提供了一个管理监控平台<strong>MyCat-Web（MyCat-eye）</strong>。 Mycat-web 是 Mycat 可视化运维的管理和监控平台。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>MyCat-eye依赖zookeeper，需先安装zookeeper</p>
+</div>
+<h2 id="读写分离">读写分离<a class="headerlink" href="#读写分离" title="链接到此段落">&para;</a></h2>
+<p>读写分离,简单地说是把对数据库的读和写操作分开,以对应不同的数据库服务器。主数据库提供写操作，从数据库提供读操作，这样能有效地减轻单台数据库的压力。</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>配置MySQL主从复制（1主N从）</li>
+<li>确保主从同步正常（<code>SHOW SLAVE STATUS</code>检查）</li>
+<li>建议从库配置<code>read_only=1</code>防止误写入</li>
+</ol>
+<p>配置<code>schema.xml</code></p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;?</span><span class="n">xml</span><span class="w"> </span><span class="k">version</span><span class="o">=</span><span class="ss">&quot;1.0&quot;</span><span class="o">?&gt;</span>
+<span class="o">&lt;!</span><span class="n">DOCTYPE</span><span class="w"> </span><span class="n">mycat</span><span class="p">:</span><span class="k">schema</span><span class="w"> </span><span class="k">SYSTEM</span><span class="w"> </span><span class="ss">&quot;schema.dtd&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">mycat</span><span class="p">:</span><span class="k">schema</span><span class="w"> </span><span class="n">xmlns</span><span class="p">:</span><span class="n">mycat</span><span class="o">=</span><span class="ss">&quot;http://io.mycat/&quot;</span><span class="o">&gt;</span>
+
+<span class="w">    </span><span class="o">&lt;!</span><span class="c1">-- 定义逻辑库 --&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="k">schema</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;TESTDB&quot;</span><span class="w"> </span><span class="n">checkSQLschema</span><span class="o">=</span><span class="ss">&quot;true&quot;</span><span class="w"> </span><span class="n">sqlMaxLimit</span><span class="o">=</span><span class="ss">&quot;100&quot;</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;!</span><span class="c1">-- 所有表默认使用读写分离 --&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="k">table</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;tb1&quot;</span><span class="w"> </span><span class="n">primaryKey</span><span class="o">=</span><span class="ss">&quot;id&quot;</span><span class="w"> </span><span class="n">dataNode</span><span class="o">=</span><span class="ss">&quot;dn1&quot;</span><span class="o">/&gt;</span>
+<span class="w">    </span><span class="o">&lt;/</span><span class="k">schema</span><span class="o">&gt;</span>
+
+<span class="w">    </span><span class="o">&lt;!</span><span class="c1">-- 定义数据节点 --&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">dataNode</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;dn1&quot;</span><span class="w"> </span><span class="n">dataHost</span><span class="o">=</span><span class="ss">&quot;localhost1&quot;</span><span class="w"> </span><span class="k">database</span><span class="o">=</span><span class="ss">&quot;testdb&quot;</span><span class="w"> </span><span class="o">/&gt;</span>
+
+<span class="w">    </span><span class="o">&lt;!</span><span class="c1">-- 定义数据主机 --&gt;</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">dataHost</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="ss">&quot;localhost1&quot;</span><span class="w"> </span><span class="n">maxCon</span><span class="o">=</span><span class="ss">&quot;1000&quot;</span><span class="w"> </span><span class="n">minCon</span><span class="o">=</span><span class="ss">&quot;10&quot;</span><span class="w"> </span><span class="n">balance</span><span class="o">=</span><span class="ss">&quot;1&quot;</span><span class="w"> </span><span class="n">writeType</span><span class="o">=</span><span class="ss">&quot;0&quot;</span><span class="w"> </span><span class="n">dbType</span><span class="o">=</span><span class="ss">&quot;mysql&quot;</span><span class="w"> </span><span class="n">dbDriver</span><span class="o">=</span><span class="ss">&quot;native&quot;</span><span class="w"> </span><span class="n">switchType</span><span class="o">=</span><span class="ss">&quot;1&quot;</span><span class="w">  </span><span class="n">slaveThreshold</span><span class="o">=</span><span class="ss">&quot;100&quot;</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="o">&lt;!</span><span class="c1">-- 心跳检测SQL --&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="n">heartbeat</span><span class="o">&gt;</span><span class="k">select</span><span class="w"> </span><span class="k">user</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">heartbeat</span><span class="o">&gt;</span>
+
+<span class="w">        </span><span class="o">&lt;!</span><span class="c1">-- 写节点(主库)配置 --&gt;</span>
+<span class="w">        </span><span class="o">&lt;</span><span class="n">writeHost</span><span class="w"> </span><span class="k">host</span><span class="o">=</span><span class="ss">&quot;hostM1&quot;</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="ss">&quot;192.168.1.100:3306&quot;</span><span class="w"> </span><span class="k">user</span><span class="o">=</span><span class="ss">&quot;root&quot;</span><span class="w"> </span><span class="n">password</span><span class="o">=</span><span class="ss">&quot;123456&quot;</span><span class="o">&gt;</span>
+<span class="w">            </span><span class="o">&lt;!</span><span class="c1">-- 读节点(从库)配置 --&gt;</span>
+<span class="w">            </span><span class="o">&lt;</span><span class="n">readHost</span><span class="w"> </span><span class="k">host</span><span class="o">=</span><span class="ss">&quot;hostS1&quot;</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="ss">&quot;192.168.1.101:3306&quot;</span><span class="w"> </span><span class="k">user</span><span class="o">=</span><span class="ss">&quot;root&quot;</span><span class="w"> </span><span class="n">password</span><span class="o">=</span><span class="ss">&quot;123456&quot;</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">            </span><span class="o">&lt;</span><span class="n">readHost</span><span class="w"> </span><span class="k">host</span><span class="o">=</span><span class="ss">&quot;hostS2&quot;</span><span class="w"> </span><span class="n">url</span><span class="o">=</span><span class="ss">&quot;192.168.1.102:3306&quot;</span><span class="w"> </span><span class="k">user</span><span class="o">=</span><span class="ss">&quot;root&quot;</span><span class="w"> </span><span class="n">password</span><span class="o">=</span><span class="ss">&quot;123456&quot;</span><span class="w"> </span><span class="o">/&gt;</span>
+<span class="w">        </span><span class="o">&lt;/</span><span class="n">writeHost</span><span class="o">&gt;</span>
+
+<span class="w">        </span><span class="o">&lt;!</span><span class="c1">-- 可配置备用写节点(主从切换时使用) --&gt;</span>
+<span class="w">        </span><span class="o">&lt;!</span><span class="c1">-- &lt;writeHost host=&quot;hostM2&quot; url=&quot;192.168.1.103:3306&quot; user=&quot;root&quot; password=&quot;123456&quot;/&gt; --&gt;</span>
+<span class="w">    </span><span class="o">&lt;/</span><span class="n">dataHost</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">mycat</span><span class="p">:</span><span class="k">schema</span><span class="o">&gt;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">参数</th>
+<th style="text-align: center;">值</th>
+<th style="text-align: center;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">balance</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">不开启读写分离</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">全部读操作随机分发到readHost</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">读操作按权重分发到所有host</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">读操作只分发到writeHost对应的readHost</td>
+</tr>
+<tr>
+<td style="text-align: center;">writeType</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">所有写操作发送到第一个writeHost</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">随机发送到writeHost</td>
+</tr>
+<tr>
+<td style="text-align: center;">switchType</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">自动切换(默认)</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">基于MySQL主从同步状态切换</td>
+</tr>
+<tr>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">手动切换</td>
+</tr>
+</tbody>
+</table>
+<p>多主从配置方式（高可用）</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dataHost</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="na">balance=</span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="na">writeType=</span><span class="s">&quot;1&quot;</span><span class="nt">&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;writeHost</span><span class="w"> </span><span class="na">host=</span><span class="s">&quot;hostM1&quot;</span><span class="w"> </span><span class="na">url=</span><span class="s">&quot;master1:3306&quot;</span><span class="err">...</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;readHost</span><span class="w"> </span><span class="err">...</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/writeHost&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;writeHost</span><span class="w"> </span><span class="na">host=</span><span class="s">&quot;hostM2&quot;</span><span class="w"> </span><span class="na">url=</span><span class="s">&quot;master2:3306&quot;</span><span class="err">...</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;readHost</span><span class="w"> </span><span class="err">...</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/writeHost&gt;</span>
+
+<span class="nt">&lt;/dataHost&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>主节点之间也<strong>互为主从</strong></p>
+</div>
+<hr />
+<p>完结撒花ヽ( •̀ ω •́ )✧</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

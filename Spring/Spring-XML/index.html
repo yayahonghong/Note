@@ -1,0 +1,4236 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/Spring/Spring-XML/">
+      
+      
+        <link rel="prev" href="../Spring-Overview/">
+      
+      
+        <link rel="next" href="../Spring-Annotation/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>基于XML的Spring应用 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#基于xml的spring应用" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              基于XML的Spring应用
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#常用配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      常用配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="常用配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bean的别名配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的别名配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的范围配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的范围配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的延迟加载" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的延迟加载
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的初始化和销毁方法配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的初始化和销毁方法配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的实例化配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的实例化配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的依赖注入配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的依赖注入配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spring的其他配置标签" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring的其他配置标签
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-的get方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring 的get方法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-配置非自定义bean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring 配置非自定义Bean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bean-实例化的基本流程" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean 实例化的基本流程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring的后处理器" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring的后处理器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spring的后处理器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例使用spring的beanfactorypostprocessor扩展点完成自定义注解扫描" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例：使用Spring的BeanFactoryPostProcessor扩展点完成自定义注解扫描
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例对bean方法进行执行时间日志增强" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例：对Bean方法进行执行时间日志增强
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-bean的生命周期" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring Bean的生命周期
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spring Bean的生命周期">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bean实例属性填充" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean实例属性填充
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常用的aware接口" class="md-nav__link">
+    <span class="md-ellipsis">
+      常用的Aware接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#一图总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      一图总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#整合第三方框架" class="md-nav__link">
+    <span class="md-ellipsis">
+      整合第三方框架
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="整合第三方框架">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#整合mybatis" class="md-nav__link">
+    <span class="md-ellipsis">
+      整合MyBatis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#其他框架" class="md-nav__link">
+    <span class="md-ellipsis">
+      其他框架
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#某一个框架与spring的集成开发" class="md-nav__link">
+    <span class="md-ellipsis">
+      某一个框架与Spring的集成开发
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#常用配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      常用配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="常用配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bean的别名配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的别名配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的范围配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的范围配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的延迟加载" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的延迟加载
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的初始化和销毁方法配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的初始化和销毁方法配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的实例化配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的实例化配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bean的依赖注入配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean的依赖注入配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spring的其他配置标签" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring的其他配置标签
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-的get方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring 的get方法
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-配置非自定义bean" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring 配置非自定义Bean
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bean-实例化的基本流程" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean 实例化的基本流程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring的后处理器" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring的后处理器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spring的后处理器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例使用spring的beanfactorypostprocessor扩展点完成自定义注解扫描" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例：使用Spring的BeanFactoryPostProcessor扩展点完成自定义注解扫描
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例对bean方法进行执行时间日志增强" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例：对Bean方法进行执行时间日志增强
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spring-bean的生命周期" class="md-nav__link">
+    <span class="md-ellipsis">
+      Spring Bean的生命周期
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Spring Bean的生命周期">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bean实例属性填充" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bean实例属性填充
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常用的aware接口" class="md-nav__link">
+    <span class="md-ellipsis">
+      常用的Aware接口
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#一图总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      一图总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#整合第三方框架" class="md-nav__link">
+    <span class="md-ellipsis">
+      整合第三方框架
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="整合第三方框架">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#整合mybatis" class="md-nav__link">
+    <span class="md-ellipsis">
+      整合MyBatis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#其他框架" class="md-nav__link">
+    <span class="md-ellipsis">
+      其他框架
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#某一个框架与spring的集成开发" class="md-nav__link">
+    <span class="md-ellipsis">
+      某一个框架与Spring的集成开发
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Spring/Spring-XML.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Spring/Spring-XML.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="基于xml的spring应用">基于XML的Spring应用<a class="headerlink" href="#基于xml的spring应用" title="链接到此段落">&para;</a></h1>
+<h3 id="常用配置">常用配置<a class="headerlink" href="#常用配置" title="链接到此段落">&para;</a></h3>
+<p>Spring开发中主要是对Bean的配置，Bean的常用配置一览如下：</p>
+<table>
+<thead>
+<tr>
+<th>Xml配置方式</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;bean id="" class="" /&gt;</code></td>
+<td>Bean的id和全限定名配置</td>
+</tr>
+<tr>
+<td><code>&lt;bean name="" /&gt;</code></td>
+<td>通过name设置Bean的别名，通过别名也能直接获取到Bean实例</td>
+</tr>
+<tr>
+<td><code>&lt;bean scope="" /&gt;</code></td>
+<td>Bean的作用范围，BeanFactory作为容器时取值singleton和prototype</td>
+</tr>
+<tr>
+<td><code>&lt;bean lazy-init="" /&gt;</code></td>
+<td>Bean的实例化时机，是否延迟加载。BeanFactory作为容器时无效</td>
+</tr>
+<tr>
+<td><code>&lt;bean init-method="" /&gt;</code></td>
+<td>Bean实例化后自动执行的初始化方法，method指定方法名</td>
+</tr>
+<tr>
+<td><code>&lt;bean destroy-method="" /&gt;</code></td>
+<td>Bean实例销毁前的方法，method指定方法名</td>
+</tr>
+<tr>
+<td><code>&lt;bean autowire="byType" /&gt;</code></td>
+<td>设置自动注入模式，常用的有按照类型byType，按照名字byName</td>
+</tr>
+<tr>
+<td><code>&lt;bean factory-bean="" factory-method="" /&gt;</code></td>
+<td>指定哪个工厂Bean的哪个方法完成Bean的创建</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">注意</p>
+<p>如果不配置id，则Spring会把当前Bean实例的全限定名作为beanName</p>
+</div>
+<p><br></p>
+<h4 id="bean的别名配置">Bean的别名配置<a class="headerlink" href="#bean的别名配置" title="链接到此段落">&para;</a></h4>
+<p>可以为当前Bean指定多个别名，根据别名也可以获得Bean对象此时多个名称都可以获得UserDaoImpl实例对象</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;aaa,bbb&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;userDao&quot;</span><span class="p">);</span>
+<span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;aaa&quot;</span><span class="p">);</span>
+<span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;bbb&quot;</span><span class="p">);</span>
+</code></pre></div>
+<br></p>
+<h4 id="bean的范围配置">Bean的范围配置<a class="headerlink" href="#bean的范围配置" title="链接到此段落">&para;</a></h4>
+<p>默认情况下，<u>单纯的Spring环境</u>Bean的作用范围有两个：singleton和prototype</p>
+<ul>
+<li>
+<p>singleton：单例，<strong>默认值</strong>，Spring容器创建的时候，就会进行Bean的实例化，并存储到容器内部的单例池中，每次getBean时都是从单例池中获取相同的Bean实例；</p>
+</li>
+<li>
+<p>prototype：原型，Spring容器初始化时不会创建Bean实例，当调用getBean时才会实例化Bean，每次getBean都会创建一个新的Bean实例。</p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="bean的延迟加载">Bean的延迟加载<a class="headerlink" href="#bean的延迟加载" title="链接到此段落">&para;</a></h4>
+<p>当lazy-init设置为true时为延迟加载，也就是当Spring容器创建的时候，不会立即创建Bean实例，等待用到时再创建Bean实例并存储到单例池中去，后续在使用该Bean直接从单例池获取即可，本质上该Bean还是<strong>单例</strong>的</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="w"> </span><span class="na">lazy-init=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<p><br></p>
+<h4 id="bean的初始化和销毁方法配置">Bean的初始化和销毁方法配置<a class="headerlink" href="#bean的初始化和销毁方法配置" title="链接到此段落">&para;</a></h4>
+<p>Bean在被实例化后，可以执行指定的初始化方法完成一些初始化的操作，Bean在销毁之前也可以执行指定的销毁方法完成一些操作，初始化方法名称和销毁方法名称通过init-method和destroy-method属性指定</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="w"> </span><span class="na">init-method=</span><span class="s">&quot;init&quot;</span><span class="w"> </span><span class="na">destroy-method=</span><span class="s">&quot;destroy&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserDaoImpl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UserDao</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="kd">public</span><span class="w"> </span><span class="nf">UserDaoImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">         </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;UserDaoImpl创建了...&quot;</span><span class="p">);</span><span class="w"> </span>
+<span class="w">     </span><span class="p">}</span>
+
+<span class="w">     </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">init</span><span class="p">(){</span><span class="w"> </span>
+<span class="w">         </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;初始化方法...&quot;</span><span class="p">);</span><span class="w"> </span>
+<span class="w">     </span><span class="p">}</span>
+
+<span class="w">     </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">destroy</span><span class="p">(){</span><span class="w"> </span>
+<span class="w">         </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;销毁方法...&quot;</span><span class="p">);</span><span class="w"> </span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">扩展</p>
+<p>除此之外，我们还可以通过实现InitializingBean接口，完成一些Bean的初始化操作，如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserDaoImpl</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">UserDao</span><span class="p">,</span><span class="w"> </span><span class="n">InitializingBean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">UserDaoImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;UserDaoImpl创建了...&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;初始化方法...&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">destroy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;销毁方法...&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//执行时机早于init-method配置的方法</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">afterPropertiesSet</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;InitializingBean...&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<hr />
+<p><br></p>
+<h4 id="bean的实例化配置">Bean的实例化配置<a class="headerlink" href="#bean的实例化配置" title="链接到此段落">&para;</a></h4>
+<p>Spring的实例化方式主要如下两种：</p>
+<ul>
+<li>
+<p>构造方法实例化：底层通过构造方法对Bean进行实例化</p>
+</li>
+<li>
+<p>工厂方式实例化：底层通过调用自定义的工厂方法对Bean进行实例化</p>
+</li>
+</ul>
+<p>构造方式实例化Bean又分为无参构造方法实例化和有参构造方法实例化，Spring中配置的几乎都是<strong>无参构造</strong>方式</p>
+<p>有参构造在实例化Bean时，需要参数的注入，通过标签<code>&lt;constructor-arg&gt;</code>嵌入在标签内部提供构造参数，如下:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//有参构造方法</span>
+<span class="kd">public</span><span class="w"> </span><span class="nf">UserDaoImpl</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">){</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">&gt;</span>
+<span class="w"> </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;张三&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<p>工厂方式实例化Bean，又分为如下三种：</p>
+<ul>
+<li>
+<p>静态工厂方法实例化Bean </p>
+</li>
+<li>
+<p>实例工厂方法实例化Bean </p>
+</li>
+<li>
+<p>实现FactoryBean规范延迟实例化Bean</p>
+</li>
+</ul>
+<p>静态工厂方法实例化Bean，其实就是定义一个工厂类，提供一个静态方法用于生产Bean实例，再将该工厂类及其静态方法配置给Spring即可:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//工厂类</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserDaoFactoryBean</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//静态工厂方法</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">UserDao</span><span class="w"> </span><span class="nf">getUserDao</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">){</span>
+<span class="w">        </span><span class="c1">//可以在此编写一些其他逻辑代码</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserDaoImpl</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.factory.UserDaoFactoryBean&quot;</span><span class="w"> </span><span class="na">factory-method=</span><span class="s">&quot;getUserDao&quot;</span><span class="nt">&gt;</span>
+<span class="w"> </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;张三&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code>&lt;constructor-arg&gt;</code>标签不仅仅是为构造方法传递参数，只要是为了实例化对象而传递的参数都可以通过标签完成，例如上面通过静态工厂方法实例化Bean所传递的参数也是要通过其进行传递的</p>
+</div>
+<p><br></p>
+<p>实例工厂方法，也就是非静态工厂方法产生Bean实例，与静态工厂方式比较，该方式需要先有工厂对象，在用工厂对象去调用非静态方法，所以在进行配置时，要先配置工厂Bean，再配置目标Bean</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//工厂类</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UserDaoFactoryBean2</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//非静态工厂方法</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">UserDao</span><span class="w"> </span><span class="nf">getUserDao</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">){</span>
+<span class="w">        </span><span class="c1">//可以在此编写一些其他逻辑代码</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserDaoImpl</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- 配置实例工厂Bean --&gt;</span>
+<span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDaoFactoryBean2&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.factory.UserDaoFactoryBean2&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">factory-bean=</span><span class="s">&quot;userDaoFactoryBean2&quot;</span><span class="w"> </span><span class="na">factory-method=</span><span class="s">&quot;getUserDao&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- 配置实例工厂Bean的哪个方法作为工厂方法--&gt;</span>
+<span class="w">    </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;haohao&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<p><br></p>
+<p>Spring提供了FactoryBean的接口规范，FactoryBean接口定义如下：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">FactoryBean</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">OBJECT_TYPE_ATTRIBUTE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">“</span><span class="n">factoryBeanObjectType</span><span class="err">”</span><span class="p">;</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="nf">getObject</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="p">;</span><span class="w"> </span><span class="c1">//获得实例对象方法</span>
+<span class="w">    </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="nf">getObjectType</span><span class="p">();</span><span class="w"> </span><span class="c1">//获得实例对象类型方法</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isSingleton</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>实现自定义工厂后，配置FactoryBean交由Spring管理即可</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!--配置自定义工厂--&gt;</span>
+<span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;org.example.factory.MyBeanFactory&quot;</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao3&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>通过断点观察发现Spring容器创建时，FactoryBean被实例化了，并存储到了单例池singletonObjects中，但是getObject() 方法尚未被执行，UserDaoImpl也没被实例化，当首次用到UserDaoImpl时，才调用getObject() ，此工厂方式产生的Bean实例不会存储到单例池singletonObjects中，会存储到 factoryBeanObjectCache  <strong>缓存池</strong> 中，并且后期每次使用到userDao都从该缓存池中返回的是同一个userDao实例。</p>
+</div>
+<hr />
+<p><br></p>
+<h4 id="bean的依赖注入配置">Bean的依赖注入配置<a class="headerlink" href="#bean的依赖注入配置" title="链接到此段落">&para;</a></h4>
+<p>Bean的依赖注入有两种方式：</p>
+<table>
+<thead>
+<tr>
+<th>注入方式</th>
+<th>配置方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通过Bean的set方法注入</td>
+<td><code>&lt;property name="userDao" ref="userDao"/&gt;</code><br/><code>&lt;property name="user" value="haohao"/&gt;</code></td>
+</tr>
+<tr>
+<td>通过构造Bean的方法进行注入</td>
+<td><code>&lt;constructor-arg name="userDao" ref="userDao"/&gt;</code><br/><code>&lt;constructor-arg name="user" value="haohao"/&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>其中，ref 是 reference 的缩写形式，翻译为：涉及，参考的意思，用于引用其他Bean的id。value 用于注入普通属性值。</p>
+</div>
+<p>依赖注入的数据类型有如下三种：</p>
+<ul>
+<li>
+<p>普通数据类型，例如：<code>String、int、boolean</code>等，通过<code>value</code>属性指定。</p>
+</li>
+<li>
+<p>引用数据类型，例如：<code>UserDaoImpl、DataSource</code>等，通过<code>ref</code>属性指定。</p>
+</li>
+<li>
+<p>集合数据类型，例如：<code>List、Map、Properties</code>等。</p>
+</li>
+</ul>
+<p><br></p>
+<p>注入<code>List&lt;T&gt;</code>集合– <strong>普通数据</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">setStrList</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strList</span><span class="p">){</span>
+<span class="w">    </span><span class="n">strList</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">str</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;strList&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;list&gt;</span>
+<span class="w">        </span><span class="nt">&lt;value&gt;</span>haohao<span class="nt">&lt;/value&gt;</span>
+<span class="w">        </span><span class="nt">&lt;value&gt;</span>miaomiao<span class="nt">&lt;/value&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/list&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+</code></pre></div>
+<br>
+注入<code>List &lt;T&gt;</code>集合–<strong>引用数据</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setObjList</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDao</span><span class="o">&gt;</span><span class="w"> </span><span class="n">objList</span><span class="p">){</span>
+<span class="w">    </span><span class="n">objList</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;objList&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;list&gt;</span>
+<span class="w">        </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">&gt;&lt;/bean&gt;</span>
+<span class="w">        </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">&gt;&lt;/bean&gt;</span>
+<span class="w">        </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">&gt;&lt;/bean&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/list&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>也可以直接引用容器中存在的Bean，class的值为bean的id</p>
+</div>
+<p><br></p>
+<p>注入<code>Set&lt;T&gt;</code>集合</p>
+<p>只需将<code>&lt;list&gt;</code>标签改为<code>&lt;set&gt;</code>即可</p>
+<p><br></p>
+<p>注入<code>Map&lt;K,V&gt;</code>集合</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!--注入值为字符串的Map集合--&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;valueMap&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;map&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;aaa&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;AAA&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;bbb&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;BBB&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ccc&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;CCC&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/map&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+
+<span class="cm">&lt;!--注入值为对象的Map集合--&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;objMap&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;map&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ud&quot;</span><span class="w"> </span><span class="na">value-ref=</span><span class="s">&quot;userDao&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ud2&quot;</span><span class="w"> </span><span class="na">value-ref=</span><span class="s">&quot;userDao2&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ud3&quot;</span><span class="w"> </span><span class="na">value-ref=</span><span class="s">&quot;userDao3&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/map&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+</code></pre></div>
+<p><br></p>
+<p>注入Properties 键值对</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;properties&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;props&gt;</span>
+<span class="w">        </span><span class="nt">&lt;prop</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;xxx&quot;</span><span class="nt">&gt;</span>XXX<span class="nt">&lt;/prop&gt;</span>
+<span class="w">        </span><span class="nt">&lt;prop</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;yyy&quot;</span><span class="nt">&gt;</span>YYY<span class="nt">&lt;/prop&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/props&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+</code></pre></div>
+<p><br></p>
+<p><strong>扩展</strong>：自动装配方式</p>
+<p>如果被注入的属性类型是Bean引用的话，那么可以在 标签中使用<code>autowire</code>属性去配置自动注入方式，属性值有两个：</p>
+<ul>
+<li>
+<p><code>byName</code>：通过属性名<strong>自动装配</strong>，即去匹配<code>setXxx</code>与<code>id="xxx"（name="xxx"）</code>是否一致；</p>
+</li>
+<li>
+<p><code>byType</code>：通过Bean的类型从容器中匹配，匹配出<strong>多个相同Bean类型时，报错</strong>。</p>
+</li>
+</ul>
+<hr />
+<h4 id="spring的其他配置标签">Spring的其他配置标签<a class="headerlink" href="#spring的其他配置标签" title="链接到此段落">&para;</a></h4>
+<p>Spring 的 xml 标签大体上分为两类，一种是默认标签，一种是自定义标签</p>
+<ul>
+<li>
+<p>默认标签：就是不用额外导入其他命名空间约束的标签，例如<code>&lt;bean&gt;</code>标签</p>
+</li>
+<li>
+<p>自定义标签：就是需要额外引入<strong>其他命名空间约束</strong>，并通过前缀引用的标签，例如<code>&lt;context:propertyplaceholder&gt;</code>标签</p>
+</li>
+</ul>
+<hr />
+<p><code>&lt;beans&gt;</code>标签，除了经常用的做为根标签外，还可以嵌套在根标签内，使用profile属性切换开发环境</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- 配置测试环境下，需要加载的Bean实例--&gt;</span>
+<span class="nt">&lt;beans</span><span class="w"> </span><span class="na">profile=</span><span class="s">&quot;test&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/beans&gt;</span>
+
+<span class="w"> </span><span class="cm">&lt;!-- 配置开发环境下，需要加载的Bean实例--&gt;</span>
+<span class="nt">&lt;beans</span><span class="w"> </span><span class="na">profile=</span><span class="s">&quot;dev&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/beans&gt;</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>可以使用以下两种方式指定被激活的环境：</p>
+<ul>
+<li>
+<p>使用命令行动态参数，虚拟机参数位置加载<code>-Dspring.profiles.active=test</code> </p>
+</li>
+<li>
+<p>使用代码的方式设置环境变量<code>System.setProperty("spring.profiles.active","test")</code></p>
+</li>
+</ul>
+</div>
+<hr />
+<p><code>&lt;import&gt;</code>标签，用于导入其他配置文件，项目变大后，就会导致一个配置文件内容过多，可以将一个配置文件根据业务某块进行拆分，拆分后，最终通过标签导入到一个主配置文件中，项目加载主配置文件就连同导入的文件一并加载了</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="cm">&lt;!--导入用户模块配置文件--&gt;</span>
+<span class="w"> </span><span class="nt">&lt;import</span><span class="w"> </span><span class="na">resource=</span><span class="s">&quot;classpath:UserModuleApplicationContext.xml&quot;</span><span class="nt">/&gt;</span>
+<span class="w"> </span><span class="cm">&lt;!--导入商品模块配置文件--&gt;</span>
+<span class="w"> </span><span class="nt">&lt;import</span><span class="w"> </span><span class="na">resource=</span><span class="s">&quot;classpath:ProductModuleApplicationContext.xml&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<hr />
+<p><code>&lt;alias&gt;</code>标签是为某个Bean添加别名，与在标签上使用name属性添加别名的方式一样，我们为UserServiceImpl指定四个别名：aaa、bbb、xxx、yyy</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!--配置UserService--&gt;</span>
+<span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userService&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;aaa,bbb&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.service.impl.UserServiceImpl&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">ref=</span><span class="s">&quot;userDao&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+<span class="cm">&lt;!--指定别名--&gt;</span>
+<span class="nt">&lt;alias</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;userService&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;xxx&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;alias</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;userService&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;yyy&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<hr />
+<p>Spring的自定义标签需要引入外部的命名空间，并为外部的命名空间指定前缀，使用&lt;前缀:标签&gt; 形式的标签，称之为自定义标签，自定义标签的解析流程也是Spring xml扩展点方式之一</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!--默认标签--&gt;</span>
+<span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;userDao&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.itheima.dao.impl.UserDaoImpl&quot;</span><span class="nt">/&gt;</span>
+<span class="cm">&lt;!--自定义标签--&gt;</span>
+<span class="nt">&lt;context:property-placeholder/&gt;</span>
+<span class="nt">&lt;mvc:annotation-driven/&gt;</span>
+<span class="nt">&lt;dubbo:application</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;application&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h3 id="spring-的get方法">Spring 的get方法<a class="headerlink" href="#spring-的get方法" title="链接到此段落">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>方法定义</th>
+<th>返回值和参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Object getBean(String beanName)</code></td>
+<td>根据beanName从容器中获取Bean实例，要求容器中Bean唯一，返回值为Object，需要强转</td>
+</tr>
+<tr>
+<td><code>T getBean (Class type)</code></td>
+<td>根据Class类型从容器中获取Bean实例，要求容器中Bean类型唯一，返回值为Class类型实例，无需强转</td>
+</tr>
+<tr>
+<td><code>T getBean (String beanName，Class type)</code></td>
+<td>根据beanName从容器中获得Bean实例，返回值为Class类型实例，无需强转</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1">//根据beanName获取容器中的Bean实例，需要手动强转</span>
+<span class="n">UserService</span><span class="w"> </span><span class="n">userService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">UserService</span><span class="p">)</span><span class="w"> </span><span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;userService&quot;</span><span class="p">);</span>
+
+<span class="c1">//根据Bean类型去容器中匹配对应的Bean实例，如存在多个匹配Bean则报错</span>
+<span class="n">UserService</span><span class="w"> </span><span class="n">userService2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="n">UserService</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+<span class="c1">//根据beanName获取容器中的Bean实例，指定Bean的Type类型</span>
+<span class="n">UserService</span><span class="w"> </span><span class="n">userService3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">applicationContext</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;userService&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">UserService</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h3 id="spring-配置非自定义bean">Spring 配置非自定义Bean<a class="headerlink" href="#spring-配置非自定义bean" title="链接到此段落">&para;</a></h3>
+<p>以上在xml 中配置的Bean都是自己定义的，例如：UserDaoImpl，UserServiceImpl。但是，在实际开发中有些功能类并不是我们自己定义的，而是使用的<strong>第三方jar包</strong>中的，这些Bean要想让Spring进行管理，也需要对其进行配置</p>
+<p>配置非自定义的Bean需要考虑如下两个问题：</p>
+<ul>
+<li>
+<p>被配置的Bean的实例化方式是什么？无参构造、有参构造、静态工厂方式还是实例工厂方式；</p>
+</li>
+<li>
+<p>被配置的Bean是否需要注入必要属性。</p>
+</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+</div>
+<p>配置Druid 数据源交由Spring管理</p>
+<pre><code>- 导入Druid坐标（Maven）
+
+- 配置数据源
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="cm">&lt;!--配置 DruidDataSource数据源--&gt;</span>
+<span class="w"> </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span><span class="nt">&gt;</span>
+<span class="w">     </span><span class="cm">&lt;!--配置必要属性--&gt;</span>
+<span class="w">     </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;driverClassName&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="nt">/&gt;</span>
+<span class="w">     </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;url&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;jdbc://localhost:3306/mybatis&quot;</span><span class="nt">/&gt;</span>
+<span class="w">     </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;root&quot;</span><span class="nt">/&gt;</span>
+<span class="w">     </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;root&quot;</span><span class="nt">/&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<p>配置Connection交由Spring管理</p>
+<pre><code>- Connection的产生是通过DriverManager的静态方法getConnection获取的，所以我们要用静态工厂方式配置
+</code></pre>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;clazz&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;java.lang.Class&quot;</span><span class="w"> </span><span class="na">factory-method=</span><span class="s">&quot;forName&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;className&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;connection&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;java.sql.DriverManager&quot;</span><span class="w"> </span><span class="na">factory-method=</span><span class="s">&quot;getConnection&quot;</span><span class="w"> </span><span class="na">scope=</span><span class="s">&quot;prototype&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;url&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;jdbc:mysql://localhost:3306/blog&quot;</span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;user&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;root&quot;</span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;123&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<p>配置日期对象交由Spring管理</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;simpleDateFormat&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;java.text.SimpleDateFormat&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;pattern&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;yyyy-MM-dd HH:mm:ss&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;date&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;java.util.Date&quot;</span><span class="w"> </span><span class="na">factory-bean=</span><span class="s">&quot;simpleDateFormat&quot;</span><span class="w"> </span><span class="na">factory-method=</span><span class="s">&quot;parse&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;constructor-arg</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;2021-01-01 12:00:00&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h3 id="bean-实例化的基本流程">Bean 实例化的基本流程<a class="headerlink" href="#bean-实例化的基本流程" title="链接到此段落">&para;</a></h3>
+<p>Spring容器在进行初始化时，会将xml配置的的信息封装成一个<code>BeanDefinition</code>对象</p>
+<p>所有的BeanDefinition存储到一个名为<code>beanDefinitionMap</code>的Map集合中去</p>
+<p>Spring框架再对该Map进行遍历，使用反射创建Bean实例对象存储在一个名为<code>singletonObjects</code>的Map集合中</p>
+<p>当调用getBean方法时则最终从该Map集合中取出Bean实例对象返回。</p>
+<p><img alt="5eff95fa-3ff2-4877-a72c-069b05c01501" src="../images/5eff95fa-3ff2-4877-a72c-069b05c01501.png" /></p>
+<hr />
+<p><br></p>
+<h3 id="spring的后处理器">Spring的后处理器<a class="headerlink" href="#spring的后处理器" title="链接到此段落">&para;</a></h3>
+<p>Spring的后处理器是Spring对外开发的重要扩展点，允许我们介入到Bean的整个实例化流程中来，以达到<strong>动态注册BeanDefinition，动态修改BeanDefinition，以及动态修改Bean</strong>的作用。</p>
+<p>Spring主要有两种后处理器：</p>
+<ul>
+<li>
+<p><code>BeanFactoryPostProcessor</code>：Bean工厂后处理器，在BeanDefinitionMap填充完毕，<strong>Bean实例化之前</strong>执行；</p>
+</li>
+<li>
+<p><code>BeanPostProcessor</code>：Bean后处理器，一般在<strong>Bean实例化之后</strong>，填充到单例池singletonObjects之前执行。</p>
+</li>
+</ul>
+<hr />
+<p>Bean工厂后处理器–BeanFactoryPostProcessor </p>
+<p><code>BeanFactoryPostProcessor</code>是一个接口规范，实现了该接口的类只要交由Spring容器管理的话，那么Spring就会回调该接口的方法，用于对<code>BeanDefinition</code>注册和修改的功能。</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">BeanFactoryPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanFactory</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">var1</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>postProcessBeanFactory</code> 参数本质就是 <code>DefaultListableBeanFactory</code></p>
+<p>拿到<code>BeanFactory</code>的引用，自然就可以对<code>beanDefinitionMap</code>中的<code>BeanDefinition</code>进行操作</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;org.example.processor.MyBeanFactoryProcessor&quot;</span><span class="nt">/&gt;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyBeanFactoryProcessor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BeanFactoryPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanFactory</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">configurableListableBeanFactory</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;MyBeanFactoryProcessor 被调用!&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// 这里可以对BeanFactory做一些操作，比如添加Bean、修改Bean等</span>
+<span class="w">        </span><span class="n">BeanDefinition</span><span class="w"> </span><span class="n">beanDefinition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configurableListableBeanFactory</span><span class="p">.</span><span class="na">getBeanDefinition</span><span class="p">(</span><span class="s">&quot;userService2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">beanDefinition</span><span class="p">.</span><span class="na">setBeanClassName</span><span class="p">(</span><span class="s">&quot;org.example.dao.impl.UserDaoImpl&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Spring 提供了一个BeanFactoryPostProcessor的子接口BeanDefinitionRegistryPostProcessor专门用于注册BeanDefinition操作</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyBeanFactoryPostProcessor2</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BeanDefinitionRegistryPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanFactory</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">configurableListableBeanFactory</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanDefinitionRegistry</span><span class="p">(</span><span class="n">BeanDefinitionRegistry</span><span class="w"> </span><span class="n">beanDefinitionRegistry</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">BeanDefinition</span><span class="w"> </span><span class="n">beanDefinition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="p">();</span>
+<span class="w">        </span><span class="n">beanDefinition</span><span class="p">.</span><span class="na">setBeanClassName</span><span class="p">(</span><span class="s">&quot;com.itheima.dao.UserDaoImpl2&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">beanDefinitionRegistry</span><span class="p">.</span><span class="na">registerBeanDefinition</span><span class="p">(</span><span class="s">&quot;userDao2&quot;</span><span class="p">,</span><span class="n">beanDefinition</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<hr />
+<p><br></p>
+<h4 id="案例使用spring的beanfactorypostprocessor扩展点完成自定义注解扫描">案例：使用Spring的BeanFactoryPostProcessor扩展点完成自定义注解扫描<a class="headerlink" href="#案例使用spring的beanfactorypostprocessor扩展点完成自定义注解扫描" title="链接到此段落">&para;</a></h4>
+<p>要求如下：</p>
+<ul>
+<li>
+<p>自定义@MyComponent注解，使用在类上；</p>
+</li>
+<li>
+<p>使用包扫描器工具 BaseClassScanUtils 完成指定包的类扫描；</p>
+</li>
+<li>
+<p>自定义BeanFactoryPostProcessor完成注解@MyComponent的解析，解析后最终被Spring管理。</p>
+</li>
+</ul>
+<p>自定义@MyComponent注解，使用在类上</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Target</span><span class="p">(</span><span class="n">ElementType</span><span class="p">.</span><span class="na">TYPE</span><span class="p">)</span>
+<span class="nd">@Retention</span><span class="p">(</span><span class="n">RetentionPolicy</span><span class="p">.</span><span class="na">RUNTIME</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="nd">@interface</span><span class="w"> </span><span class="n">MyComponent</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">value</span><span class="p">()</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>在类上使用@MyComponent</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@MyComponent</span><span class="p">(</span><span class="s">&quot;myBean&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TestBean</span><span class="w"> </span><span class="p">{</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>自定义<code>BeanFactoryPostProcessor</code>完成注解解析</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyComponentFactory</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BeanDefinitionRegistryPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanDefinitionRegistry</span><span class="p">(</span><span class="n">BeanDefinitionRegistry</span><span class="w"> </span><span class="n">beanDefinitionRegistry</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 扫描并注册组件</span>
+<span class="w">        </span><span class="c1">// 注册组件的BeanDefinition</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&gt;</span><span class="w"> </span><span class="n">myComponents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BeanScanUtil</span><span class="p">.</span><span class="na">scanMyComponentAnnotation</span><span class="p">(</span><span class="s">&quot;org.example&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">myComponents</span><span class="p">.</span><span class="na">forEach</span><span class="p">((</span><span class="n">beanName</span><span class="p">,</span><span class="n">clazz</span><span class="p">)</span><span class="o">-&gt;</span><span class="p">{</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">className</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clazz</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span>
+<span class="w">            </span><span class="n">BeanDefinition</span><span class="w"> </span><span class="n">beanDefinition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RootBeanDefinition</span><span class="p">();</span>
+<span class="w">            </span><span class="n">beanDefinition</span><span class="p">.</span><span class="na">setBeanClassName</span><span class="p">(</span><span class="n">className</span><span class="p">);</span>
+<span class="w">            </span><span class="n">beanDefinitionRegistry</span><span class="p">.</span><span class="na">registerBeanDefinition</span><span class="p">(</span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">beanDefinition</span><span class="p">);</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanFactory</span><span class="p">(</span><span class="n">ConfigurableListableBeanFactory</span><span class="w"> </span><span class="n">configurableListableBeanFactory</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BeanScanUtil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//设置资源规则</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">RESOURCE_PATTERN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/**/*.class&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">scanMyComponentAnnotation</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">basePackage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">        </span><span class="c1">//创建容器存储使用了指定注解的Bean字节码对象</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&gt;</span><span class="w"> </span><span class="n">annotationClassMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">//spring工具类，可以获取指定路径下的全部类</span>
+<span class="w">        </span><span class="n">ResourcePatternResolver</span><span class="w"> </span><span class="n">resourcePatternResolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PathMatchingResourcePatternResolver</span><span class="p">();</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ResourcePatternResolver</span><span class="p">.</span><span class="na">CLASSPATH_ALL_URL_PREFIX</span><span class="w"> </span><span class="o">+</span>
+<span class="w">                    </span><span class="n">ClassUtils</span><span class="p">.</span><span class="na">convertClassNameToResourcePath</span><span class="p">(</span><span class="n">basePackage</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">RESOURCE_PATTERN</span><span class="p">;</span>
+<span class="w">            </span><span class="n">Resource</span><span class="o">[]</span><span class="w"> </span><span class="n">resources</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resourcePatternResolver</span><span class="p">.</span><span class="na">getResources</span><span class="p">(</span><span class="n">pattern</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">//MetadataReader 的工厂类</span>
+<span class="w">            </span><span class="n">MetadataReaderFactory</span><span class="w"> </span><span class="n">refractory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CachingMetadataReaderFactory</span><span class="p">(</span><span class="n">resourcePatternResolver</span><span class="p">);</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Resource</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">resources</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">//用于读取类信息</span>
+<span class="w">                </span><span class="n">MetadataReader</span><span class="w"> </span><span class="n">reader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">refractory</span><span class="p">.</span><span class="na">getMetadataReader</span><span class="p">(</span><span class="n">resource</span><span class="p">);</span>
+<span class="w">                </span><span class="c1">//扫描到的class</span>
+<span class="w">                </span><span class="n">String</span><span class="w"> </span><span class="n">classname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reader</span><span class="p">.</span><span class="na">getClassMetadata</span><span class="p">().</span><span class="na">getClassName</span><span class="p">();</span>
+<span class="w">                </span><span class="n">Class</span><span class="o">&lt;?&gt;</span><span class="w"> </span><span class="n">clazz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">classname</span><span class="p">);</span>
+<span class="w">                </span><span class="c1">//判断是否属于指定的注解类型</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clazz</span><span class="p">.</span><span class="na">isAnnotationPresent</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">//获得注解对象</span>
+<span class="w">                    </span><span class="n">MyComponent</span><span class="w"> </span><span class="n">annotation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clazz</span><span class="p">.</span><span class="na">getAnnotation</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">                    </span><span class="c1">//获得属value属性值</span>
+<span class="w">                    </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">annotation</span><span class="p">.</span><span class="na">value</span><span class="p">();</span>
+<span class="w">                    </span><span class="c1">//判断是否为&quot;&quot;</span>
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">beanName</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">beanName</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="c1">//存储到Map中去</span>
+<span class="w">                        </span><span class="n">annotationClassMap</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">beanName</span><span class="p">,</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
+<span class="w">                        </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                    </span><span class="c1">//如果没有为&quot;&quot;,那就把当前类的类名作为beanName</span>
+<span class="w">                    </span><span class="n">annotationClassMap</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">clazz</span><span class="p">.</span><span class="na">getSimpleName</span><span class="p">(),</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">exception</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">annotationClassMap</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p>Bean后处理器–BeanPostProcessor</p>
+<p>Bean被实例化后，到最终缓存到名为singletonObjects单例池之前，中间会经过Bean的初始化过程</p>
+<p>例如：属性的填充、初始方法init的执行等，其中有一个对外进行扩展的点BeanPostProcessor，我们称为Bean后处理。</p>
+<p>跟上面的Bean工厂后处理器相似，它也是一个接口，实现了该接口并被容器管理的BeanPostProcessor，会在流程节点上被Spring自动调用。</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">BeanPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//在属性注入完毕，init初始化方法执行之前被回调</span>
+<span class="w">    </span><span class="nd">@Nullable</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">postProcessBeforeInitialization</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">bean</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">bean</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">//在初始化方法执行之后，被添加到单例池singletonObjects之前被回调</span>
+<span class="w">    </span><span class="nd">@Nullable</span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">postProcessAfterInitialization</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">bean</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">bean</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h4 id="案例对bean方法进行执行时间日志增强">案例：对Bean方法进行执行时间日志增强<a class="headerlink" href="#案例对bean方法进行执行时间日志增强" title="链接到此段落">&para;</a></h4>
+<p>要求如下：</p>
+<ul>
+<li>
+<p>Bean的方法执行之前控制台打印当前时间；</p>
+</li>
+<li>
+<p>Bean的方法执行之后控制台打印当前时间。</p>
+</li>
+</ul>
+<p>分析：</p>
+<ul>
+<li>
+<p>对方法进行增强主要就是代理模式和包装模式；</p>
+</li>
+<li>
+<p>由于Bean方法不确定，所以使用动态代理在运行期间执行增强操作；</p>
+</li>
+<li>
+<p>在Bean实例创建完毕后，进入到单例池之前，使用Proxy代替真实的目标Bean</p>
+</li>
+</ul>
+<p>编写BeanPostProcessor，增强逻辑编写在after方法中：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TImeLogBeanPostProcessor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BeanPostProcessor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">postProcessAfterInitialization</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">bean</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">beanName</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">BeansException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 使用动态代理对目标BEan进行增强，返回proxy对象</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Proxy</span><span class="p">.</span><span class="na">newProxyInstance</span><span class="p">(</span>
+<span class="w">                </span><span class="n">bean</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getClassLoader</span><span class="p">(),</span>
+<span class="w">                </span><span class="n">bean</span><span class="p">.</span><span class="na">getClass</span><span class="p">().</span><span class="na">getInterfaces</span><span class="p">(),</span>
+<span class="w">                </span><span class="p">(</span><span class="n">proxy</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="c1">// 输出开始时间</span>
+<span class="w">                    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;执行方法：&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;--开始时间：&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Date</span><span class="p">());</span>
+<span class="w">                    </span><span class="c1">// 执行目标方法</span>
+<span class="w">                    </span><span class="n">Object</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">invoke</span><span class="p">(</span><span class="n">bean</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+<span class="w">                    </span><span class="c1">// 输出结束时间</span>
+<span class="w">                    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;方法结束：&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">method</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;--结束时间：&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Date</span><span class="p">());</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h3 id="spring-bean的生命周期">Spring Bean的生命周期<a class="headerlink" href="#spring-bean的生命周期" title="链接到此段落">&para;</a></h3>
+<p>Spring Bean的生命周期是从 Bean 实例化之后，即通过反射创建出对象之后，到Bean成为一个完整对象，最终存储到单例池中，这个过程被称为Spring Bean的生命周期。</p>
+<p>Spring Bean的生命周期大体上分为三个阶段：</p>
+<ul>
+<li>
+<p>Bean的<strong>实例化</strong>阶段：Spring框架会取出BeanDefinition的信息进行判断当前Bean的范围是否是singleton的，是否延迟加载的，是否FactoryBean等，最终将一个普通的singleton的Bean通过反射进行实例化；</p>
+</li>
+<li>
+<p>Bean的<strong>初始化</strong>阶段：Bean创建之后还仅仅是个"半成品"，还需要对Bean实例的属性进行填充、执行一些Aware接口方法、执行BeanPostProcessor方法、执行InitializingBean接口的初始化方法、执行自定义初始化init方法等。该阶段是Spring最具技术含量和复杂度的阶段，Aop增强功能，后面要学习的Spring的注解功能等、spring高频面试题Bean的循环引用问题都是在这个阶段体现的；</p>
+</li>
+<li>
+<p>Bean的<strong>完成</strong>阶段：经过初始化阶段，Bean就成为了一个完整的Spring Bean，被存储到单例池singletonObjects中去了，即完成了Spring Bean的整个生命周期。</p>
+</li>
+</ul>
+<p>Spring Bean的初始化过程涉及如下几个过程：</p>
+<ul>
+<li>
+<p>Bean实例的属性填充</p>
+</li>
+<li>
+<p>Aware接口属性注入</p>
+</li>
+<li>
+<p>BeanPostProcessor的before()方法回调</p>
+</li>
+<li>
+<p>InitializingBean接口的初始化方法回调</p>
+</li>
+<li>
+<p>自定义初始化方法init回调</p>
+</li>
+<li>
+<p>BeanPostProcessor的after()方法回调</p>
+</li>
+</ul>
+<hr />
+<p><br></p>
+<h4 id="bean实例属性填充">Bean实例属性填充<a class="headerlink" href="#bean实例属性填充" title="链接到此段落">&para;</a></h4>
+<p>BeanDefinition 中有对当前Bean实体的注入信息通过属性<code>propertyValues</code>进行了存储</p>
+<p>Spring在进行属性注入时，会分为如下几种情况：</p>
+<ul>
+<li>
+<p>注入普通属性，String、int或存储基本类型的集合时，直接通过set方法的反射设置进去；</p>
+</li>
+<li>
+<p>注入单向对象引用属性时，从容器中getBean获取后通过set方法反射设置进去，如果容器中没有，则先创建被注入对象Bean实例（完成整个生命周期）后，再进行注入操作；</p>
+</li>
+<li>
+<p>注入双向对象引用属性时，就比较复杂了，涉及了循环引用（<strong>循环依赖</strong>）问题，下面会详细阐述解决方案。</p>
+</li>
+</ul>
+<p>多个实体之间相互依赖并形成闭环的情况就叫做"循环依赖"，也叫做"循环引用":</p>
+<p><img alt="77d4a5fe-76d5-4218-8156-c5b699b7f3a6" src="../images/77d4a5fe-76d5-4218-8156-c5b699b7f3a6.png" /></p>
+<h5 id="解决循环引用">解决循环引用<a class="headerlink" href="#解决循环引用" title="链接到此段落">&para;</a></h5>
+<p>Spring提供了<strong>三级缓存</strong>存储完整Bean实例和<u>半成品</u>Bean实例，用于解决循环引用问题</p>
+<p>在<code>DefaultListableBeanFactory</code>的上四级父类<code>DefaultSingletonBeanRegistry</code>中提供如下三个Map：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DefaultSingletonBeanRegistry</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="c1">//1、最终存储单例Bean成品的容器，即实例化和初始化都完成的Bean，称之为&quot;一级缓存&quot;</span>
+<span class="w">     </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">singletonObjects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConcurrentHashMap</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span>
+
+<span class="w">     </span><span class="c1">//2、早期Bean单例池，缓存半成品对象，且当前对象已经被其他对象引用了，称之为&quot;二级缓存&quot;</span>
+<span class="w">     </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">earlySingletonObjects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConcurrentHashMap</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span>
+
+<span class="w">     </span><span class="c1">//3、单例Bean的工厂池，缓存半成品对象，对象未被引用，使用时再通过工厂创建Bean，称之为&quot;三级缓存&quot;</span>
+<span class="w">     </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ObjectFactory</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">singletonFactories</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="p">(</span><span class="mi">16</span><span class="p">);</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>UserService和UserDao循环依赖的过程结合上述三级缓存描述如下：</p>
+<ul>
+<li>
+<p>UserService 实例化对象，但尚未初始化，将UserService存储到三级缓存；</p>
+</li>
+<li>
+<p>UserService 属性注入，需要UserDao，从缓存中获取，没有UserDao；</p>
+</li>
+<li>
+<p>UserDao实例化对象，但尚未初始化，将UserDao存储到到三级缓存；</p>
+</li>
+<li>
+<p>UserDao属性注入，需要UserService，从三级缓存获取UserService，UserService从三级缓存移入二级缓存；</p>
+</li>
+<li>
+<p>UserDao执行其他生命周期过程，最终成为一个完成Bean，存储到一级缓存，删除二三级缓存；</p>
+</li>
+<li>
+<p>UserService 注入UserDao；</p>
+</li>
+<li>
+<p>UserService执行其他生命周期过程，最终成为一个完成Bean，存储到一级缓存，删除二三级缓存。</p>
+</li>
+</ul>
+<hr />
+<p><br></p>
+<h4 id="常用的aware接口">常用的Aware接口<a class="headerlink" href="#常用的aware接口" title="链接到此段落">&para;</a></h4>
+<p>Aware接口是一种<strong>框架辅助属性注入</strong>的一种思想，其他框架中也可以看到类似的接口。框架具备高度封装性，我们接触到的一般都是业务代码，一个<strong>底层功能API</strong>不能轻易的获取到，但是这不意味着永远用不到这些对象，如果用到了，就可以使用框架提供的类似Aware的接口，让框架为我们注入该对象。</p>
+<table>
+<thead>
+<tr>
+<th>Aware接口</th>
+<th>回调接口</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ServletContextAware</code></td>
+<td><code>setServletContext(ServletContext context)</code></td>
+<td>Spring框架回调方法注入ServletContext对象，web环境下才生效</td>
+</tr>
+<tr>
+<td><code>BeanFactoryAware</code></td>
+<td><code>setBeanFactory(BeanFactory factory)</code></td>
+<td>Spring框架回调方法注入beanFactory对象</td>
+</tr>
+<tr>
+<td><code>BeanNameAware</code></td>
+<td><code>setBeanName(String beanName)</code></td>
+<td>Spring框架回调方法注入当前Bean在容器中的beanName</td>
+</tr>
+<tr>
+<td><code>ApplicationContextAware</code></td>
+<td><code>setApplicationContext(ApplicationContext applicationContext)</code></td>
+<td>Spring框架回调方法注入applicationContext对象</td>
+</tr>
+</tbody>
+</table>
+<h4 id="一图总结">一图总结<a class="headerlink" href="#一图总结" title="链接到此段落">&para;</a></h4>
+<p><img alt="d58d7a4e-8220-4d4f-a386-5d4f5603f4a5" src="../images/d58d7a4e-8220-4d4f-a386-5d4f5603f4a5.png" /></p>
+<h3 id="整合第三方框架">整合第三方框架<a class="headerlink" href="#整合第三方框架" title="链接到此段落">&para;</a></h3>
+<p>xml整合第三方框架有两种整合方案：</p>
+<ol>
+<li>
+<p>不需要自定义名空间，不需要使用Spring的配置文件配置第三方框架本身内容，例如：MyBatis；</p>
+</li>
+<li>
+<p>需要引入第三方框架命名空间，需要使用Spring的配置文件配置第三方框架本身内容，例如：Dubbo。</p>
+</li>
+</ol>
+<h4 id="整合mybatis">整合MyBatis<a class="headerlink" href="#整合mybatis" title="链接到此段落">&para;</a></h4>
+<p>MyBatis提供了mybatis-spring.jar专门用于两大框架的整合。</p>
+<p>Spring整合MyBatis的步骤如下：</p>
+<ul>
+<li>
+<p>导入MyBatis整合Spring的相关坐标；</p>
+</li>
+<li>
+<p>编写Mapper和Mapper.xml；</p>
+</li>
+<li>
+<p>配置SqlSessionFactoryBean和MapperScannerConfigurer；</p>
+</li>
+<li>
+<p>编写测试代码</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="cm">&lt;!--配置数据源--&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;dataSource&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;url&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;jdbc:mysql://localhost:3306/mybatis&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;root&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;root&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!--配置SqlSessionFactoryBean--&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;dataSource&quot;</span><span class="w"> </span><span class="na">ref=</span><span class="s">&quot;dataSource&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!--配置Mapper包扫描,会自动将mapper注册为BeanDefinition--&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;basePackage&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;com.itheima.dao&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+<p><br></p>
+<p>Spring整合MyBatis的原理剖析</p>
+<p>整合包里提供了一个SqlSessionFactoryBean和一个扫描Mapper的配置对象，SqlSessionFactoryBean一旦被实例化，就开始扫描Mapper并通过动态代理产生Mapper的实现类存储到Spring容器中。相关的有如下四个类：</p>
+<ul>
+<li>
+<p>SqlSessionFactoryBean：需要进行配置，用于提供SqlSessionFactory；</p>
+</li>
+<li>
+<p>MapperScannerConfigurer：需要进行配置，用于扫描指定mapper注册BeanDefinition；</p>
+</li>
+<li>
+<p>MapperFactoryBean：Mapper的FactoryBean，获得指定Mapper时调用getObject方法；</p>
+</li>
+<li>
+<p>ClassPathMapperScanner：definition.setAutowireMode(2) 修改了自动注入状态，所以MapperFactoryBean中的setSqlSessionFactory会自动注入进去。</p>
+</li>
+</ul>
+<blockquote>
+<p>PS：autowireMode取值：1是根据名称自动装配，2是根据类型自动装配</p>
+</blockquote>
+<p>配置SqlSessionFactoryBean作用是向容器中提供SqlSessionFactory，SqlSessionFactoryBean实现了FactoryBean和InitializingBean两个接口，所以会自动执行getObject() 和afterPropertiesSet()方法</p>
+<div class="highlight"><pre><span></span><code><span class="n">SqlSessionFactoryBean</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">FactoryBean</span><span class="o">&lt;</span><span class="n">SqlSessionFactory</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">InitializingBean</span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">afterPropertiesSet</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">//创建SqlSessionFactory对象</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">sqlSessionFactory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">buildSqlSessionFactory</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">SqlSessionFactory</span><span class="w"> </span><span class="nf">getObject</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">sqlSessionFactory</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>配置MapperScannerConfigurer作用是扫描Mapper，向容器中注册Mapper对应的MapperFactoryBean，MapperScannerConfigurer实现了BeanDefinitionRegistryPostProcessor和InitializingBean两个接口，会在postProcessBeanDefinitionRegistry方法中向容器中注册MapperFactoryBean</p>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">MapperScannerConfigurer</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">BeanDefinitionRegistryPostProcessor</span><span class="p">,</span><span class="w"> </span><span class="n">InitializingBean</span><span class="p">{</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">postProcessBeanDefinitionRegistry</span><span class="p">(</span><span class="n">BeanDefinitionRegistry</span><span class="w"> </span><span class="n">registry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ClassPathMapperScanner</span><span class="w"> </span><span class="n">scanner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ClassPathMapperScanner</span><span class="p">(</span><span class="n">registry</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h4 id="其他框架">其他框架<a class="headerlink" href="#其他框架" title="链接到此段落">&para;</a></h4>
+<p>以Spring的context 命名空间为例，该方式是命名空间扩展方式。</p>
+<p>需求：加载外部properties文件，将键值对存储在Spring容器中</p>
+<div class="highlight"><pre><span></span><code><span class="na">jdbc.url</span><span class="o">=</span><span class="s">jdbc:mysql://localhost:3306/mybatis</span>
+<span class="na">jdbc.username</span><span class="o">=</span><span class="s">root</span>
+<span class="na">jdbc.password</span><span class="o">=</span><span class="s">root</span>
+</code></pre></div>
+<p>引入context命名空间，在使用context命名空间的标签，使用SpEL表达式在xml或注解中根据key获得value</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;beans</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://www.springframework.org/schema/beans&quot;</span>
+<span class="w">       </span><span class="na">xmlns:context=</span><span class="s">&quot;http://www.springframework.org/schema/context&quot;</span>
+<span class="w">       </span><span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+<span class="w">       </span><span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.springframework.org/schema/beans</span>
+<span class="s">    http://www.springframework.org/schema/beans/spring-beans.xsd</span>
+<span class="s">    http://www.springframework.org/schema/context</span>
+<span class="s">    http://www.springframework.org/schema/context/spring-context.xsd&quot;</span><span class="nt">&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;context:property-placeholder</span><span class="w"> </span><span class="na">location=</span><span class="s">&quot;classpath:jdbc.properties&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;bean</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;dataSource&quot;</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;com.alibaba.druid.pool.DruidDataSource&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;url&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;${jdbc.url}&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;username&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;${jdbc.username}&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">        </span><span class="nt">&lt;property</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;${jdbc.password}&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;/beans&gt;</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h4 id="某一个框架与spring的集成开发">某一个框架与Spring的集成开发<a class="headerlink" href="#某一个框架与spring的集成开发" title="链接到此段落">&para;</a></h4>
+<p>步骤分析：</p>
+<ol>
+<li>确定命名空间名称、schema虚拟路径、标签名称；</li>
+<li>编写schema约束文件<code>xxx-annotation.xsd</code></li>
+<li>在类加载路径下创建META目录，编写约束映射文件<code>spring.schemas</code>和处理器映射文件<code>spring.handlers</code> </li>
+<li>编写命名空间处理器<code>XXXNamespaceHandler</code>，在<code>init</code>方法中注册<code>XXXBeanDefinitionParser</code></li>
+<li>编写标签的解析器<code>XXXBeanDefinitionParser</code>，在parse方法中注册<code>XXXBeanPostProcessor</code> </li>
+<li>编写<code>XXXBeanPostProcessor</code> </li>
+</ol>
+<p>​   ==========以上五步是框架开发者要做的，下面是框架使用者要做的=========== </p>
+<ol>
+<li>
+<p>在<code>applicationContext.xml</code>配置文件中引入命名空间</p>
+</li>
+<li>
+<p>在<code>applicationContext.xml</code>配置文件中使用自定义的标签</p>
+</li>
+</ol>
+<hr />
+<p><strong>上一节：</strong> <a href="../Spring-Overview/">概述</a></p>
+<p><strong>下一节：</strong> <a href="../Spring-Annotation/">基于注解的Spring应用</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
