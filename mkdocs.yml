@@ -177,7 +177,11 @@ nav:
       - 锁: MySQL/锁.md
       - MySQL管理: MySQL/MySQL管理.md
       - 运维: MySQL/运维.md
-    - Redis: Redis/Redis.md
+    - Redis: 
+      - SQL与NoSQL: Redis/SQL与NoSQL.md
+      - 认识Redis: Redis/认识Redis.md
+      - Redis客户端: Redis/Redis客户端.md
+      - Redis应用场景: Redis/Redis应用场景.md
   - 网络与中间件:
     - Netty: Netty/Netty.md
     - Kafka: Kafka.md
