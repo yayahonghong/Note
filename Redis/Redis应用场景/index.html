@@ -1,0 +1,4220 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
+      
+      
+        <link rel="prev" href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/">
+      
+      
+        <link rel="next" href="../../Netty/Netty/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Redis应用场景 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#短信登录" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Redis应用场景
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#短信登录" class="md-nav__link">
+    <span class="md-ellipsis">
+      短信登录
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis实现缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis实现缓存
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis实现缓存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存更新策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存更新策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存穿透" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存穿透
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存雪崩" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存雪崩
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存击穿" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存击穿
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#全局唯一id" class="md-nav__link">
+    <span class="md-ellipsis">
+      全局唯一ID
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="全局唯一ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      UUID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snowflake算法" class="md-nav__link">
+    <span class="md-ellipsis">
+      Snowflake算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis自增" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis自增
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#超卖问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      超卖问题
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#一人一单" class="md-nav__link">
+    <span class="md-ellipsis">
+      一人一单
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一人一单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#单实例部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      单实例部署
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="单实例部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#多实例部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      多实例部署
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基于redis的分布式锁" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于Redis的分布式锁
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于Redis的分布式锁">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#简单实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      简单实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#锁误删问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      锁误删问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#原子性问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      原子性问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redission" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redission
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redission">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#快速入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      快速入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#可重入锁原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      可重入锁原理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#重试机制和看门狗" class="md-nav__link">
+    <span class="md-ellipsis">
+      重试机制和看门狗
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#主从一致性" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从一致性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基于redis的消息队列" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于Redis的消息队列
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于Redis的消息队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#使用list实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用list实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用pubsub实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用PubSub实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用stream实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用Stream实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feed流模式推流" class="md-nav__link">
+    <span class="md-ellipsis">
+      Feed流模式（推流）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geo数据" class="md-nav__link">
+    <span class="md-ellipsis">
+      GEO数据
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bitmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      BitMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hyperlogloguv统计" class="md-nav__link">
+    <span class="md-ellipsis">
+      HyperLogLog&amp;&amp;UV统计
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#短信登录" class="md-nav__link">
+    <span class="md-ellipsis">
+      短信登录
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis实现缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis实现缓存
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis实现缓存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存更新策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存更新策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存穿透" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存穿透
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存雪崩" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存雪崩
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存击穿" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存击穿
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#全局唯一id" class="md-nav__link">
+    <span class="md-ellipsis">
+      全局唯一ID
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="全局唯一ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uuid" class="md-nav__link">
+    <span class="md-ellipsis">
+      UUID
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snowflake算法" class="md-nav__link">
+    <span class="md-ellipsis">
+      Snowflake算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis自增" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis自增
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#超卖问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      超卖问题
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#一人一单" class="md-nav__link">
+    <span class="md-ellipsis">
+      一人一单
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一人一单">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#单实例部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      单实例部署
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="单实例部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#多实例部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      多实例部署
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基于redis的分布式锁" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于Redis的分布式锁
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于Redis的分布式锁">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#简单实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      简单实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#锁误删问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      锁误删问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#原子性问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      原子性问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redission" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redission
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redission">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#快速入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      快速入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#可重入锁原理" class="md-nav__link">
+    <span class="md-ellipsis">
+      可重入锁原理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#重试机制和看门狗" class="md-nav__link">
+    <span class="md-ellipsis">
+      重试机制和看门狗
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#主从一致性" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从一致性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基于redis的消息队列" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于Redis的消息队列
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于Redis的消息队列">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#使用list实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用list实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用pubsub实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用PubSub实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用stream实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用Stream实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feed流模式推流" class="md-nav__link">
+    <span class="md-ellipsis">
+      Feed流模式（推流）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geo数据" class="md-nav__link">
+    <span class="md-ellipsis">
+      GEO数据
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bitmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      BitMap
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hyperlogloguv统计" class="md-nav__link">
+    <span class="md-ellipsis">
+      HyperLogLog&amp;&amp;UV统计
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/Redis应用场景.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/Redis应用场景.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+  <h1>Redis应用场景</h1>
+
+<h2 id="短信登录">短信登录<a class="headerlink" href="#短信登录" title="链接到此段落">&para;</a></h2>
+<p><img alt="image-20250223172141477" src="../images/image-20250223172141477.png" /></p>
+<p><img alt="image-20250223183646720" src="../images/image-20250223183646720.png" /></p>
+<p><img alt="image-20250223215858889" src="../images/image-20250223215858889.png" /></p>
+<h2 id="redis实现缓存">Redis实现缓存<a class="headerlink" href="#redis实现缓存" title="链接到此段落">&para;</a></h2>
+<p><strong>缓存</strong>就是数据交换的缓冲区（称作Cache [ kæʃ ] ），是存贮数据的临时地方，一般读写性能较高</p>
+<p>优势：</p>
+<ul>
+<li>降低服务器负载</li>
+<li>提高响应速度</li>
+</ul>
+<p>劣势：</p>
+<ul>
+<li>数据不一致</li>
+<li>增加维护复杂度</li>
+</ul>
+<p><img alt="image-20250224225628206" src="../images/image-20250224225628206.png" /></p>
+<p><img alt="image-20250224230452693" src="../images/image-20250224230452693.png" /></p>
+<h3 id="缓存更新策略">缓存更新策略<a class="headerlink" href="#缓存更新策略" title="链接到此段落">&para;</a></h3>
+<p><img alt="image-20250225160127096" src="../images/image-20250225160127096.png" /></p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li><strong><code>Cache Aside Pattern</code></strong>：由缓存的调用者，在更新数据库的同时更新缓存（<font color="red">推荐</font>）</li>
+<li><strong><code>Read/Write Through Pattern</code></strong>：缓存与数据库整合为一个服务，由服务来维护一致性。调用者调用该服务，无需关心缓存一致性问题。</li>
+<li><strong><code>Write Behind Caching Pattern</code></strong>：调用者只操作缓存，由其它线程异步的将缓存数据持久化到数据库，保证最终一致。</li>
+</ol>
+<p>操作缓存和数据库时有三个问题需要考虑：</p>
+<p>1.删除缓存还是更新缓存？</p>
+<ul>
+<li>
+<p>更新缓存：每次更新数据库都更新缓存，无效写操作较多❌</p>
+</li>
+<li>
+<p>删除缓存：更新数据库时让缓存失效，查询时再更新缓存✔</p>
+</li>
+</ul>
+<p>2.如何保证缓存与数据库的操作的同时成功或失败？</p>
+<ul>
+<li>
+<p>单体系统，将缓存与数据库操作放在一个事务</p>
+</li>
+<li>
+<p>分布式系统，利用TCC等分布式事务方案</p>
+</li>
+</ul>
+<p>3.先操作缓存还是先操作数据库？</p>
+<ul>
+<li>
+<p>先写数据库，然后再删除缓存</p>
+</li>
+<li>
+<p>要确保数据库与缓存操作的原子性</p>
+</li>
+</ul>
+<h3 id="缓存穿透">缓存穿透<a class="headerlink" href="#缓存穿透" title="链接到此段落">&para;</a></h3>
+<p><strong>缓存穿透</strong>是指客户端请求的数据在缓存中和数据库中都不存在，这样缓存永远不会生效，这些请求都会到达数据库。</p>
+<p>常见的解决方案有两种：</p>
+<ul>
+<li>
+<p>缓存空对象</p>
+<ul>
+<li>优点：实现简单，维护方便</li>
+<li>缺点：<ul>
+<li>额外的内存消耗</li>
+<li>可能造成短期的不一致</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>布隆过滤</p>
+<ul>
+<li>优点：内存占用较少，没有多余key</li>
+<li>缺点：<ul>
+<li>实现复杂</li>
+<li>存在误判可能</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img alt="image-20250225172612836" src="../images/image-20250225172612836.png" /></p>
+<p><strong>可行方案：</strong></p>
+<ul>
+<li>缓存null值</li>
+<li>布隆过滤</li>
+<li>增强id的复杂度，避免被猜测id规律</li>
+<li>做好数据的基础格式校验</li>
+<li>加强用户权限校验</li>
+<li>做好热点参数的限流</li>
+</ul>
+<h3 id="缓存雪崩">缓存雪崩<a class="headerlink" href="#缓存雪崩" title="链接到此段落">&para;</a></h3>
+<p><strong>缓存雪崩</strong>是指在同一时段<font color=red>大量的缓存key同时失效或者Redis服务宕机</font>，导致大量请求到达数据库，带来巨大压力。</p>
+<p><strong>解决方案：</strong></p>
+<ul>
+<li>给不同的Key的TTL添加随机值</li>
+<li>利用Redis集群提高服务的可用性</li>
+<li>给缓存业务添加降级限流策略</li>
+<li>给业务添加多级缓存</li>
+</ul>
+<h3 id="缓存击穿">缓存击穿<a class="headerlink" href="#缓存击穿" title="链接到此段落">&para;</a></h3>
+<p><strong>缓存击穿问题</strong>也叫热点Key问题，就是一个被<strong>高并发访问</strong>并且<strong>缓存重建业务较复杂</strong>的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。</p>
+<p>常见的解决方案有两种：</p>
+<ul>
+<li>互斥锁</li>
+<li>逻辑过期</li>
+</ul>
+<hr />
+<table>
+<thead>
+<tr>
+<th>解决方案</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>互斥锁</td>
+<td>没有额外内存消耗<br>保证一致性<br>实现简单</td>
+<td>线程需要等待，性能受影响<br>可能有死锁风险</td>
+</tr>
+<tr>
+<td>逻辑过期</td>
+<td>线程无需等待，性能较好</td>
+<td>不保证一致性<br>有额外内存消耗<br>实现复杂</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="全局唯一id">全局唯一ID<a class="headerlink" href="#全局唯一id" title="链接到此段落">&para;</a></h2>
+<p>全局ID生成器，是一种在<strong>分布式系统</strong>下用来生成全局唯一ID的工具，需要满足以下特性：</p>
+<ul>
+<li>唯一性</li>
+<li>高可用</li>
+<li>高性能</li>
+<li>递增性</li>
+<li>安全性</li>
+</ul>
+<p>常见的实现方式包括UUID、Snowflake算法等。</p>
+<h3 id="uuid">UUID<a class="headerlink" href="#uuid" title="链接到此段落">&para;</a></h3>
+<p>UUID 是一个128位的标识符，通常表示为32个十六进制字符，分为5段（8-4-4-4-12）。UUID 的生成基于时间戳、随机数或硬件地址等，确保全局唯一性。</p>
+<p><strong>示例：</strong></p>
+<div class="highlight"><pre><span></span><code>550e8400-e29b-41d4-a716-446655440000
+</code></pre></div>
+<p><strong>优点：</strong></p>
+<ul>
+<li>无需中心化服务，分布式生成。</li>
+<li>全球唯一性高。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>长度较长（36字符）。</li>
+<li>无序，不适合作为数据库主键（可能导致索引碎片）。</li>
+</ul>
+<hr />
+<h3 id="snowflake算法">Snowflake算法<a class="headerlink" href="#snowflake算法" title="链接到此段落">&para;</a></h3>
+<p>Snowflake 是 Twitter 开源的分布式ID生成算法，生成一个64位的ID，结构如下：</p>
+<ul>
+<li><strong>1位</strong>：符号位（固定为0）。</li>
+<li><strong>41位</strong>：时间戳（毫秒级，可用69年）。</li>
+<li><strong>10位</strong>：机器ID（支持1024个节点）。</li>
+<li><strong>12位</strong>：序列号（每毫秒可生成4096个ID）。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<div class="highlight"><pre><span></span><code>1234567890123456789
+</code></pre></div>
+<p><strong>优点：</strong></p>
+<ul>
+<li>短小精悍（64位整数）。</li>
+<li>时间有序，适合作为数据库主键。</li>
+<li>高性能，支持高并发。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>依赖系统时钟，时钟回拨可能导致ID冲突。</li>
+<li>需要管理机器ID的分配。</li>
+</ul>
+<h3 id="redis自增">Redis自增<a class="headerlink" href="#redis自增" title="链接到此段落">&para;</a></h3>
+<p>Redis自增ID生成器利用Redis的原子性INCR命令生成全局唯一ID，结合时间戳和序列号保证ID的唯一性和递增性。</p>
+<p><strong>实现原理：</strong></p>
+<ol>
+<li><strong>时间戳部分</strong>：使用自定义起始时间戳（如2025年1月1日）作为基准，计算当前时间与基准时间的秒数差值，作为ID的高位部分</li>
+<li><strong>序列号部分</strong>：使用Redis的INCR命令对每天的计数器进行原子性自增，作为ID的低位部分</li>
+<li><strong>位运算组合</strong>：将时间戳左移32位，与序列号进行按位或运算，生成最终的64位ID</li>
+</ol>
+<p><strong>ID结构（64位）：</strong></p>
+<ul>
+<li><strong>32位时间戳</strong>：相对于起始时间的秒数（可用68年）</li>
+<li><strong>32位序列号</strong>：每天重置的自增序列（每天可生成42亿个ID）</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li>高性能：基于Redis的内存操作，性能极高</li>
+<li>全局唯一：时间戳+日期+序列号确保唯一性</li>
+<li>趋势递增：时间维度上ID呈递增趋势</li>
+<li>信息可读：可从ID中解析出生成时间</li>
+<li>高可用：支持Redis集群部署</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>依赖Redis：Redis故障会影响ID生成</li>
+<li>时钟敏感：依赖系统时钟的准确性</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Component</span>
+<span class="nd">@RequiredArgsConstructor</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RedisIdWorker</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">StringRedisTemplate</span><span class="w"> </span><span class="n">redisTemplate</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 自定义起始时间戳（2025年1月1日0时0分0秒）</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">BEGIN_TIME_STAMP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1735689600L</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">nextId</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">prefix</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 1. 生成时间戳</span>
+<span class="w">        </span><span class="n">LocalDateTime</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LocalDateTime</span><span class="p">.</span><span class="na">now</span><span class="p">();</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">epochSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="na">toEpochSecond</span><span class="p">(</span><span class="n">ZoneOffset</span><span class="p">.</span><span class="na">UTC</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">nowEpochSecond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">epochSecond</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">BEGIN_TIME_STAMP</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// 2. 生成序列号（每天一个key，避免单key过大）</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ofPattern</span><span class="p">(</span><span class="s">&quot;yyyyMMdd&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">increment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">redisTemplate</span><span class="p">.</span><span class="na">opsForValue</span><span class="p">().</span><span class="na">increment</span><span class="p">(</span><span class="s">&quot;icr:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">date</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// 3. 拼接并返回（时间戳左移32位 + 序列号）</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">nowEpochSecond</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">increment</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="超卖问题">超卖问题<a class="headerlink" href="#超卖问题" title="链接到此段落">&para;</a></h2>
+<p>超卖问题（Overselling）是电商、秒杀、库存管理等场景中常见的核心问题，指系统<strong>实际销售数量超过库存数量</strong>，导致订单无法履约。</p>
+<p><strong>原因</strong>：</p>
+<ol>
+<li><strong>并发请求冲突</strong><ul>
+<li>多个用户同时请求购买同一商品，系统未正确处理并发扣减库存。</li>
+</ul>
+</li>
+<li><strong>数据库更新延迟</strong><ul>
+<li>数据库读写分离时，从库同步延迟导致读取到旧库存数据。</li>
+</ul>
+</li>
+<li><strong>缓存与数据库不一致</strong><ul>
+<li>缓存层（如 Redis）与数据库的库存数据未同步。</li>
+</ul>
+</li>
+<li><strong>非原子性操作</strong><ul>
+<li>查询库存、扣减库存分步执行，中间过程被其他请求插入。</li>
+</ul>
+</li>
+</ol>
+<p><strong>解决方案</strong>：</p>
+<p><strong>数据库层面：锁机制</strong></p>
+<ul>
+<li><strong>悲观锁（Pessimistic Lock）</strong>
+  通过 <code>SELECT ... FOR UPDATE</code> 锁定记录，确保串行操作。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">BEGIN</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">UPDATE</span><span class="p">;</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div>
+<p><strong>缺点</strong>：高并发下性能差，可能引发死锁。</p>
+<ul>
+<li><strong>乐观锁（Optimistic Lock）</strong>
+  使用版本号或库存字段本身作为条件更新。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">products</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">stock</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">{</span><span class="n">current_version</span><span class="err">}</span><span class="p">;</span>
+</code></pre></div>
+<p><strong>优点</strong>：无锁竞争，适合高并发。
+  <strong>缺点</strong>：需处理更新失败（如重试或提示用户）。</p>
+<p><strong>分布式锁</strong></p>
+<ul>
+<li><strong>Redis 锁</strong>
+  使用 <code>SET key value NX EX</code> 实现原子锁：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">lock</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;product_1_lock&quot;</span><span class="p">,</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ex</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">lock</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 扣减库存逻辑</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">redis</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;product_1_lock&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>注意</strong>：需解决锁过期和误删问题（如 Redlock 算法）。</p>
+<p><strong>缓存层原子操作</strong></p>
+<ul>
+<li><strong>Redis 原子扣减</strong>
+  利用 Redis 的原子命令（如 <code>DECR</code> 或 Lua 脚本）：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Lua 脚本（原子扣减库存）</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">stock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">tonumber</span><span class="p">(</span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="kr">if</span><span class="w"> </span><span class="nv">stock</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;DECR&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">-- 成功</span>
+<span class="kr">else</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="mi">0</span><span class="w">  </span><span class="c1">-- 失败</span>
+<span class="kr">end</span>
+</code></pre></div>
+<p><strong>优点</strong>：高性能，避免直接穿透到数据库。</p>
+<ul>
+<li><strong>预扣库存（预占机制）</strong>
+  用户下单时先在 Redis 中扣减库存，异步同步到数据库：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">redis</span><span class="o">.</span><span class="n">decr</span><span class="p">(</span><span class="s2">&quot;product_1_stock&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># 创建订单，异步更新数据库</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># 恢复库存：redis.incr(&quot;product_1_stock&quot;)</span>
+</code></pre></div>
+<p><strong>消息队列削峰</strong></p>
+<ul>
+<li>将请求放入队列（如 Kafka、RabbitMQ），由消费者顺序处理：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 生产者（用户请求入队）</span>
+<span class="n">producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;order_topic&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span> <span class="s2">&quot;product_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
+<span class="c1"># 消费者（顺序扣减库存）</span>
+<span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s2">&quot;order_topic&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">consumer</span><span class="p">:</span>
+    <span class="n">process_order</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>优点</strong>：流量削峰，保证最终一致性。</p>
+<h2 id="一人一单">一人一单<a class="headerlink" href="#一人一单" title="链接到此段落">&para;</a></h2>
+<h3 id="单实例部署">单实例部署<a class="headerlink" href="#单实例部署" title="链接到此段落">&para;</a></h3>
+<p>某些业务只允许用户进行一次交易</p>
+<p>但当一个用户同一时间发起多个请求时，就有可能发生一人多单问题（多个线程都查询到数据库中并没有订单存在，都可以创建订单）</p>
+<p>可以对数据操作代码加锁同步</p>
+<div class="highlight"><pre><span></span><code><span class="kd">synchronized</span><span class="w"> </span><span class="p">(</span><span class="n">userId</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">intern</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 获取代理对象，解决spring事务失效问题</span>
+<span class="w">            </span><span class="n">IVoucherOrderService</span><span class="w"> </span><span class="n">proxy</span><span class="w"> </span><span class="o">=</span><span class="p">(</span><span class="n">IVoucherOrderService</span><span class="p">)</span><span class="w"> </span><span class="n">AopContext</span><span class="p">.</span><span class="na">currentProxy</span><span class="p">();</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">proxy</span><span class="p">.</span><span class="na">createOrder</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">userId</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>以上代码只对同一个用户加锁，避免不同用户被阻塞的性能问题（intern()将字符串加入字符串常量池，避免同一个用户id有多个对象，同步失效）</p>
+<p>Spring的事务管理基于AOP代理对象实现，如果在类的方法内调用自身的方法，等同于this.xxx()，并没有通过代理对象实现事务增强，解决方案为先获取代理对象，然后再通过代理对象调用该方法</p>
+<p>需要引入<code>aspectjweaver</code>依赖，并在启动类上加上<code>@EnableAspectJAutoProxy(exposeProxy = true)</code>注解</p>
+</div>
+<h4 id="多实例部署">多实例部署<a class="headerlink" href="#多实例部署" title="链接到此段落">&para;</a></h4>
+<p>以上方案在多实例集群模式下仍会发生线程安全问题，原因是多个实例各自都有自身的<code>JVM</code>实现同步锁，无法共享</p>
+<p>解决方案：</p>
+<p>​   <strong>分布式锁</strong>：满足分布式系统或集群模式下多进程可见并且互斥的锁</p>
+<ul>
+<li>多进程可见</li>
+<li>互斥</li>
+<li>高性能</li>
+<li>安全性</li>
+<li>高可用</li>
+</ul>
+<p>常见实现方式</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>MySQL</th>
+<th>Redis</th>
+<th>Zookeeper</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>互斥</td>
+<td>利用本身互斥锁机制</td>
+<td>利用setnx这类互斥命令</td>
+<td>利用节点唯一性和有序性实现</td>
+</tr>
+<tr>
+<td>高可用</td>
+<td>优秀</td>
+<td>优秀</td>
+<td>优秀</td>
+</tr>
+<tr>
+<td>高性能</td>
+<td>一般</td>
+<td>优秀</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>断开连接自动释放锁</td>
+<td>锁到期自动释放，避免死锁</td>
+<td>临时节点断开连接自动释放</td>
+</tr>
+</tbody>
+</table>
+<h2 id="基于redis的分布式锁">基于Redis的分布式锁<a class="headerlink" href="#基于redis的分布式锁" title="链接到此段落">&para;</a></h2>
+<h3 id="简单实现">简单实现<a class="headerlink" href="#简单实现" title="链接到此段落">&para;</a></h3>
+<p>实现分布式锁时需要实现的两个基本方法：</p>
+<ul>
+<li>获取锁：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>SET<span class="w"> </span>lock<span class="w"> </span>thread1<span class="w"> </span>EX<span class="w"> </span><span class="m">10</span><span class="w"> </span>NX
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>EX参数设置过期时间，NX参数实现与<code>SETNX</code>相同的功能</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>不建议直接使用<code>SETNX</code>,因为无法同时设置过期时间，可能发生获得锁后服务宕机，而未设置过期时间，最终导致死锁。</p>
+</div>
+<ul>
+<li>释放锁：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>DEL<span class="w"> </span>lock
+</code></pre></div>
+<p><img alt="image-20250313212150077" src="../images/image-20250313212150077.png" /></p>
+<p>示例：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">tryLock</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">timeout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 获取当前线程ID</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">getId</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">Boolean</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">opsForValue</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">setIfAbsent</span><span class="p">(</span><span class="n">KEY_PREFIX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">timeout</span><span class="p">,</span><span class="w"> </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Boolean</span><span class="p">.</span><span class="na">TRUE</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">success</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">unlock</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 释放锁</span>
+<span class="w">    </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">delete</span><span class="p">(</span><span class="n">KEY_PREFIX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="锁误删问题">锁误删问题<a class="headerlink" href="#锁误删问题" title="链接到此段落">&para;</a></h3>
+<p>主要发生在某个线程阻塞时锁被超时释放了，其他线程就可以获得锁，当被阻塞的线程恢复后就会删除不属于自己的锁</p>
+<p><img alt="image-20250313214623010" src="../images/image-20250313214623010.png" /></p>
+<p><strong>解决方案</strong>：</p>
+<p>为线程的锁加入唯一标识，释放前判断锁是否属于自己</p>
+<h3 id="原子性问题">原子性问题<a class="headerlink" href="#原子性问题" title="链接到此段落">&para;</a></h3>
+<p>如果查询和删除锁不能原子性执行，仍然有可能发生锁误删问题</p>
+<p><img alt="image-20250313220527221" src="../images/image-20250313220527221.png" /></p>
+<p><strong>Lua脚本</strong></p>
+<p>Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，确保多条命令执行时的原子性。Lua是一种编程语言，基本语法可以参考<a href="https://www.runoob.com/lua/lua-tutorial.html">网站</a></p>
+<p>Redis可以通过如下命令执行Lua脚本</p>
+<div class="highlight"><pre><span></span><code><span class="nv">EVAL</span><span class="w"> </span><span class="s2">&quot;&lt;脚本内容&gt;&quot;</span>
+
+<span class="c1">-- 示例</span>
+
+<span class="nv">EVAL</span><span class="w"> </span><span class="s2">&quot;return redis.call(&#39;set&#39;,&#39;key&#39;,&#39;value&#39;)&quot;</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>参数<strong>0</strong>表示需要的key类型的参数个数</p>
+</div>
+<p>脚本中的key、value可以作为参数传递。key类型参数会放入<code>KEYS</code>数组，其它参数会放入<code>ARGV</code>数组，在脚本中可以从KEYS和ARGV数组获取这些参数：</p>
+<div class="highlight"><pre><span></span><code><span class="nv">EVAL</span><span class="w"> </span><span class="s2">&quot;return redis.call(&#39;set&#39;,KEYS[1],ARGV[1])&quot;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="nv">value</span>
+</code></pre></div>
+<p>释放锁脚本示例：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 获取key</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1">-- 获取线程ID</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">threadId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="kd">local</span><span class="w"> </span><span class="nv">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;get&#39;</span><span class="p">,</span><span class="nv">key</span><span class="p">)</span>
+
+<span class="kr">if</span><span class="p">(</span><span class="nv">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nv">threadId</span><span class="p">)</span>
+<span class="kr">then</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;del&#39;</span><span class="p">,</span><span class="nv">key</span><span class="p">)</span>
+<span class="kr">end</span>
+<span class="kr">return</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DefaultRedisScript</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">UNLOCK_SCRIPT</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UNLOCK_SCRIPT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultRedisScript</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">UNLOCK_SCRIPT</span><span class="p">.</span><span class="na">setLocation</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ClassPathResource</span><span class="p">(</span><span class="s">&quot;unlock.lua&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">UNLOCK_SCRIPT</span><span class="p">.</span><span class="na">setResultType</span><span class="p">(</span><span class="n">Long</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w">    </span>
+
+<span class="w">        </span><span class="c1">// 执行Lua脚本释放锁</span>
+<span class="w">        </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span>
+<span class="w">                </span><span class="n">UNLOCK_SCRIPT</span><span class="p">,</span>
+<span class="w">                </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="n">KEY_PREFIX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="p">),</span>
+<span class="w">                </span><span class="n">ID_PREFIX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Thread</span><span class="p">.</span><span class="na">currentThread</span><span class="p">().</span><span class="na">getId</span><span class="p">()</span>
+<span class="w">        </span><span class="p">);</span>
+</code></pre></div>
+<h3 id="redission">Redission<a class="headerlink" href="#redission" title="链接到此段落">&para;</a></h3>
+<p>基于<code>SETNX</code>实现的分布式锁存在下面的问题</p>
+<p><img alt="image-20250314173318992" src="../images/image-20250314173318992.png" /></p>
+<p><strong>Redisson</strong>是一个在Redis的基础上实现的Java驻内存数据网格（In-Memory Data Grid）。它不仅提供了一系列的分布式的Java常用对象，还提供了许多分布式服务，其中就包含了各种分布式锁的实现。</p>
+<p>官网地址： <a href="https://redisson.org/">https://redisson.org</a></p>
+<p><img alt="image-20250314173449659" src="../images/image-20250314173449659.png" /></p>
+<h4 id="快速入门">快速入门<a class="headerlink" href="#快速入门" title="链接到此段落">&para;</a></h4>
+<p>引入依赖</p>
+<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">            </span><span class="nt">&lt;groupId&gt;</span>org.redisson<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;artifactId&gt;</span>redisson<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">            </span><span class="nt">&lt;version&gt;</span>3.36.0<span class="nt">&lt;/version&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+<p>配置Redisson</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Configuration</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RedisConfig</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Bean</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RedissonClient</span><span class="w"> </span><span class="nf">redisson</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 配置Redisson</span>
+<span class="w">        </span><span class="n">Config</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Config</span><span class="p">();</span>
+<span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="na">useSingleServer</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">setAddress</span><span class="p">(</span><span class="s">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">setPassword</span><span class="p">(</span><span class="s">&quot;123456&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// 创建Redisson客户端</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Redisson</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>在业务中注入<code>RedissonClient</code>然后获取锁即可</p>
+<h4 id="可重入锁原理">可重入锁原理<a class="headerlink" href="#可重入锁原理" title="链接到此段落">&para;</a></h4>
+<p>利用hash结构记录线程id和重入次数</p>
+<p><img alt="image-20250314181231205" src="../images/image-20250314181231205.png" /></p>
+<p>获取锁</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 锁的key</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">threadId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 线程唯一标识</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">releaseTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ARGV</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 锁的自动释放时间</span>
+<span class="c1">-- 判断是否存在</span>
+<span class="kr">if</span><span class="p">(</span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;exists&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">    </span><span class="c1">-- 不存在, 获取锁</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;hset&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">threadId</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span><span class="w"> </span>
+<span class="w">    </span><span class="c1">-- 设置有效期</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;expire&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">releaseTime</span><span class="p">);</span><span class="w"> </span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 返回结果</span>
+<span class="kr">end</span><span class="p">;</span>
+<span class="c1">-- 锁已经存在，判断threadId是否是自己</span>
+<span class="kr">if</span><span class="p">(</span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;hexists&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">threadId</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">    </span><span class="c1">-- 不存在, 获取锁，重入次数+1</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;hincrby&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">threadId</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">);</span><span class="w"> </span>
+<span class="w">    </span><span class="c1">-- 设置有效期</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;expire&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">releaseTime</span><span class="p">);</span><span class="w"> </span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 返回结果</span>
+<span class="kr">end</span><span class="p">;</span>
+<span class="kr">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 代码走到这里,说明获取锁的不是自己，获取锁失败</span>
+</code></pre></div>
+<p>释放锁</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 锁的key</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">threadId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ARGV</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 线程唯一标识</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">releaseTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ARGV</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w"> </span><span class="c1">-- 锁的自动释放时间</span>
+<span class="c1">-- 判断当前锁是否还是被自己持有</span>
+<span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;HEXISTS&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">threadId</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">;</span><span class="w"> </span><span class="c1">-- 如果已经不是自己，则直接返回</span>
+<span class="kr">end</span><span class="p">;</span>
+<span class="c1">-- 是自己的锁，则重入次数-1</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;HINCRBY&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">threadId</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="c1">-- 判断是否重入次数是否已经为0 </span>
+<span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="nv">count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">    </span><span class="c1">-- 大于0说明不能释放锁，重置有效期然后返回</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;EXPIRE&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">releaseTime</span><span class="p">);</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">;</span>
+<span class="kr">else</span><span class="w">  </span><span class="c1">-- 等于0说明可以释放锁，直接删除</span>
+<span class="w">    </span><span class="nv">redis</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s1">&#39;DEL&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">);</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">;</span>
+<span class="kr">end</span><span class="p">;</span>
+</code></pre></div>
+<h4 id="重试机制和看门狗">重试机制和看门狗<a class="headerlink" href="#重试机制和看门狗" title="链接到此段落">&para;</a></h4>
+<p>•<strong>可重试</strong>：利用信号量和PubSub功能实现等待、唤醒，获取锁失败的重试机制</p>
+<p>•<strong>超时续约</strong>：利用watchDog，每隔一段时间（releaseTime / 3），重置超时时间</p>
+<h4 id="主从一致性">主从一致性<a class="headerlink" href="#主从一致性" title="链接到此段落">&para;</a></h4>
+<p>原理：多个独立的Redis节点，必须在所有节点都获取重入锁，才算获取锁成功</p>
+<p>缺陷：运维成本高、实现复杂</p>
+<h2 id="基于redis的消息队列">基于Redis的消息队列<a class="headerlink" href="#基于redis的消息队列" title="链接到此段落">&para;</a></h2>
+<p><strong>消息队列</strong>（<strong>M</strong>essage <strong>Q</strong>ueue），字面意思就是存放消息的队列。最简单的消息队列模型包括3个角色：</p>
+<ul>
+<li>消息队列：存储和管理消息，也被称为消息代理（Message Broker）</li>
+<li>生产者：发送消息到消息队列</li>
+<li>消费者：从消息队列获取消息并处理消息</li>
+</ul>
+<p>Redis提供了三种不同的方式来实现消息队列：</p>
+<ul>
+<li>list结构：基于List结构模拟消息队列</li>
+<li>PubSub：基本的点对点消息模型</li>
+<li>Stream：比较完善的消息队列模型</li>
+</ul>
+<h3 id="使用list实现">使用list实现<a class="headerlink" href="#使用list实现" title="链接到此段落">&para;</a></h3>
+<p>Redis的list数据结构是一个双向链表，很容易模拟出队列效果。队列是入口和出口不在一边，因此我们可以利用：LPUSH 结合 RPOP、或者 RPUSH 结合 LPOP来实现。</p>
+<p>不过要注意的是，当队列中没有消息时RPOP或LPOP操作会返回null，并不像JVM的阻塞队列那样会阻塞并等待消息。因此这里应该使用<strong>BRPOP</strong>或者<strong>BLPOP</strong>来实现阻塞效果。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>利用Redis存储，不受限于JVM内存上限</li>
+<li>基于Redis的持久化机制，数据安全性有保证</li>
+<li>可以满足消息有序性</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>无法避免消息丢失</li>
+<li>只支持单消费者</li>
+</ul>
+<h3 id="使用pubsub实现">使用PubSub实现<a class="headerlink" href="#使用pubsub实现" title="链接到此段落">&para;</a></h3>
+<p><strong>PubSub</strong>（发布订阅）是Redis2.0版本引入的消息传递模型。消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有订阅者都能收到相关消息。</p>
+<ul>
+<li><code>SUBSCRIBE channel [channel]</code> ：订阅一个或多个频道</li>
+<li><code>PUBLISH channel msg</code> ：向一个频道发送消息</li>
+<li><code>PSUBSCRIBE pattern[pattern]</code> ：订阅与pattern格式匹配的所有频道</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>采用发布订阅模型，支持多生产、多消费</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>不支持数据持久化</li>
+<li>无法避免消息丢失</li>
+<li>消息堆积有上限，超出时数据丢失</li>
+</ul>
+<h3 id="使用stream实现">使用Stream实现<a class="headerlink" href="#使用stream实现" title="链接到此段落">&para;</a></h3>
+<p><code>Stream</code>是Redis5.0引入的一种数据类型，可以实现功能较完善的消息队列</p>
+<p>发送消息</p>
+<p><img alt="image-20250316155920428" src="../images/image-20250316155920428.png" /></p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><code>xadd user * name ysh age 22</code>  </p>
+</div>
+<p>读取消息</p>
+<p><img alt="image-20250316160247412" src="../images/image-20250316160247412.png" /></p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p><code>xread cout 1 block 2000 streams user $</code> 阻塞式读取</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>当我们指定起始ID为$时，代表读取最新的消息，如果我们处理一条消息的过程中，又有超过1条以上的消息到达队列，则下次获取时也只能获取到最新的一条，会出现漏读消息的问题。</p>
+</div>
+<p>STREAM类型消息队列的XREAD命令特点：</p>
+<ul>
+<li>消息可回溯</li>
+<li>一个消息可以被多个消费者读取</li>
+<li>可以阻塞读取</li>
+<li>有消息漏读的风险</li>
+</ul>
+<p><strong>消费者组</strong></p>
+<p><img alt="image-20250316160957819" src="../images/image-20250316160957819.png" /></p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 创建消费者组</span>
+xgroup<span class="w"> </span>create<span class="w"> </span>key<span class="w"> </span>groupName<span class="w"> </span>ID
+
+<span class="c1">## 删除消费者组</span>
+xgroup<span class="w"> </span>destroy<span class="w"> </span>key<span class="w"> </span>groupName
+
+<span class="c1">## 将消费者添加到消费者组</span>
+xgroup<span class="w"> </span>createconsumer<span class="w"> </span>key<span class="w"> </span>groupName<span class="w"> </span>consumerName
+
+<span class="c1">## 删除消费者组中的消费者</span>
+xgroup<span class="w"> </span>delconsumer<span class="w"> </span>key<span class="w"> </span>groupName<span class="w"> </span>consumerName
+</code></pre></div>
+<p><img alt="image-20250316161723498" src="../images/image-20250316161723498.png" /></p>
+<h2 id="feed流模式推流">Feed流模式（推流）<a class="headerlink" href="#feed流模式推流" title="链接到此段落">&para;</a></h2>
+<p>Feed流产品有两种常见的模式：</p>
+<ul>
+<li>TimeLine:不做内容筛选，简单的按照内容发布时间排序，常用于好友或关注。例如朋友圈<ul>
+<li>优点：信息全面，不会有缺失，并且实现也相对简单</li>
+<li>优点：信息噪音多，用户不一定感兴趣，内容获取效率低</li>
+</ul>
+</li>
+<li>智能排序:利用智能算法屏蔽违规的、用户不感兴趣的内容，推送用户感兴趣的信息来吸引用户<ul>
+<li>优点：投喂用户感兴趣的信息，用户黏度很高，容易沉迷</li>
+<li>缺点：算法如果不精准，可能起反作用</li>
+</ul>
+</li>
+</ul>
+<p>推送方式：</p>
+<ul>
+<li>
+<p>拉模式：消费端主动拉取（读要求高，不推荐）</p>
+</li>
+<li>
+<p>推模式：生产者主动推送（写要求高，用户量少时推荐）</p>
+</li>
+<li>
+<p>推拉结合：以上两者结合（用户千万以上推荐）</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">实现方式</p>
+<p>创建发件箱和收件箱，按照推送方式将推送内容的标识（通常为ID）发送到对应位置</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
+应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
+每次查询时需要的参数为上次查询最后一条记录的值，与上一条记录值相同的记录数（offset）</p>
+</div>
+<h2 id="geo数据">GEO数据<a class="headerlink" href="#geo数据" title="链接到此段落">&para;</a></h2>
+<p>GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中加入了对GEO的支持，允许存储地理坐标信息，帮助我们根据经纬度来检索数据。常见的命令有：</p>
+<p><a href="https://redis.io/commands/geoadd">GEOADD</a>：添加一个地理空间信息，包含：经度（longitude）、纬度（latitude）、值（member）</p>
+<p><a href="https://redis.io/commands/geodist">GEODIST</a>：计算指定的两个点之间的距离并返回</p>
+<p><a href="https://redis.io/commands/geohash">GEOHASH</a>：将指定member的坐标转为hash字符串形式并返回</p>
+<p><a href="https://redis.io/commands/geopos">GEOPOS</a>：返回指定member的坐标</p>
+<p><a href="https://redis.io/commands/georadius">GEORADIUS</a>：指定圆心、半径，找到该圆内包含的所有member，并按照与圆心之间的距离排序后返回。6.2以后已废弃</p>
+<p><a href="https://redis.io/commands/geosearch">GEOSEARCH</a>：在指定范围内搜索member，并按照与指定点之间的距离排序后返回。范围可以是圆形或矩形。6.2.新功能</p>
+<p><a href="https://redis.io/commands/geosearchstore">GEOSEARCHSTORE</a>：与GEOSEARCH功能一致，不过可以把结果存储到一个指定的key。 6.2.新功能</p>
+<h2 id="bitmap">BitMap<a class="headerlink" href="#bitmap" title="链接到此段落">&para;</a></h2>
+<p><strong>Redis</strong>中利用string类型数据结构实现<strong>BitMap</strong>，因此最大上限是512M，转换为bit则是 2^32个bit位。</p>
+<p>BitMap的操作命令有：</p>
+<p><a href="https://redis.io/commands/setbit">SETBIT</a>：向指定位置（offset）存入一个0或1</p>
+<p><a href="https://redis.io/commands/getbit">GETBIT</a> ：获取指定位置（offset）的bit值</p>
+<p><a href="https://redis.io/commands/bitcount">BITCOUNT</a> ：统计BitMap中值为1的bit位的数量</p>
+<p><a href="https://redis.io/commands/bitfield">BITFIELD</a> ：操作（查询、修改、自增）BitMap中bit数组中的指定位置（offset）的值</p>
+<p><a href="https://redis.io/commands/bitfield_ro">BITFIELD_RO</a> ：获取BitMap中bit数组，并以十进制形式返回</p>
+<p><a href="https://redis.io/commands/bitop">BITOP</a> ：将多个BitMap的结果做位运算（与 、或、异或）</p>
+<p><a href="https://redis.io/commands/bitpos">BITPOS</a> ：查找bit数组中指定范围内第一个0或1出现的位置</p>
+<h2 id="hyperlogloguv统计">HyperLogLog&amp;&amp;UV统计<a class="headerlink" href="#hyperlogloguv统计" title="链接到此段落">&para;</a></h2>
+<ul>
+<li>
+<p><strong>UV</strong>：全称<strong>U</strong>nique <strong>V</strong>isitor，也叫独立访客量，是指通过互联网访问、浏览这个网页的自然人。1天内同一个用户多次访问该网站，只记录1次。</p>
+</li>
+<li>
+<p><strong>PV</strong>：全称<strong>P</strong>age <strong>V</strong>iew，也叫页面访问量或点击量，用户每访问网站的一个页面，记录1次PV，用户多次打开页面，则记录多次PV。往往用来衡量网站的流量。</p>
+</li>
+</ul>
+<p>UV统计在服务端做会比较麻烦，因为要判断该用户是否已经统计过了，需要将统计过的用户信息保存。但是如果每个访问的用户都保存到Redis中，数据量会非常大。</p>
+<p>Hyperloglog(HLL)是从Loglog算法派生的概率算法，用于确定非常大的集合的基数，而不需要存储其所有值。相关算法原理可以参考：<a href="https://juejin.cn/post/6844903785744056333">https://juejin.cn/post/6844903785744056333#heading-0</a></p>
+<p>Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16kb，内存占用低，但是其测量结果是概率性的，有小于0.81％的误差。不过对于UV统计来说，这完全可以忽略。</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 测试代码</span>
+<span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">testHyperLogLog</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[</span><span class="mi">10000</span><span class="o">]</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1000000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10000</span><span class="p">;</span>
+<span class="w">            </span><span class="n">values</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;user_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">9999</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">opsForHyperLogLog</span><span class="p">().</span><span class="na">add</span><span class="p">(</span><span class="s">&quot;hll&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">Long</span><span class="w"> </span><span class="n">hll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">opsForHyperLogLog</span><span class="p">().</span><span class="na">size</span><span class="p">(</span><span class="s">&quot;hll&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;hll = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hll</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

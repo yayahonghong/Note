@@ -1,0 +1,5067 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/SpringCloud/Elasticsearch/">
+      
+      
+        <link rel="prev" href="../MQ/">
+      
+      
+        <link rel="next" href="../../MySQL/SQL/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Elasticsearch - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#安装" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Elasticsearch
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#安装" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#初识es" class="md-nav__link">
+    <span class="md-ellipsis">
+      初识ES
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初识ES">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#倒排索引" class="md-nav__link">
+    <span class="md-ellipsis">
+      倒排索引
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ik分词器" class="md-nav__link">
+    <span class="md-ellipsis">
+      IK分词器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IK分词器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#安装_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#拓展词典" class="md-nav__link">
+    <span class="md-ellipsis">
+      拓展词典
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基础概念" class="md-nav__link">
+    <span class="md-ellipsis">
+      基础概念
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基础概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#文档和字段" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档和字段
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#索引和映射" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引和映射
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#索引库操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引库操作
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="索引库操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mapping映射属性" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mapping映射属性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crud" class="md-nav__link">
+    <span class="md-ellipsis">
+      CRUD
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#文档操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档操作
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文档操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crud_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CRUD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#批处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      批处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#javarestclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      JavaRestClient
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JavaRestClient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestAPI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#初始化restclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化RestClient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#索引库操作_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引库操作
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#文档操作_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档操作
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dsl查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      DSL查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DSL查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#叶子查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      叶子查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="叶子查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全文检索查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      全文检索查询
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#精确查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      精确查询
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#复合查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      复合查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="复合查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bool查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      bool查询
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#排序和分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      排序和分页
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="排序和分页">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#排序" class="md-nav__link">
+    <span class="md-ellipsis">
+      排序
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      分页
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#深度分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      深度分页
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#高亮显示" class="md-nav__link">
+    <span class="md-ellipsis">
+      高亮显示
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restclient查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestClient查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RestClient查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入门_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#构建查询条件" class="md-nav__link">
+    <span class="md-ellipsis">
+      构建查询条件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分页和排序" class="md-nav__link">
+    <span class="md-ellipsis">
+      分页和排序
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#高亮显示_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      高亮显示
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#数据聚合" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据聚合
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据聚合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsl语法" class="md-nav__link">
+    <span class="md-ellipsis">
+      DSL语法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restclient实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestClient实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#安装" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#初识es" class="md-nav__link">
+    <span class="md-ellipsis">
+      初识ES
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初识ES">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#倒排索引" class="md-nav__link">
+    <span class="md-ellipsis">
+      倒排索引
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ik分词器" class="md-nav__link">
+    <span class="md-ellipsis">
+      IK分词器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IK分词器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#安装_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#使用" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#拓展词典" class="md-nav__link">
+    <span class="md-ellipsis">
+      拓展词典
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基础概念" class="md-nav__link">
+    <span class="md-ellipsis">
+      基础概念
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基础概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#文档和字段" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档和字段
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#索引和映射" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引和映射
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#索引库操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引库操作
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="索引库操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mapping映射属性" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mapping映射属性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crud" class="md-nav__link">
+    <span class="md-ellipsis">
+      CRUD
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#文档操作" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档操作
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文档操作">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#crud_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CRUD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#批处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      批处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#javarestclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      JavaRestClient
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JavaRestClient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestAPI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#初始化restclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化RestClient
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#索引库操作_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      索引库操作
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#文档操作_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      文档操作
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dsl查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      DSL查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DSL查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#叶子查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      叶子查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="叶子查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全文检索查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      全文检索查询
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#精确查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      精确查询
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#复合查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      复合查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="复合查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bool查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      bool查询
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#排序和分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      排序和分页
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="排序和分页">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#排序" class="md-nav__link">
+    <span class="md-ellipsis">
+      排序
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      分页
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#深度分页" class="md-nav__link">
+    <span class="md-ellipsis">
+      深度分页
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#高亮显示" class="md-nav__link">
+    <span class="md-ellipsis">
+      高亮显示
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      总结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#restclient查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestClient查询
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RestClient查询">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#入门_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      入门
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#构建查询条件" class="md-nav__link">
+    <span class="md-ellipsis">
+      构建查询条件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分页和排序" class="md-nav__link">
+    <span class="md-ellipsis">
+      分页和排序
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#高亮显示_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      高亮显示
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#数据聚合" class="md-nav__link">
+    <span class="md-ellipsis">
+      数据聚合
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据聚合">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsl语法" class="md-nav__link">
+    <span class="md-ellipsis">
+      DSL语法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restclient实现" class="md-nav__link">
+    <span class="md-ellipsis">
+      RestClient实现
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/SpringCloud/Elasticsearch.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/SpringCloud/Elasticsearch.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+  <h1>Elasticsearch</h1>
+
+<p><a href="https://www.elastic.co/cn/elasticsearch">Elasticsearch：官方分布式搜索和分析引擎 | Elastic</a></p>
+<p>数据库的模糊搜索功能单一，匹配条件非常苛刻，必须恰好包含用户搜索的关键字。</p>
+<p>而在搜索引擎中，用户输入出现个别错字，或者用拼音搜索、同义词搜索都能正确匹配到数据。在面临海量数据的搜索，或者有一些复杂搜索需求的时候，推荐使用专门的搜索引擎来实现搜索功能。</p>
+<p>Elasticsearch是由elastic公司开发的一套搜索引擎技术，它是elastic技术栈中的一部分。完整的技术栈包括：</p>
+<ul>
+<li>Elasticsearch：用于数据存储、计算和搜索</li>
+<li>Logstash/Beats：用于数据收集</li>
+<li>Kibana：用于数据可视化</li>
+</ul>
+<p>整套技术栈被称为ELK，经常用来做日志收集、系统监控和状态分析等等</p>
+<p><br></p>
+<h2 id="安装">安装<a class="headerlink" href="#安装" title="链接到此段落">&para;</a></h2>
+<p>1.docker安装elasticsearch</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>es<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="s2">&quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="s2">&quot;discovery.type=single-node&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>es-data:/usr/share/elasticsearch/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>es-plugins:/usr/share/elasticsearch/plugins<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--privileged<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--network<span class="w"> </span>work<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">9200</span>:9200<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">9300</span>:9300<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>elasticsearch:7.12.1
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>-e "ES_JAVA_OPTS=-Xms512m -Xmx512m" 设置Java虚拟机内存</p>
+<p>-e "discovery.type=single-node" 设置单机模式</p>
+</div>
+<p>2.docker安装Kibana</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+--name<span class="w"> </span>kibana<span class="w"> </span><span class="se">\</span>
+-e<span class="w"> </span><span class="nv">ELASTICSEARCH_HOSTS</span><span class="o">=</span>http://es:9200<span class="w"> </span><span class="se">\</span>
+--network<span class="o">=</span>work<span class="w"> </span><span class="se">\</span>
+-p<span class="w"> </span><span class="m">5601</span>:5601<span class="w">  </span><span class="se">\</span>
+kibana:7.12.1
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>-e ELASTICSEARCH_HOSTS=http://es:9200 设置elasticsearch地址，同一docker网络中可使用容器名</p>
+<p>访问5601端口即可进入图形化界面</p>
+</div>
+<p><br></p>
+<hr />
+<h2 id="初识es">初识ES<a class="headerlink" href="#初识es" title="链接到此段落">&para;</a></h2>
+<h3 id="倒排索引">倒排索引<a class="headerlink" href="#倒排索引" title="链接到此段落">&para;</a></h3>
+<p>elasticsearch之所以有如此高性能的搜索表现，正是因为底层的倒排索引技术。</p>
+<p><strong>倒排索引</strong>的概念是基于MySQL这样的<strong>正向索引</strong>而言的。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>根据id精确匹配时，可以走索引，查询效率较高。而当搜索条件为模糊匹配时，由于索引无法生效，导致从索引查询退化为全表扫描，效率很差。
+因此，正向索引适合于根据索引字段的精确搜索，不适合基于部分词条的模糊匹配。</p>
+</div>
+<p>倒排索引中有两个非常重要的概念：</p>
+<ul>
+<li>文档（<code>Document</code>）：用来搜索的数据，其中的每一条数据就是一个文档。例如一个网页、一个商品信息</li>
+<li>词条（<code>Term</code>）：对文档数据或用户搜索数据，利用某种算法分词，得到的具备含义的词语就是词条。例如：我是中国人，就可以分为：我、是、中国人、中国、国人这样的几个词条</li>
+</ul>
+<p><strong>创建倒排索引</strong>是对正向索引的一种特殊处理和应用，流程如下：</p>
+<ul>
+<li>将每一个文档的数据利用<strong>分词算法</strong>根据语义拆分，得到一个个词条</li>
+<li>创建表，每行数据包括词条、词条所在文档id、位置等信息</li>
+<li>因为词条唯一性，可以给词条创建<strong>正向</strong>索引</li>
+</ul>
+<p>此时形成的这张以词条为索引的表，就是倒排索引表，两者对比如下：</p>
+<p><strong>正向索引</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>id（索引）</strong></th>
+<th style="text-align: left;"><strong>title</strong></th>
+<th style="text-align: left;"><strong>price</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">小米手机</td>
+<td style="text-align: left;">3499</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">华为手机</td>
+<td style="text-align: left;">4999</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">华为小米充电器</td>
+<td style="text-align: left;">49</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">小米手环</td>
+<td style="text-align: left;">49</td>
+</tr>
+<tr>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+</tr>
+</tbody>
+</table>
+<p><strong>倒排索引</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>词条（索引）</strong></th>
+<th style="text-align: left;"><strong>文档id</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">小米</td>
+<td style="text-align: left;">1，3，4</td>
+</tr>
+<tr>
+<td style="text-align: left;">手机</td>
+<td style="text-align: left;">1，2</td>
+</tr>
+<tr>
+<td style="text-align: left;">华为</td>
+<td style="text-align: left;">2，3</td>
+</tr>
+<tr>
+<td style="text-align: left;">充电器</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;">手环</td>
+<td style="text-align: left;">4</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="image-20250219192134064" src="../images/image-20250219192134064.png" /></p>
+<p><br></p>
+<p><strong>正向索引</strong>：</p>
+<ul>
+<li>优点： <ul>
+<li>可以给多个字段创建索引</li>
+<li>根据索引字段搜索、排序速度非常快</li>
+</ul>
+</li>
+<li>缺点： <ul>
+<li>根据非索引字段，或者索引字段中的部分词条查找时，只能全表扫描。</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<p><strong>倒排索引</strong>：</p>
+<ul>
+<li>优点： <ul>
+<li>根据词条搜索、模糊搜索时，速度非常快</li>
+</ul>
+</li>
+<li>缺点： <ul>
+<li>只能给词条创建索引，而不是字段</li>
+<li>无法根据字段做排序</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<h3 id="ik分词器">IK分词器<a class="headerlink" href="#ik分词器" title="链接到此段落">&para;</a></h3>
+<p>Elasticsearch的关键就是倒排索引，而倒排索引依赖于对文档内容的分词，而分词则需要高效、精准的分词算法，IK分词器就是这样一个中文分词算法。</p>
+<h4 id="安装_1">安装<a class="headerlink" href="#安装_1" title="链接到此段落">&para;</a></h4>
+<p><strong>方案一</strong>：在线安装</p>
+<p>运行一个命令即可：</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>es容器名<span class="w"> </span>./bin/elasticsearch-plugin<span class="w">  </span>install<span class="w"> </span>https://release.infinilabs.com/analysis-ik/stable/elasticsearch-analysis-ik-7.12.1.zip
+</code></pre></div>
+<blockquote>
+<p><a href="https://github.com/infinilabs/analysis-ik/tree/master?tab=readme-ov-file">GitHub - infinilabs/analysis-ik: 🚌 The IK Analysis plugin integrates Lucene IK analyzer into Elasticsearch and OpenSearch, support customized dictionary.</a></p>
+</blockquote>
+<p>然后重启es容器：</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>restart<span class="w"> </span>es容器名
+</code></pre></div>
+<p><br></p>
+<p><strong>方案二</strong>：离线安装</p>
+<p>查看之前安装的Elasticsearch容器的plugins数据卷目录：</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>es-plugins
+</code></pre></div>
+<p>将插件复制到容器挂载的目录，重启容器即可</p>
+<p><br></p>
+<h4 id="使用">使用<a class="headerlink" href="#使用" title="链接到此段落">&para;</a></h4>
+<p>IK分词器包含两种模式：</p>
+<ul>
+<li><code>ik_smart</code>：智能语义切分 </li>
+<li><code>ik_max_word</code>：最细粒度切分 </li>
+</ul>
+<p><br></p>
+<p>我们在Kibana的DevTools上测试分词器，首先测试Elasticsearch官方提供的标准分词器：</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">/_a</span><span class="kc">nal</span><span class="err">yze</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;analyzer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Elasticsearch是一个基于Lucene的搜索服务器&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>标准分词器适用于英文分词，中文分词效果不好</p>
+<p>中文建议使用<code>ik_smart</code>模式</p>
+</div>
+<p><br></p>
+<h4 id="拓展词典">拓展词典<a class="headerlink" href="#拓展词典" title="链接到此段落">&para;</a></h4>
+<p>随着互联网的发展，“造词运动”也越发的频繁。出现了很多新的词语，在原有的词汇列表中并不存在。</p>
+<p>所以要想正确分词，IK分词器的词库也需要不断的更新，IK分词器提供了扩展词汇的功能。</p>
+<p>1.打开IK分词器config目录：</p>
+<p><img alt="image-20250219195305871" src="../images/image-20250219195305871.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>注意，如果采用在线安装的通过，默认是没有config目录的，需要自己创建</p>
+</div>
+<p>2.在IKAnalyzer.cfg.xml配置文件内容添加：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE properties SYSTEM &quot;http://java.sun.com/dtd/properties.dtd&quot;&gt;</span>
+<span class="nt">&lt;properties&gt;</span>
+<span class="w">        </span><span class="nt">&lt;comment&gt;</span>IK<span class="w"> </span>Analyzer<span class="w"> </span>扩展配置<span class="nt">&lt;/comment&gt;</span>
+<span class="w">        </span><span class="cm">&lt;!--用户可以在这里配置自己的扩展字典 *** 添加扩展词典--&gt;</span>
+<span class="w">        </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ext_dict&quot;</span><span class="nt">&gt;</span>ext.dic<span class="nt">&lt;/entry&gt;</span>
+<span class="w">        </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;ext_stopwords&quot;</span><span class="nt">&gt;&lt;/entry&gt;</span><span class="w">     </span><span class="cm">&lt;!-- 停用词配置 --&gt;</span>
+<span class="w">        </span><span class="nt">&lt;entry</span><span class="w"> </span><span class="na">key=</span><span class="s">&quot;remote_ext_dict&quot;</span><span class="nt">&gt;&lt;/entry&gt;</span><span class="w">    </span><span class="cm">&lt;!-- 远程词典 --&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+</code></pre></div>
+<p>3.在IK分词器的config目录新建一个 <code>ext.dic</code>，可以参考config目录下复制一个配置文件进行修改</p>
+<div class="highlight"><pre><span></span><code>一坤年
+泰裤辣
+</code></pre></div>
+<p><br></p>
+<h2 id="基础概念">基础概念<a class="headerlink" href="#基础概念" title="链接到此段落">&para;</a></h2>
+<h3 id="文档和字段">文档和字段<a class="headerlink" href="#文档和字段" title="链接到此段落">&para;</a></h3>
+<p>Elasticsearch是面向<strong>文档（Document）</strong>存储的，可以是数据库中的一条商品数据，一个订单信息。</p>
+<p>文档数据会被序列化为<code>json</code>格式后存储在<code>elasticsearch</code>，因此，原本数据库中的一行数据就是ES中的一个JSON文档</p>
+<p>而数据库中每行数据都包含很多列，这些列就转换为JSON文档中的<strong>字段（Field）</strong>。</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;小米手机&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3499</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;华为手机&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4999</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;华为小米充电器&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">49</span>
+<span class="p">}</span>
+<span class="err">...</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="索引和映射">索引和映射<a class="headerlink" href="#索引和映射" title="链接到此段落">&para;</a></h3>
+<p>随着业务发展，需要在es中存储的文档也会越来越多，比如有商品的文档、用户的文档、订单文档等等，所有文档都散乱存放显然非常混乱，也不方便管理。</p>
+<p>因此，我们要将类型相同的文档集中在一起管理，称为<strong>索引（Index）</strong>（索引类似于数据库中“表”的概念）</p>
+<p>数据库的表会有约束信息，用来定义表的结构、字段的名称、类型等信息。因此，索引库中就有<strong>映射（mapping）</strong>，是索引中文档的字段约束信息，类似表的结构约束。</p>
+<p>MySQL 与 Elasticsearch</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>MySQL</strong></th>
+<th style="text-align: left;"><strong>Elasticsearch</strong></th>
+<th style="text-align: left;"><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Table</td>
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;">索引(index)，就是文档的集合，类似数据库的表(table)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Row</td>
+<td style="text-align: left;">Document</td>
+<td style="text-align: left;">文档（Document），就是一条条的数据，类似数据库中的行（Row），文档都是JSON格式</td>
+</tr>
+<tr>
+<td style="text-align: left;">Column</td>
+<td style="text-align: left;">Field</td>
+<td style="text-align: left;">字段（Field），就是JSON文档中的字段，类似数据库中的列（Column）</td>
+</tr>
+<tr>
+<td style="text-align: left;">Schema</td>
+<td style="text-align: left;">Mapping</td>
+<td style="text-align: left;">Mapping（映射）是索引中文档的约束，例如字段类型约束。类似数据库的表结构（Schema）</td>
+</tr>
+<tr>
+<td style="text-align: left;">SQL</td>
+<td style="text-align: left;">DSL</td>
+<td style="text-align: left;">DSL是elasticsearch提供的JSON风格的请求语句，用来操作elasticsearch，实现CRUD</td>
+</tr>
+</tbody>
+</table>
+<p>在企业中，往往是两者结合使用：</p>
+<ul>
+<li>对安全性要求较高的写操作，使用mysql实现</li>
+<li>对查询性能要求较高的搜索需求，使用elasticsearch实现</li>
+<li>两者再基于某种方式，实现数据的同步，保证一致性</li>
+</ul>
+<p><img alt="image-20250219200655300" src="../images/image-20250219200655300.png" /></p>
+<p><br></p>
+<hr />
+<h2 id="索引库操作">索引库操作<a class="headerlink" href="#索引库操作" title="链接到此段落">&para;</a></h2>
+<h3 id="mapping映射属性">Mapping映射属性<a class="headerlink" href="#mapping映射属性" title="链接到此段落">&para;</a></h3>
+<p>Mapping是对索引库中文档的约束，常见的Mapping属性包括：</p>
+<ul>
+<li><code>type</code>：字段数据类型，常见的简单类型有： <ul>
+<li>字符串：<code>text</code>（可分词的文本）、<code>keyword</code>（精确值，不应分词，例如：品牌、国家、ip地址）</li>
+<li>数值：<code>long</code>、<code>integer</code>、<code>short</code>、<code>byte</code>、<code>double</code>、<code>float</code>、</li>
+<li>布尔：<code>boolean</code></li>
+<li>日期：<code>date</code></li>
+<li>对象：<code>object</code></li>
+</ul>
+</li>
+<li><code>index</code>：是否创建索引（是否参与搜索），默认为<code>true</code></li>
+<li><code>analyzer</code>：使用哪种分词器</li>
+<li><code>properties</code>：该字段的子字段</li>
+</ul>
+<p><br></p>
+<p>例如下面的json文档：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;weight&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">52.1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;isMarried&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;黑马程序员Java讲师&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zy@itcast.cn&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">99.1</span><span class="p">,</span><span class="w"> </span><span class="mf">99.5</span><span class="p">,</span><span class="w"> </span><span class="mf">98.9</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;云&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;赵&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>对应的每个字段映射（Mapping）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>字段名</strong></th>
+<th style="text-align: center;"><strong>字段类型</strong></th>
+<th style="text-align: center;"><strong>类型说明</strong></th>
+<th style="text-align: center;"><strong>是否</strong>参与搜索</th>
+<th style="text-align: center;"><strong>是否</strong>参与分词</th>
+<th style="text-align: center;"><strong>分词器</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">age</td>
+<td style="text-align: center;"><code>integer</code></td>
+<td style="text-align: center;">整数</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+<tr>
+<td style="text-align: center;">weight</td>
+<td style="text-align: center;"><code>float</code></td>
+<td style="text-align: center;">浮点数</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+<tr>
+<td style="text-align: center;">isMarried</td>
+<td style="text-align: center;"><code>boolean</code></td>
+<td style="text-align: center;">布尔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+<tr>
+<td style="text-align: center;">info</td>
+<td style="text-align: center;"><code>text</code></td>
+<td style="text-align: center;">字符串，但需要分词</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">IK</td>
+</tr>
+<tr>
+<td style="text-align: center;">email</td>
+<td style="text-align: center;"><code>keyword</code></td>
+<td style="text-align: center;">字符串，但是不分词</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+<tr>
+<td style="text-align: center;">score</td>
+<td style="text-align: center;"><code>float</code></td>
+<td style="text-align: center;">只看数组中元素类型</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+<tr>
+<td style="text-align: center;">name</td>
+<td style="text-align: center;"><code>keyword</code></td>
+<td style="text-align: center;">字符串，但是不分词</td>
+<td style="text-align: center;">✔</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">——</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h3 id="crud">CRUD<a class="headerlink" href="#crud" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>创建索引库和mapping</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/&lt;索引库名称&gt;</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;mappings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;&lt;字段名&gt;&quot;</span><span class="p">:{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;analyzer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ik_smart&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;&lt;字段名2&gt;&quot;</span><span class="p">:{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;keyword&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;&lt;字段名3&gt;&quot;</span><span class="p">:{</span>
+<span class="w">        </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;&lt;子字段&gt;&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;keyword&quot;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="c1">// ...略</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>查询索引库</li>
+</ul>
+<div class="highlight"><pre><span></span><code>GET /索引库名
+</code></pre></div>
+<ul>
+<li>删除索引库</li>
+</ul>
+<div class="highlight"><pre><span></span><code>DELETE /索引库名
+</code></pre></div>
+<ul>
+<li>修改索引库</li>
+</ul>
+<p>倒排索引结构虽然不复杂，但是一旦数据结构改变（比如改变了分词器），就需要重新创建倒排索引，这简直是灾难。因此索引库<strong>一旦创建，就无法再修改mapping中原有字段的属性</strong>。</p>
+<p>虽然无法修改mapping中已有的字段，但是却允许添加新的字段到mapping中，因为不会对倒排索引产生影响。因此修改索引库能做的就是向索引库中添加新字段，或者更新索引库的基础属性。</p>
+<div class="highlight"><pre><span></span><code>PUT /索引库名/_mapping
+{
+  &quot;properties&quot;: {
+    &quot;&lt;新字段名&gt;&quot;:{
+      &quot;type&quot;: &quot;integer&quot;
+    }
+  }
+}
+</code></pre></div>
+<p><br></p>
+<hr />
+<h2 id="文档操作">文档操作<a class="headerlink" href="#文档操作" title="链接到此段落">&para;</a></h2>
+<h3 id="crud_1">CRUD<a class="headerlink" href="#crud_1" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>新增文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">/索引库名/_doc/文档id</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;字段1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;字段2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;字段3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;子属性1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值3&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;子属性2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值4&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>eg.</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">/heima/_doc/</span><span class="mi">1</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;info&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Elasticsearch是一个基于Lucene的搜索服务器&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example@example.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;云&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;赵&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>查询文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/索引库名/_doc/文档id</span>
+</code></pre></div>
+<ul>
+<li>删除文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">DELETE</span><span class="w"> </span><span class="err">/索引库名/_doc/文档id</span>
+</code></pre></div>
+<ul>
+<li>修改文档</li>
+</ul>
+<p>修改有两种方式：</p>
+<p>​全量修改：直接覆盖原来的文档</p>
+<p>局部修改：修改文档中的部分字段</p>
+<p><br></p>
+<p>1.全量修改</p>
+<p>全量修改是覆盖原来的文档，其本质是两步操作：</p>
+<ul>
+<li>根据指定的id删除文档</li>
+<li>新增一个相同id的文档</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>如果根据id删除时，id不存在，第二步的新增也会执行，但操作从修改变成了新增。</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_doc/文档id</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;字段1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;字段2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;值2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// ... 略</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>2.局部修改</p>
+<p>局部修改是只修改指定id匹配的文档中的部分字段。</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_upda</span><span class="kc">te</span><span class="err">/文档id</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;doc&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;字段名&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;新的值&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="批处理">批处理<a class="headerlink" href="#批处理" title="链接到此段落">&para;</a></h3>
+<p>批处理采用POST请求，基本语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">_bulk</span>
+
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;index&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;_index&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;field1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;delete&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;_index&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;create&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;_index&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;field1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value3&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;update&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;_id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;_index&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">&quot;doc&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;field2&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value2&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><code>index</code>代表新增操作<ul>
+<li><code>_index</code>：指定索引库名</li>
+<li><code>_id</code>指定要操作的文档id</li>
+<li><code>{ "field1" : "value1" }</code>：则是要新增的文档内容</li>
+</ul>
+</li>
+<li><code>delete</code>代表删除操作<ul>
+<li><code>_index</code>：指定索引库名</li>
+<li><code>_id</code>指定要操作的文档id</li>
+</ul>
+</li>
+<li><code>update</code>代表更新操作<ul>
+<li><code>_index</code>：指定索引库名</li>
+<li><code>_id</code>指定要操作的文档id</li>
+<li><code>{ "doc" : {"field2" : "value2"} }</code>：要更新的文档字段</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<hr />
+<h2 id="javarestclient">JavaRestClient<a class="headerlink" href="#javarestclient" title="链接到此段落">&para;</a></h2>
+<h3 id="restapi">RestAPI<a class="headerlink" href="#restapi" title="链接到此段落">&para;</a></h3>
+<p>ES官方提供了各种不同语言的客户端，用来操作ES。这些客户端的本质就是组装DSL语句，通过http请求发送给ES。</p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/client/index.html">官方文档地址</a></p>
+<p>由于ES目前提供了全新版本的客户端，老版本的客户端已经被标记为过时。此处采用老版本客户端作为示例<a href="../images/image-20250220170629116.png">image-20250220170629116</a></p>
+<p><br></p>
+<h3 id="初始化restclient">初始化RestClient<a class="headerlink" href="#初始化restclient" title="链接到此段落">&para;</a></h3>
+<p>在elasticsearch提供的API中，与elasticsearch一切交互都封装在一个名为<code>RestHighLevelClient</code>的类中，必须先完成这个对象的初始化，建立与elasticsearch的连接。</p>
+<ol>
+<li>
+<p>引入<code>es</code>的<code>RestHighLevelClient</code>依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>org.elasticsearch.client<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>elasticsearch-rest-high-level-client<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>因为SpringBoot提供了默认的ES版本，我们需要覆盖默认的ES版本：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;maven.compiler.source&gt;</span>11<span class="nt">&lt;/maven.compiler.source&gt;</span>
+<span class="w">    </span><span class="nt">&lt;maven.compiler.target&gt;</span>11<span class="nt">&lt;/maven.compiler.target&gt;</span>
+<span class="w">    </span><span class="nt">&lt;elasticsearch.version&gt;</span>7.12.1<span class="nt">&lt;/elasticsearch.version&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>初始化RestHighLevelClient：</p>
+<div class="highlight"><pre><span></span><code><span class="n">RestHighLevelClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RestHighLevelClient</span><span class="p">(</span><span class="n">RestClient</span><span class="p">.</span><span class="na">builder</span><span class="p">(</span>
+<span class="w">        </span><span class="n">HttpHost</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="s">&quot;Localhost:9200&quot;</span><span class="p">)</span>
+<span class="p">));</span>
+</code></pre></div>
+</li>
+</ol>
+<p><br></p>
+<h3 id="索引库操作_1">索引库操作<a class="headerlink" href="#索引库操作_1" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>
+<p>创建索引库
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">testCreateIndex</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CreateIndexRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CreateIndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// MAPPING_TEMPLATE是一个json字符串，定义了索引库的映射</span>
+<span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="n">MAPPING_TEMPLATE</span><span class="p">,</span><span class="w"> </span><span class="n">XContentType</span><span class="p">.</span><span class="na">JSON</span><span class="p">);</span>
+<span class="w">    </span><span class="n">client</span><span class="p">.</span><span class="na">indices</span><span class="p">().</span><span class="na">create</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>删除索引库</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testDeleteIndex</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1.创建Request对象</span>
+<span class="w">    </span><span class="n">DeleteIndexRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DeleteIndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2.发送请求</span>
+<span class="w">    </span><span class="n">client</span><span class="p">.</span><span class="na">indices</span><span class="p">().</span><span class="na">delete</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>查询索引库</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testGetIndex</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">GetIndexRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GetIndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="n">exists</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">indices</span><span class="p">().</span><span class="na">exists</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;exists = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">exists</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>JavaRestClient操作elasticsearch的流程基本类似。核心是<code>client.indices()</code>方法来获取索引库的操作对象。</p>
+<p>索引库操作的基本步骤：</p>
+<ul>
+<li>初始化<code>RestHighLevelClient</code></li>
+<li>创建XxxIndexRequest。XXX是<code>Create</code>、<code>Get</code>、<code>Delete</code></li>
+<li>准备请求参数（ <code>Create</code>时需要，其它是无参，可以省略）</li>
+<li>发送请求。调用<code>RestHighLevelClient#indices().xxx()</code>方法，xxx是<code>create</code>、<code>exists</code>、<code>delete</code></li>
+</ul>
+<p><br></p>
+<h3 id="文档操作_1">文档操作<a class="headerlink" href="#文档操作_1" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>新增文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testAddDocument</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1.根据id查询商品数据</span>
+<span class="w">    </span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itemService</span><span class="p">.</span><span class="na">getById</span><span class="p">(</span><span class="mi">100002644680L</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2.转换为文档类型</span>
+<span class="w">    </span><span class="n">ItemDoc</span><span class="w"> </span><span class="n">itemDoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BeanUtil</span><span class="p">.</span><span class="na">copyProperties</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 3.将ItemDTO转json</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">doc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toJsonStr</span><span class="p">(</span><span class="n">itemDoc</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 1.准备Request对象</span>
+<span class="w">    </span><span class="n">IndexRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">).</span><span class="na">id</span><span class="p">(</span><span class="n">itemDoc</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// 2.准备Json文档</span>
+<span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span><span class="w"> </span><span class="n">XContentType</span><span class="p">.</span><span class="na">JSON</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 3.发送请求</span>
+<span class="w">    </span><span class="n">client</span><span class="p">.</span><span class="na">index</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>删除文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testDeleteDocument</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1.准备Request，两个参数，第一个是索引库名，第二个是文档id</span>
+<span class="w">    </span><span class="n">DeleteRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DeleteRequest</span><span class="p">(</span><span class="s">&quot;item&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;100002644680&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2.发送请求</span>
+<span class="w">    </span><span class="n">client</span><span class="p">.</span><span class="na">delete</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>查询文档</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testGetDocumentById</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1.准备Request对象</span>
+<span class="w">    </span><span class="n">GetRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GetRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">).</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;100002644680&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2.发送请求</span>
+<span class="w">    </span><span class="n">GetResponse</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 3.获取响应结果中的source </span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">response</span><span class="p">.</span><span class="na">getSourceAsString</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">ItemDoc</span><span class="w"> </span><span class="n">itemDoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toBean</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;itemDoc= &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>更新文档</li>
+</ul>
+<p>在RestClient的API中，<strong>全量修改</strong>与新增的API完全一致，判断依据是ID：</p>
+<p>​   如果新增时，ID已经存在，则修改</p>
+<p>​   如果新增时，ID不存在，则新增</p>
+<p><strong>局部更新</strong></p>
+<p><img alt="image-20250220181619181" src="../images/image-20250220181619181.png" /></p>
+<ul>
+<li>批量操作</li>
+</ul>
+<p>批处理与前面讲的文档的CRUD步骤基本一致：</p>
+<ul>
+<li>创建Request，但这次用的是<code>BulkRequest</code></li>
+<li>准备请求参数</li>
+<li>发送请求，这次要用到<code>client.bulk()</code>方法</li>
+</ul>
+<p><code>BulkRequest</code>本身其实并没有请求参数，其本质就是将多个普通的CRUD请求组合在一起发送。例如：</p>
+<ul>
+<li>批量新增文档，就是给每个文档创建一个<code>IndexRequest</code>请求，然后封装到<code>BulkRequest</code>中，一起发出。</li>
+<li>批量删除，就是创建N个<code>DeleteRequest</code>请求，然后封装到<code>BulkRequest</code>，一起发出</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testBulk</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1.创建Request</span>
+<span class="w">    </span><span class="n">BulkRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BulkRequest</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 2.准备请求参数</span>
+<span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">IndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">).</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">).</span><span class="na">source</span><span class="p">(</span><span class="s">&quot;json doc1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">XContentType</span><span class="p">.</span><span class="na">JSON</span><span class="p">));</span>
+<span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">IndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">).</span><span class="na">id</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">).</span><span class="na">source</span><span class="p">(</span><span class="s">&quot;json doc2&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">XContentType</span><span class="p">.</span><span class="na">JSON</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// 3.发送请求</span>
+<span class="w">    </span><span class="n">client</span><span class="p">.</span><span class="na">bulk</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>业务示例：将数据库记录批量导入ES</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">testBulkDoc</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pageNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">pageSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span><span class="p">;</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Page</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itemService</span><span class="p">.</span><span class="na">lambdaQuery</span><span class="p">()</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">eq</span><span class="p">(</span><span class="n">Item</span><span class="p">::</span><span class="n">getStatus</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">page</span><span class="p">(</span><span class="n">Page</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">pageNum</span><span class="p">,</span><span class="w"> </span><span class="n">pageSize</span><span class="p">));</span>
+<span class="w">            </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="n">records</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">page</span><span class="p">.</span><span class="na">getRecords</span><span class="p">();</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">records</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">records</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">BulkRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">BulkRequest</span><span class="p">();</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">records</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">request</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">IndexRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">)</span>
+<span class="w">                        </span><span class="p">.</span><span class="na">id</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">toString</span><span class="p">())</span>
+<span class="w">                        </span><span class="p">.</span><span class="na">source</span><span class="p">(</span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toJsonStr</span><span class="p">(</span><span class="n">BeanUtil</span><span class="p">.</span><span class="na">copyProperties</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">.</span><span class="na">class</span><span class="p">)),</span><span class="w"> </span><span class="n">XContentType</span><span class="p">.</span><span class="na">JSON</span><span class="p">));</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">client</span><span class="p">.</span><span class="na">bulk</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="w">            </span><span class="n">pageNum</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<hr />
+<h2 id="dsl查询">DSL查询<a class="headerlink" href="#dsl查询" title="链接到此段落">&para;</a></h2>
+<p>Elasticsearch提供了基于JSON的DSL（<a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/query-dsl.html">Domain Specific Language</a>）语句来定义查询条件，其JavaAPI就是在组织DSL条件。</p>
+<p>Elasticsearch的查询可以分为两大类：</p>
+<ul>
+<li><strong>叶子查询（Leaf</strong> <strong>query</strong> <strong>clauses）</strong>：一般是在特定的字段里查询特定值，属于简单查询，很少单独使用。</li>
+<li><strong>复合查询（Compound</strong> <strong>query</strong> <strong>clauses）</strong>：以逻辑方式组合多个叶子查询或者更改叶子查询的行为方式。</li>
+</ul>
+<p><br></p>
+<h3 id="入门">入门<a class="headerlink" href="#入门" title="链接到此段落">&para;</a></h3>
+<p>语法结构</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;查询类型&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// .. 查询条件</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>eg查询所有</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match_all&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>虽然是match_all，但是响应结果中并不会包含索引库中的所有文档，而是仅有10条。
+这是因为处于安全考虑，elasticsearch设置了默认的查询页数。</p>
+</div>
+<p><br></p>
+<h3 id="叶子查询">叶子查询<a class="headerlink" href="#叶子查询" title="链接到此段落">&para;</a></h3>
+<p>叶子查询的类型也可以做进一步细分，详情可以查看<a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/query-dsl.html">官方文档</a></p>
+<p>例如：</p>
+<ul>
+<li><strong>全文检索查询（Full Text Queries）</strong>：利用分词器对用户输入搜索条件先分词，得到词条，然后再利用倒排索引搜索词条。例如：<ul>
+<li><code>match</code>：</li>
+<li><code>multi_match</code></li>
+</ul>
+</li>
+<li><strong>精确查询（Term-level queries）</strong>：不对用户输入搜索条件分词，根据字段内容精确值匹配。但只能查找keyword、数值、日期、boolean类型的字段。例如：<ul>
+<li><code>ids</code></li>
+<li><code>term</code></li>
+<li><code>range</code></li>
+</ul>
+</li>
+<li><strong>地理坐标查询：</strong>用于搜索地理位置，搜索方式很多，例如：<ul>
+<li><code>geo_bounding_box</code>：按矩形搜索</li>
+<li><code>geo_distance</code>：按点和半径搜索</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<h4 id="全文检索查询">全文检索查询<a class="headerlink" href="#全文检索查询" title="链接到此段落">&para;</a></h4>
+<p>全文检索的种类也很多，详情可以参考<a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/full-text-queries.html">官方文档</a></p>
+<p>以全文检索中的<code>match</code>为例，语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;字段名&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;搜索条件&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img alt="image-20250221173539449" src="../images/image-20250221173539449.png" /></p>
+<p><code>match</code>类似的还有<code>multi_match</code>，区别在于可以同时对多个字段搜索，而且多个字段都要满足，语法示例：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;multi_match&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;搜索条件&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;字段1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;字段2&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img alt="image-20250221173632434" src="../images/image-20250221173632434.png" /></p>
+<p><br></p>
+<h4 id="精确查询">精确查询<a class="headerlink" href="#精确查询" title="链接到此段落">&para;</a></h4>
+<p>精确查询，英文是<code>Term-level query</code>，顾名思义，词条级别的查询。也就是说不会对用户输入的搜索条件再分词，而是作为一个词条，与搜索的字段内容精确值匹配。因此推荐查找<code>keyword</code>、数值、日期、<code>boolean</code>类型的字段。</p>
+<p>以<code>term</code>查询为例，其语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;term&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;字段名&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;搜索条件&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>range</code>查询，语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;range&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;字段名&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;gte&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">最小值</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;lte&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">最大值</span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>range</code>是范围查询，对于范围筛选的关键字有：</p>
+<ul>
+<li><code>gte</code>：大于等于</li>
+<li><code>gt</code>：大于</li>
+<li><code>lte</code>：小于等于</li>
+<li><code>lt</code>：小于</li>
+</ul>
+<p><br></p>
+<h3 id="复合查询">复合查询<a class="headerlink" href="#复合查询" title="链接到此段落">&para;</a></h3>
+<p>复合查询大致可以分为两类：</p>
+<ul>
+<li>第一类：基于逻辑运算组合叶子查询，实现组合条件，例如<ul>
+<li>bool</li>
+</ul>
+</li>
+<li>第二类：基于某种算法修改查询时的文档相关性算分，从而改变文档排名。例如：<ul>
+<li>function_score</li>
+<li>dis_max</li>
+</ul>
+</li>
+</ul>
+<p>其它复合查询及相关语法可以参考<a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/compound-queries.html">官方文档</a></p>
+<p><br></p>
+<h4 id="bool查询">bool查询<a class="headerlink" href="#bool查询" title="链接到此段落">&para;</a></h4>
+<p>bool查询，即布尔查询。就是利用逻辑运算来组合一个或多个查询子句的组合。</p>
+<p>bool查询支持的逻辑运算有：</p>
+<ul>
+<li>must：必须匹配每个子查询，类似“与”</li>
+<li>should：选择性匹配子查询，类似“或”</li>
+<li>must_not：必须不匹配，<strong>不参与算分</strong>，类似“非”</li>
+<li>filter：必须匹配，<strong>不参与算分</strong></li>
+</ul>
+<blockquote>
+<p>出于性能考虑，与搜索关键字无关的查询尽量采用must_not或filter逻辑运算，避免参与相关性算分。</p>
+</blockquote>
+<p>例如搜索页面：</p>
+<p><img alt="img" src="../images/1740132347702-1.png" /></p>
+<p>其中输入框的搜索条件肯定要参与相关性算分，可以采用match。但是价格范围过滤、品牌过滤、分类过滤等尽量采用filter，不要参与相关性算分。</p>
+<p>比如，我们要搜索<code>手机</code>，但品牌必须是<code>华为</code>，价格必须是<code>900~1599</code>，那么可以这样写：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;bool&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;must&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;match&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;手机&quot;</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;filter&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;term&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;brand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;华为&quot;</span><span class="w"> </span><span class="p">}}},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">&quot;range&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;gte&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">90000</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;lt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">159900</span><span class="p">}}}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="排序和分页">排序和分页<a class="headerlink" href="#排序和分页" title="链接到此段落">&para;</a></h3>
+<h4 id="排序">排序<a class="headerlink" href="#排序" title="链接到此段落">&para;</a></h4>
+<p>elasticsearch默认是根据相关度算分（<code>_score</code>）来排序，但是也支持自定义方式对搜索结果排序。不过分词字段无法排序，能参与排序字段类型有：<code>keyword</code>类型、数值类型、地理坐标类型、日期类型等。</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">dexName/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match_all&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;排序字段&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;排序方式asc和desc&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>示例，我们按照商品价格排序：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match_all&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;desc&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<h4 id="分页">分页<a class="headerlink" href="#分页" title="链接到此段落">&para;</a></h4>
+<p>lasticsearch中通过修改<code>from</code>、<code>size</code>参数来控制要返回的分页结果：</p>
+<ul>
+<li><code>from</code>：从第几个文档开始</li>
+<li><code>size</code>：总共查询几个文档</li>
+</ul>
+<p>类似于mysql中的<code>limit ?, ?</code></p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match_all&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 分页开始的位置，默认为0</span>
+<span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">  </span><span class="c1">// 每页文档数量，默认10</span>
+<span class="w">  </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;desc&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<h4 id="深度分页">深度分页<a class="headerlink" href="#深度分页" title="链接到此段落">&para;</a></h4>
+<p>elasticsearch的数据一般会采用分片存储，也就是把一个索引中的数据分成N份，存储到不同节点上。这种存储方式比较有利于数据扩展，但给分页带来了一些麻烦。 </p>
+<p>比如一个索引库中有100000条数据，分别存储到4个分片，每个分片25000条数据。现在每页查询10条，查询第99页。那么分页查询的条件如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">990</span><span class="p">,</span><span class="w"> </span><span class="c1">// 从第990条开始查询</span>
+<span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="c1">// 每页查询10条</span>
+<span class="w">  </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;asc&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>从语句来分析，要查询第990~1000名的数据。</p>
+<p>从实现思路来分析，肯定是将所有数据排序，找出前1000名，截取其中的990~1000的部分。但问题来了，我们如何才能找到所有数据中的前1000名呢？</p>
+<p>要知道每一片的数据都不一样，第1片上的第900~1000，在另1个节点上并不一定依然是900~1000名。所以我们只能在每一个分片上都找出排名前1000的数据，然后汇总到一起，重新排序，才能找出整个索引库中真正的前1000名，此时截取990~1000的数据即可。</p>
+<p>如图：</p>
+<p><img alt="img" src="../images/1740133622949-4.png" /></p>
+<p>试想一下，假如我们现在要查询的是第999页数据呢，是不是要找第9990~10000的数据，那岂不是需要把每个分片中的前10000名数据都查询出来，汇总在一起，在内存中排序？如果查询的分页深度更深呢，需要一次检索的数据岂不是更多？</p>
+<p><br></p>
+<p>由此可知，当查询分页深度较大时，汇总数据过多，对内存和CPU会产生非常大的压力。</p>
+<p>因此elasticsearch会禁止<code>from + size</code>超过10000的请求。</p>
+<p>针对深度分页，elasticsearch提供了两种解决方案：</p>
+<ul>
+<li><code>search after</code>：分页时需要排序，原理是从上一次的排序值开始，查询下一页数据。官方推荐使用的方式。</li>
+<li><code>scroll</code>：原理将排序后的文档id形成快照，保存下来，基于快照做分页。官方已经不推荐使用。</li>
+</ul>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/paginate-search-results.html">详情见文档</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>大多数情况下，我们采用普通分页就可以了。查看百度、京东等网站，会发现其分页都有限制。例如百度最多支持77页，每页不足20条。京东最多100页，每页最多60条。
+因此，一般我们采用限制分页深度的方式即可，无需实现深度分页。</p>
+</div>
+<p><br></p>
+<h3 id="高亮显示">高亮显示<a class="headerlink" href="#高亮显示" title="链接到此段落">&para;</a></h3>
+<p>我们在百度，京东搜索时，关键字会变成红色，比较醒目，这叫做高亮显示</p>
+<p>实现高亮的思路就是：</p>
+<ul>
+<li>用户输入搜索关键字搜索数据</li>
+<li>服务端根据搜索关键字到elasticsearch搜索，并给搜索结果中的关键字词条添加<code>html</code>标签</li>
+<li>前端提前给约定好的<code>html</code>标签添加<code>CSS</code>样式</li>
+</ul>
+<p>事实上elasticsearch已经提供了给搜索关键字加标签的语法，无需我们自己编码。</p>
+<p>基本语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/</span><span class="p">{</span><span class="err">索引库名</span><span class="p">}</span><span class="err">/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;match&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;搜索字段&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;搜索关键字&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;高亮字段名称&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;pre_tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;em&gt;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;post_tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;/em&gt;&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<ul>
+<li>搜索必须有查询条件，而且是全文检索类型的查询条件，例如<code>match</code></li>
+<li>参与高亮的字段必须是<code>text</code>类型的字段</li>
+<li>默认情况下参与高亮的字段要与搜索字段一致，除非添加：<code>required_field_match=false</code></li>
+</ul>
+</div>
+<p><br></p>
+<h3 id="总结">总结<a class="headerlink" href="#总结" title="链接到此段落">&para;</a></h3>
+<p>查询的DSL是一个大的JSON对象，包含下列属性：</p>
+<ul>
+<li><code>query</code>：查询条件</li>
+<li><code>from</code>和<code>size</code>：分页条件</li>
+<li><code>sort</code>：排序条件</li>
+<li><code>highlight</code>：高亮条件</li>
+</ul>
+<p><br></p>
+<hr />
+<h2 id="restclient查询">RestClient查询<a class="headerlink" href="#restclient查询" title="链接到此段落">&para;</a></h2>
+<p>文档的查询依然使用 <code>RestHighLevelClient</code>对象，查询的基本步骤如下：</p>
+<ul>
+<li>创建<code>request</code>对象，这次是搜索，所以是<code>SearchRequest</code></li>
+<li>准备请求参数，也就是查询DSL对应的JSON参数</li>
+<li>发起请求</li>
+<li>解析响应，响应结果相对复杂，需要逐层解析</li>
+</ul>
+<p><br></p>
+<h3 id="入门_1">入门<a class="headerlink" href="#入门_1" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>创建<code>SearchRequest</code>对象</li>
+<li>准备<code>request.source()</code>，也就是DSL。<ul>
+<li><code>QueryBuilders</code>来构建查询条件</li>
+<li>传入<code>request.source()</code> 的<code>query()</code>方法</li>
+</ul>
+</li>
+<li>发送请求，得到结果</li>
+<li>解析结果（参考JSON结果，从外到内，逐层解析）</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testMatchAll</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//创建request对象</span>
+<span class="w">    </span><span class="n">SearchRequest</span><span class="w"> </span><span class="n">searchRequest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SearchRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//配置request参数</span>
+<span class="w">    </span><span class="n">searchRequest</span><span class="p">.</span><span class="na">source</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="n">QueryBuilders</span><span class="p">.</span><span class="na">matchAllQuery</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">//执行查询</span>
+<span class="w">    </span><span class="n">SearchResponse</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="n">searchRequest</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">//处理结果</span>
+<span class="w">    </span><span class="n">SearchHits</span><span class="w"> </span><span class="n">searchHits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">response</span><span class="p">.</span><span class="na">getHits</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchHits</span><span class="p">.</span><span class="na">getTotalHits</span><span class="p">().</span><span class="na">value</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">SearchHit</span><span class="o">[]</span><span class="w"> </span><span class="n">hits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchHits</span><span class="p">.</span><span class="na">getHits</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">SearchHit</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">hits</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hit</span><span class="p">.</span><span class="na">getSourceAsString</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ItemDoc</span><span class="w"> </span><span class="n">bean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toBean</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;bean = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bean</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img alt="image-20250221193557137" src="../images/image-20250221193557137.png" /></p>
+<ul>
+<li><code>hits</code>：命中的结果 </li>
+<li><code>total</code>：总条数，其中的value是具体的总条数值</li>
+<li><code>max_score</code>：所有结果中得分最高的文档的相关性算分</li>
+<li><code>hits</code>：搜索结果的文档数组，其中的每个文档都是一个json对象 <ul>
+<li><code>_source</code>：文档中的原始数据，也是json对象</li>
+</ul>
+</li>
+</ul>
+<p><br></p>
+<h3 id="构建查询条件">构建查询条件<a class="headerlink" href="#构建查询条件" title="链接到此段落">&para;</a></h3>
+<p>所有的查询条件都是使用QueryBuilders来构建的</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testSearch</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SearchRequest</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SearchRequest</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">request</span><span class="p">.</span><span class="na">source</span><span class="p">().</span><span class="na">query</span><span class="p">(</span>
+<span class="w">            </span><span class="n">QueryBuilders</span><span class="p">.</span><span class="na">boolQuery</span><span class="p">()</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">must</span><span class="p">(</span><span class="n">QueryBuilders</span><span class="p">.</span><span class="na">matchQuery</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;脱脂牛奶&quot;</span><span class="p">))</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">QueryBuilders</span><span class="p">.</span><span class="na">termQuery</span><span class="p">(</span><span class="s">&quot;brand.keyword&quot;</span><span class="p">,</span><span class="s">&quot;德亚&quot;</span><span class="p">))</span>
+<span class="w">                    </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">QueryBuilders</span><span class="p">.</span><span class="na">rangeQuery</span><span class="p">(</span><span class="s">&quot;price&quot;</span><span class="p">).</span><span class="na">lt</span><span class="p">(</span><span class="mi">30000</span><span class="p">))</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">SearchResponse</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="p">.</span><span class="na">search</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="w"> </span><span class="n">RequestOptions</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span>
+<span class="w">    </span><span class="n">parseResult</span><span class="p">(</span><span class="n">response</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="分页和排序">分页和排序<a class="headerlink" href="#分页和排序" title="链接到此段落">&para;</a></h3>
+<p><code>requeset.source()</code>就是整个请求JSON参数，所以排序、分页都是基于这个来设置</p>
+<p><img alt="image-20250221195212813" src="../images/image-20250221195212813.png" /></p>
+<p><br></p>
+<h3 id="高亮显示_1">高亮显示<a class="headerlink" href="#高亮显示_1" title="链接到此段落">&para;</a></h3>
+<p>高亮查询与前面的查询有两点不同：</p>
+<ul>
+<li>条件同样是在<code>request.source()</code>中指定，只不过高亮条件要基于<code>HighlightBuilder</code>来构造</li>
+<li>高亮响应结果与搜索的文档结果不在一起，需要<strong>单独解析</strong></li>
+</ul>
+<p><img alt="image-20250221200221666" src="../images/image-20250221200221666.png" /></p>
+<p><strong>解析高亮结果</strong></p>
+<ul>
+<li>
+<p>获取高亮结果。<code>hit.getHighlightFields()</code>，返回值是一个<code>Map</code>，key是高亮字段名称，值是<code>HighlightField</code>对象，代表高亮值</p>
+</li>
+<li>
+<p>从<code>Map</code>中根据高亮字段名称，获取高亮字段值对象<code>HighlightField</code></p>
+</li>
+<li>
+<p>从<code>HighlightField</code>中获取<code>Fragments</code>，并且转为字符串。这部分就是真正的高亮字符串了</p>
+<blockquote>
+<p><strong>注意</strong>Fragments实际上返回数组，需要将数组拼接得到高亮字符串(ES会将过长的字符串拆分成多个片段)</p>
+</blockquote>
+</li>
+<li>
+<p>最后用高亮的结果替换Bean中非高亮结果</p>
+</li>
+</ul>
+<p>eg</p>
+<div class="highlight"><pre><span></span><code><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleResponse</span><span class="p">(</span><span class="n">SearchResponse</span><span class="w"> </span><span class="n">response</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SearchHits</span><span class="w"> </span><span class="n">searchHits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">response</span><span class="p">.</span><span class="na">getHits</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 1.获取总条数</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchHits</span><span class="p">.</span><span class="na">getTotalHits</span><span class="p">().</span><span class="na">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;共搜索到&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;条数据&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2.遍历结果数组</span>
+<span class="w">    </span><span class="n">SearchHit</span><span class="o">[]</span><span class="w"> </span><span class="n">hits</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchHits</span><span class="p">.</span><span class="na">getHits</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">SearchHit</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">hits</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 3.得到_source，也就是原始json文档</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hit</span><span class="p">.</span><span class="na">getSourceAsString</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">// 4.反序列化</span>
+<span class="w">        </span><span class="n">ItemDoc</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JSONUtil</span><span class="p">.</span><span class="na">toBean</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">ItemDoc</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 5.获取高亮结果</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">HighlightField</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hfs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hit</span><span class="p">.</span><span class="na">getHighlightFields</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">CollUtils</span><span class="p">.</span><span class="na">isNotEmpty</span><span class="p">(</span><span class="n">hfs</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 5.1.有高亮结果，获取name的高亮结果</span>
+<span class="w">            </span><span class="n">HighlightField</span><span class="w"> </span><span class="n">hf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hfs</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hf</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// 5.2.获取第一个高亮结果片段，就是商品名称的高亮值</span>
+<span class="w">                </span><span class="n">String</span><span class="w"> </span><span class="n">hfName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hf</span><span class="p">.</span><span class="na">getFragments</span><span class="p">()</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="na">string</span><span class="p">();</span>
+<span class="w">                </span><span class="n">item</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">hfName</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<hr />
+<h2 id="数据聚合">数据聚合<a class="headerlink" href="#数据聚合" title="链接到此段落">&para;</a></h2>
+<p>聚合（<code>aggregations</code>）可以让我们极其方便的实现对数据的统计、分析、运算。</p>
+<p>例如：</p>
+<ul>
+<li>什么品牌的手机最受欢迎？</li>
+<li>这些手机的平均价格、最高价格、最低价格？</li>
+<li>这些手机每月的销售情况如何？</li>
+</ul>
+<p>实现这些统计功能的比数据库的sql要方便的多，而且查询速度非常快，可以实现近实时搜索效果。</p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/8.19/search-aggregations.html">官方文档</a></p>
+<p>聚合常见的有三类：</p>
+<ul>
+<li><strong>桶（<code>Bucket</code>）</strong>聚合：用来对文档做分组 <ul>
+<li><code>TermAggregation</code>：按照文档字段值分组，例如按照品牌值分组、按照国家分组</li>
+<li><code>Date Histogram</code>：按照日期阶梯分组，例如一周为一组，或者一月为一组</li>
+</ul>
+</li>
+<li><strong>度量（<code>Metric</code>）</strong>聚合：用以计算一些值，比如：最大值、最小值、平均值等 <ul>
+<li><code>Avg</code>：求平均值</li>
+<li><code>Max</code>：求最大值</li>
+<li><code>Min</code>：求最小值</li>
+<li><code>Stats</code>：同时求<code>max</code>、<code>min</code>、<code>avg</code>、<code>sum</code>等</li>
+</ul>
+</li>
+<li><strong>管道（<code>pipeline</code>）</strong>聚合：以其它聚合的结果为基础做进一步运算 </li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>参加聚合的字段必须是keyword、日期、数值、布尔类型</p>
+</div>
+<p><br></p>
+<h3 id="dsl语法">DSL语法<a class="headerlink" href="#dsl语法" title="链接到此段落">&para;</a></h3>
+<ul>
+<li><strong>桶聚合</strong></li>
+</ul>
+<p>基本语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">&quot;aggs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;category_agg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;terms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;field&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;category&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>语法说明：</p>
+<ul>
+<li><code>size</code>：设置<code>size</code>为0，就是每页查0条，则结果中就不包含文档，只包含聚合结果</li>
+<li>
+<p><code>aggs</code>：定义聚合</p>
+<ul>
+<li><code>category_agg</code>：聚合名称，自定义，但不能重复<ul>
+<li><code>terms</code>：聚合的类型，按分类聚合，所以用<code>term</code><ul>
+<li><code>field</code>：参与聚合的字段名称</li>
+<li><code>size</code>：希望返回的聚合结果的最大数量</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>带条件的聚合</strong>只需要添加<code>query</code>设置条件即可</p>
+</li>
+<li>
+<p><strong>Metric</strong>聚合</p>
+</li>
+</ul>
+<p>现在我们需要对桶内的商品做运算，获取每个品牌价格的最小值、最大值、平均值。</p>
+<p>这就要用到<code>Metric</code>聚合了，例如<code>stat</code>聚合，就可以同时获取<code>min</code>、<code>max</code>、<code>avg</code>等结果。</p>
+<p>语法如下：</p>
+<div class="highlight"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">te</span><span class="err">ms/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;bool&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;filter&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;term&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;手机&quot;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;range&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;gte&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">300000</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">&quot;aggs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;brand_agg&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;terms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;field&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brand&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;aggs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;stats_meric&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;stats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;field&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;price&quot;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p>嵌套了metric聚合</p>
+</blockquote>
+<p><img alt="image-20250221205056076" src="../images/image-20250221205056076.png" /></p>
+<p>聚合必须的三要素：</p>
+<ul>
+<li>聚合名称</li>
+<li>聚合类型</li>
+<li>聚合字段</li>
+</ul>
+<p>聚合可配置属性有：</p>
+<ul>
+<li>size：指定聚合结果数量</li>
+<li>order：指定聚合结果排序方式</li>
+<li>field：指定聚合字段</li>
+</ul>
+<p><br></p>
+<h3 id="restclient实现">RestClient实现<a class="headerlink" href="#restclient实现" title="链接到此段落">&para;</a></h3>
+<p>利用<code>request.source()</code>方法来设置聚合</p>
+<p>聚合条件的要利用<code>AggregationBuilders</code>这个工具类来构造</p>
+<p><img alt="image-20250221205242861" src="../images/image-20250221205242861.png" /></p>
+<p>需要单独解析聚合结果</p>
+<p><img alt="image-20250221205517623" src="../images/image-20250221205517623.png" /></p>
+<blockquote>
+<p>使用aggregations.get()返回聚合结果时，应该根据<strong>聚合类型</strong>使用具体的<strong>子接口</strong>接收，而不是使用顶级接口<code>Aggregation</code></p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

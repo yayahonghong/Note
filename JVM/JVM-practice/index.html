@@ -1,0 +1,4691 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yayahonghong.github.io/Note/JVM/JVM-practice/">
+      
+      
+        <link rel="prev" href="../JVM-base/">
+      
+      
+        <link rel="next" href="../JVM-advance/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>JVM 实践 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#内存调优" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              JVM 实践
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#内存泄露内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存泄露&amp;&amp;内存溢出
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#解决内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      解决内存溢出
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决内存溢出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#发现问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="发现问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#在线定位问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      在线定位问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#两种方案的比较" class="md-nav__link">
+    <span class="md-ellipsis">
+      两种方案的比较
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#内存溢出原因分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存溢出原因分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="内存溢出原因分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#代码规范问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      代码规范问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#并发请求问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      并发请求问题
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#诊断问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      诊断问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="诊断问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#内存快照" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存快照
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修复问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      修复问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="修复问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例一分页查询文章接口的内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例一：分页查询文章接口的内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例二mybatis导致的内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例二：Mybatis导致的内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例三导出大文件内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例三：导出大文件内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例四threadlocal使用时占用大量内存" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例四：ThreadLocal使用时占用大量内存
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例五文章内容审核接口的内存问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例五：文章内容审核接口的内存问题
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gc调优" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC调优
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GC调优">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gc调优指标" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC调优指标
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#发现问题_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="发现问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jstat工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      jstat工具
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualvm插件" class="md-nav__link">
+    <span class="md-ellipsis">
+      visualvm插件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus--grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus + Grafana
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gc日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gc-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC Viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gceasy" class="md-nav__link">
+    <span class="md-ellipsis">
+      GCeasy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常见的gc模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      常见的GC模式
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#解决gc问题的手段" class="md-nav__link">
+    <span class="md-ellipsis">
+      解决GC问题的手段
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决GC问题的手段">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#优化基础jvm参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      优化基础JVM参数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能调优" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能调优
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能调优">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#线程转储的查看方式" class="md-nav__link">
+    <span class="md-ellipsis">
+      线程转储的查看方式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例1cpu占用率高问题的解决方案" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例1：CPU占用率高问题的解决方案
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例2接口响应时间很长的问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例2：接口响应时间很长的问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例3定位偏底层的性能问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例3：定位偏底层的性能问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例4线程被耗尽问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例4：线程被耗尽问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jmh" class="md-nav__link">
+    <span class="md-ellipsis">
+      JMH
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#综合案例" class="md-nav__link">
+    <span class="md-ellipsis">
+      综合案例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#内存泄露内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存泄露&amp;&amp;内存溢出
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#解决内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      解决内存溢出
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决内存溢出">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#发现问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="发现问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#在线定位问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      在线定位问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#两种方案的比较" class="md-nav__link">
+    <span class="md-ellipsis">
+      两种方案的比较
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#内存溢出原因分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存溢出原因分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="内存溢出原因分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#代码规范问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      代码规范问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#并发请求问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      并发请求问题
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#诊断问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      诊断问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="诊断问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#内存快照" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存快照
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修复问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      修复问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="修复问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例一分页查询文章接口的内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例一：分页查询文章接口的内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例二mybatis导致的内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例二：Mybatis导致的内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例三导出大文件内存溢出" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例三：导出大文件内存溢出
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例四threadlocal使用时占用大量内存" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例四：ThreadLocal使用时占用大量内存
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例五文章内容审核接口的内存问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例五：文章内容审核接口的内存问题
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gc调优" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC调优
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GC调优">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gc调优指标" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC调优指标
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#发现问题_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现问题
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="发现问题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jstat工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      jstat工具
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualvm插件" class="md-nav__link">
+    <span class="md-ellipsis">
+      visualvm插件
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus--grafana" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus + Grafana
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gc日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC日志
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gc-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      GC Viewer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gceasy" class="md-nav__link">
+    <span class="md-ellipsis">
+      GCeasy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常见的gc模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      常见的GC模式
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#解决gc问题的手段" class="md-nav__link">
+    <span class="md-ellipsis">
+      解决GC问题的手段
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="解决GC问题的手段">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#优化基础jvm参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      优化基础JVM参数
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能调优" class="md-nav__link">
+    <span class="md-ellipsis">
+      性能调优
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能调优">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#线程转储的查看方式" class="md-nav__link">
+    <span class="md-ellipsis">
+      线程转储的查看方式
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例1cpu占用率高问题的解决方案" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例1：CPU占用率高问题的解决方案
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例2接口响应时间很长的问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例2：接口响应时间很长的问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例3定位偏底层的性能问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例3：定位偏底层的性能问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#案例4线程被耗尽问题" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例4：线程被耗尽问题
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jmh" class="md-nav__link">
+    <span class="md-ellipsis">
+      JMH
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#综合案例" class="md-nav__link">
+    <span class="md-ellipsis">
+      综合案例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/JVM/JVM-practice.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/JVM/JVM-practice.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="内存调优">内存调优<a class="headerlink" href="#内存调优" title="链接到此段落">&para;</a></h1>
+<hr />
+<h2 id="内存泄露内存溢出">内存泄露&amp;&amp;内存溢出<a class="headerlink" href="#内存泄露内存溢出" title="链接到此段落">&para;</a></h2>
+<p>在Java中如果不再使用一个对象，但是该对象依然在GC root引用链上，这个对象就不会被垃圾回收器回收，这种情况称为<strong>内存泄漏</strong></p>
+<p>内存泄漏最终会导致<strong>内存溢出</strong></p>
+<hr />
+<h2 id="解决内存溢出">解决内存溢出<a class="headerlink" href="#解决内存溢出" title="链接到此段落">&para;</a></h2>
+<p><img alt="204e3551-72af-41f4-9523-f96770f0ff89" src="../images/204e3551-72af-41f4-9523-f96770f0ff89.png" /></p>
+<hr />
+<h3 id="发现问题">发现问题<a class="headerlink" href="#发现问题" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>Linux下使用<code>top</code>命令查看CPU和内存使用率</p>
+<ul>
+<li>使用简单，但是功能单一</li>
+</ul>
+</li>
+<li>
+<p><a href="https://visualvm.github.io/">VisualVm</a>工具查看堆内存和非堆内存的使用情况</p>
+<ul>
+<li>功能强大，可以查看内存、线程、类等信息</li>
+</ul>
+</li>
+<li>
+<p><a href="https://arthas.aliyun.com/doc/">arthas</a>工具查看内存使用情况</p>
+<ul>
+<li>功能强大，支持在线诊断</li>
+</ul>
+</li>
+<li>
+<p>使用Prometheus+Grafana监控Java应用</p>
+<ul>
+<li>企业中常用的监控方案</li>
+</ul>
+</li>
+<li>
+<p>查看堆内存监控图
+<img alt="6094b97d-2f8f-4db8-b9df-5a5c7a7c0831" src="../images/Snipaste_2025-09-08_20-47-59.png" /></p>
+</li>
+</ol>
+<div class="admonition example">
+<p class="admonition-title">案例</p>
+<p>使用阿里arthas tunnel管理所有的需要监控的程序</p>
+<p>背景：团队已经普及了arthas的使用，但是由于使用了<strong>微服务</strong>架构，生产环境上的应用数量非常多，使用arthas还得登录到每一台服务器上再去操作非常不方便。团队调研发现官方文档说明可以使用tunnel来管理所有需要监控的程序。</p>
+<p>步骤：</p>
+<ol>
+<li>
+<p>在Spring Boot程序中添加arthas的依赖，在配置文件中添加tunnel服务端的地址，便于tunnel去监控所有的程序。</p>
+</li>
+<li>
+<p>将tunnel服务端程序部署在某台服务器上并启动。</p>
+</li>
+<li>
+<p>启动需要监控的程序，查看日志确认已经连接上tunnel服务端。</p>
+</li>
+<li>
+<p>打开tunnel的服务端页面，查看所有的进程列表，并选择进程进行arthas的操作。</p>
+</li>
+</ol>
+</div>
+<h4 id="在线定位问题">在线定位问题<a class="headerlink" href="#在线定位问题" title="链接到此段落">&para;</a></h4>
+<ol>
+<li>
+<p>使用<code>jmap-histo:live 进程ID &gt; 文件名</code> 命令将内存中存活对象以直方图的形式保存到文件中，这个过程会影响用户的时间，但是时间比较短暂。</p>
+</li>
+<li>
+<p>分析内存占用最多的对象，一般这些对象就是造成内存泄漏的原因。</p>
+</li>
+<li>
+<p>使用arthas的<code>stack</code>命令,<code>stack 全限定类名 [方法名]</code>，追踪对象创建的方法被调用的调用路径，找到对象创建的根源。也可以使用btrace工具编写脚本追踪方法执行的过程。</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>BTrace 是一个在Java 平台上执行的追踪工具，可以有效地用于线上运行系统的方法追踪，具有侵入性小、对性能的影响微乎其微等特点。项目中可以使用btrace工具，打印出方法被调用的栈信息。</p>
+<p>使用方法：</p>
+<ol>
+<li>
+<p>下载btrace工具， 官方地址：<a href="https://github.com/btraceio/btrace/releases/latest">github</a></p>
+</li>
+<li>
+<p>编写btrace脚本，通常是一个java文件。</p>
+</li>
+<li>
+<p>将btrace工具和脚本上传到服务器，在服务器上运行 btrace 进程ID 脚本文件名 。</p>
+</li>
+<li>
+<p>观察执行结果。</p>
+</li>
+</ol>
+</div>
+<h4 id="两种方案的比较">两种方案的比较<a class="headerlink" href="#两种方案的比较" title="链接到此段落">&para;</a></h4>
+<p><img alt="affa9e6e-4f93-4dd8-a236-c13d8e7f6a61" src="../images/affa9e6e-4f93-4dd8-a236-c13d8e7f6a61.png" /></p>
+<hr />
+<h3 id="内存溢出原因分析">内存溢出原因分析<a class="headerlink" href="#内存溢出原因分析" title="链接到此段落">&para;</a></h3>
+<h4 id="代码规范问题">代码规范问题<a class="headerlink" href="#代码规范问题" title="链接到此段落">&para;</a></h4>
+<ol>
+<li>
+<p><code>equals</code>和<code>hashCode</code>方法重写不正确</p>
+<div class="admonition example">
+<p class="admonition-title">equals和hashCode导致内存泄漏</p>
+<p>Java的集合类中，<code>HashMap</code>、<code>HashSet</code>、<code>Hashtable</code>等都使用了哈希表来存储数据，这些集合类在存储数据时会调用对象的<code>hashCode</code>方法来计算对象的哈希值，并根据哈希值将对象存储到哈希表中。</p>
+<p>如果对象的<code>hashCode</code>实现有问题，导致相同的对象每次调用<code>hashCode</code>方法时返回不同的值，那么在将对象存储到哈希表中时，会导致对象被存储到不同的位置，进而导致内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>确保同时重写<code>equals</code>和<code>hashCode</code>方法。</p>
+</li>
+<li>
+<p>确保<code>hashCode</code>方法返回的值在对象的生命周期内保持不变。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>非静态内部类和匿名类错误地引用外部类</p>
+<div class="admonition example">
+<p class="admonition-title">非静态内部类和匿名类导致内存泄漏</p>
+<p>非静态内部类和匿名类会隐式地持有对外部类实例的引用，如果外部类实例的生命周期比内部类实例长，那么内部类实例就会一直持有对外部类实例的引用，导致外部类实例无法被垃圾回收，从而引发内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>使用静态内部类，避免隐式引用外部类实例。</p>
+</li>
+<li>
+<p>如果必须使用非静态内部类或匿名类，确保在不再需要时显式地将其引用设置为<code>null</code>。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>使用<code>ThreadLocal</code>时没有及时清理</p>
+<div class="admonition example">
+<p class="admonition-title">ThreadLocal导致内存泄漏</p>
+<p><code>ThreadLocal</code>用于为每个线程提供独立的变量副本，避免了多线程环境下的共享变量问题。一般手动创建的线程会在线程结束时自动清理<code>ThreadLocal</code>变量，但是如果使用线程池，线程不会结束，<code>ThreadLocal</code>变量会一直存在，导致内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>在不再需要<code>ThreadLocal</code>变量时，调用<code>remove()</code>方法清理变量。</p>
+</li>
+<li>
+<p>避免在长生命周期的线程中使用<code>ThreadLocal</code>，例如线程池中的线程。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>使用<code>String</code>的<code>intern</code>方法导致字符串常量池内存溢出</p>
+<div class="admonition example">
+<p class="admonition-title">String.intern导致内存泄漏</p>
+<p><code>String.intern()</code>方法会将字符串添加到字符串常量池中，如果频繁调用<code>intern()</code>方法，可能会导致字符串常量池内存溢出。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>避免频繁调用<code>String.intern()</code>方法。</p>
+</li>
+<li>
+<p>使用<code>StringBuilder</code>或<code>StringBuffer</code>来构建字符串，避免创建过多的临时字符串对象。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>通过静态字段引用对象</p>
+<div class="admonition example">
+<p class="admonition-title">静态字段引用对象导致内存泄漏</p>
+<p>静态字段的生命周期与类的生命周期相同，如果静态字段引用了大量对象，这些对象将无法被垃圾回收，导致内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>避免使用静态字段引用大量对象，在不再需要时，将静态字段引用设置为<code>null</code>。</p>
+</li>
+<li>
+<p>使用单例模式时，尽量使用懒汉式加载，避免在类加载时创建大量对象。</p>
+</li>
+<li>
+<p>Spring等框架中，使用<code>@Scope("prototype")</code>注解来定义原型作用域的Bean，避免单例Bean持有大量对象。</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>资源没有及时关闭</p>
+<div class="admonition example">
+<p class="admonition-title">资源没有及时关闭导致内存泄漏</p>
+<p>在Java中，文件、数据库连接、网络连接等资源需要手动关闭，如果没有及时关闭这些资源，可能会导致内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>
+<p>使用<code>try-with-resources</code>语句来自动关闭资源。</p>
+</li>
+<li>
+<p>在<code>finally</code>块中显式地关闭资源，确保无论是否发生异常，资源都能被关闭。</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+<h4 id="并发请求问题">并发请求问题<a class="headerlink" href="#并发请求问题" title="链接到此段落">&para;</a></h4>
+<p>并发请求问题指的是用户通过发送请求向Java应用获取数据，正常情况下Java应用将数据返回之后，这部分数据就可以在内存中被释放掉。</p>
+<p>但是由于用户的并发请求量有可能很大，同时处理数据的时间很长，导致大量的数据存在于内存中，最终超过了内存的上限，导致内存溢出。这类问题的处理思路和内存泄漏类似，首先要定位到对象产生的根源。</p>
+<h5 id="模拟并发请求">模拟并发请求<a class="headerlink" href="#模拟并发请求" title="链接到此段落">&para;</a></h5>
+<p>使用<a href="https://jmeter.apache.org/"><u><strong>Apache JMeter - Apache JMeter™</strong></u></a>软件可以进行并发请求测试。</p>
+<p>步骤：</p>
+<ol>
+<li>
+<p>安装Jmeter软件，添加线程组。</p>
+</li>
+<li>
+<p>在线程组中增加Http请求，添加随机参数。</p>
+</li>
+<li>
+<p>在线程组中添加监听器–聚合报告，用来展示最终结果。</p>
+</li>
+<li>
+<p>启动程序，运行线程组并观察程序是否出现内存溢出。</p>
+</li>
+</ol>
+<hr />
+<h3 id="诊断问题">诊断问题<a class="headerlink" href="#诊断问题" title="链接到此段落">&para;</a></h3>
+<h4 id="内存快照">内存快照<a class="headerlink" href="#内存快照" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>当堆内存溢出时，需要在堆内存溢出时将整个堆内存保存下来，生成内存快照(Heap Profile)文件。</p>
+</li>
+<li>
+<p>生成内存快照的Java虚拟机参数：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">#发生OutOfMemoryError错误时，自动生成hprof内存快照文件。</span>
+-XX:+HeapDumpOnOutOfMemoryError
+
+<span class="c1">#指定hprof文件的输出路径。</span>
+-XX:HeapDumpPath<span class="o">=</span>&lt;path&gt;
+</code></pre></div>
+<ul>
+<li>使用<a href="https://eclipse.dev/mat/">MAT</a>打开hprof文件，并选择内存泄漏检测功能，MAT会自行根据内存快照中保存的数据分析内存泄漏的根源。</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">案例</p>
+<p>某团队通过监控系统发现有一个服务内存在持续增长，希望尽快通过内存快照分析增长的原因，由于<strong>并未产生内存溢出</strong>所以不能通过HeapDumpOnOutOfMemoryError参数生成内存快照。</p>
+<p>思路：</p>
+<p>导出运行中系统的内存快照，比较简单的方式有两种，注意只需要导出标记为存活的对象：</p>
+<ol>
+<li>通过<u><strong>JDK</strong></u>自带的jmap命令导出，格式为：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>jmap<span class="w"> </span>-dump:live,format<span class="o">=</span>b,file<span class="o">=</span>文件路径和文件名<span class="w"> </span>进程ID
+</code></pre></div>
+<ol>
+<li>通过<u><strong>arthas</strong></u>的heapdump命令导出，格式为：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>heapdump<span class="w"> </span>--live<span class="w"> </span>文件路径和文件名
+</code></pre></div>
+</div>
+<p><strong>分析超大堆的内存快照</strong></p>
+<ul>
+<li>
+<p>在程序员开发用的机器内存范围之内的快照文件，直接使用MAT打开分析即可。但是经常会遇到服务器上的程序占用的内存达到10G以上，开发机无法正常打开此类内存快照，此时需要下载服务器操作系统对应的MAT。下载地址： https://eclipse.dev/mat/downloads.php</p>
+</li>
+<li>
+<p>通过MAT中的脚本生成分析报告：</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code>./ParseHeapDump.sh<span class="w"> </span>快照文件路径<span class="w"> </span>org.eclipse.mat.api:suspects
+<span class="w"> </span>org.eclipse.mat.api:overview<span class="w"> </span>org.eclipse.mat.api:top_components
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>默认MAT分析时只使用了1G的堆内存，如果快照文件超过1G，需要修改MAT目录下的MemoryAnalyzer.ini配置文件调整最大堆内存。</p>
+</div>
+<hr />
+<h3 id="修复问题">修复问题<a class="headerlink" href="#修复问题" title="链接到此段落">&para;</a></h3>
+<p>具体问题具体分析，针对不同的内存泄漏问题，采取相应的解决方案。</p>
+<ol>
+<li>
+<p>代码规范问题（已在上一小节提供案例及方案）</p>
+</li>
+<li>
+<p>并发请求问题——参数设置不当</p>
+<ul>
+<li>如堆内存设置过小，应适当增加堆内存大小。</li>
+</ul>
+</li>
+<li>
+<p>并发请求问题——设计不当</p>
+<ul>
+<li>
+<p>一次性从数据库获取大量数据</p>
+</li>
+<li>
+<p>没有根据服务器性能进行限流</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="案例一分页查询文章接口的内存溢出">案例一：分页查询文章接口的内存溢出<a class="headerlink" href="#案例一分页查询文章接口的内存溢出" title="链接到此段落">&para;</a></h4>
+<p><strong>背景</strong>：某个新闻资讯类项目采用了微服务架构，其中有一个文章微服务，这个微服务在业务高峰期出现了内存溢出的现象。</p>
+<p><img alt="a328e2df-a398-4416-8eea-9824d0e51c46" src="../images/a328e2df-a398-4416-8eea-9824d0e51c46.png" /></p>
+<p><strong>解决思路</strong>：</p>
+<ol>
+<li>
+<p>服务出现OOM内存溢出时，生成内存快照。</p>
+</li>
+<li>
+<p>使用MAT分析内存快照，找到内存溢出的对象。</p>
+</li>
+<li>
+<p>尝试在开发环境中<strong>重现问题</strong>，分析代码中问题产生的原因。</p>
+</li>
+<li>
+<p>修改代码。</p>
+</li>
+<li>
+<p>测试并验证结果。</p>
+</li>
+</ol>
+<p><strong>问题根源</strong>：</p>
+<p>文章微服务中的分页接口没有限制最大单次访问条数，并且单个文章对象占用的内存量较大，在业务高峰期并发量较大时这部分从数据库获取到内存之后会占用大量的内存空间。</p>
+<p><strong>可行方案</strong>：</p>
+<ul>
+<li>
+<p>与产品设计人员沟通，限制最大的单次访问条数。</p>
+</li>
+<li>
+<p>分页接口如果只是为了展示文章列表，不需要获取文章内容，可以大大减少对象的大小。</p>
+</li>
+<li>
+<p>在高峰期对微服务进行限流保护。</p>
+</li>
+</ul>
+<hr />
+<h4 id="案例二mybatis导致的内存溢出">案例二：Mybatis导致的内存溢出<a class="headerlink" href="#案例二mybatis导致的内存溢出" title="链接到此段落">&para;</a></h4>
+<p><strong>背景</strong>：文章微服务进行了升级，新增加了一个判断id是否存在的接口，第二天业务高峰期再次出现了内存溢出，判断应该和新增加的接口有关系。</p>
+<p><strong>解决思路</strong>：</p>
+<ol>
+<li>
+<p>服务出现OOM内存溢出时，生成内存快照。</p>
+</li>
+<li>
+<p>使用MAT分析内存快照，找到内存溢出的对象。</p>
+</li>
+<li>
+<p>尝试在开发环境中重现问题，分析代码中问题产生的原因。</p>
+</li>
+<li>
+<p>修改代码。</p>
+</li>
+<li>
+<p>测试并验证结果。</p>
+</li>
+</ol>
+<p><strong>问题根源</strong>：</p>
+<p>Mybatis在使用foreach进行sql拼接时，会在内存中创建对象，如果foreach处理的数组或者集合元素个数过多，会占用大量的内存空间。</p>
+<p><strong>可行方案</strong>：</p>
+<ul>
+<li>
+<p>限制参数中最大的id个数。</p>
+</li>
+<li>
+<p>将id缓存到redis或者内存缓存中，通过缓存进行校验。</p>
+</li>
+</ul>
+<hr />
+<h4 id="案例三导出大文件内存溢出">案例三：导出大文件内存溢出<a class="headerlink" href="#案例三导出大文件内存溢出" title="链接到此段落">&para;</a></h4>
+<p><strong>背景</strong>：某个管理系统支持几十万条数据的excel文件导出。但测试发现系统在运行时如果有几十个人同时进行大数据量的导出，会出现内存溢出。</p>
+<p>该团队使用的是<strong>k8s</strong>将管理系统部署到了容器中，所以使用阿里云的k8s环境还原场景，并解决问题。阿里云的k8s整体规划如下：</p>
+<p><img alt="15e07ca4-f1f9-4b7c-b16f-743028b9686f" src="../images/15e07ca4-f1f9-4b7c-b16f-743028b9686f.png" /></p>
+<p><strong>问题根源</strong>：</p>
+<p>Excel文件导出如果使用POI的XSSFWorkbook，在大数据量（几十万）的情况下会占用大量的内存。</p>
+<p><strong>可行方案</strong>:</p>
+<ul>
+<li>
+<p>使用poi的SXSSFWorkbook。</p>
+</li>
+<li>
+<p><code>hutool</code>提供的BigExcelWriter减少内存开销。（服务器大内存推荐）</p>
+</li>
+<li>
+<p>使用<code>easy excel</code>，对内存进行了大量的优化。（服务器小内存推荐，占用内存小，耗时长）</p>
+</li>
+</ul>
+<hr />
+<h4 id="案例四threadlocal使用时占用大量内存">案例四：ThreadLocal使用时占用大量内存<a class="headerlink" href="#案例四threadlocal使用时占用大量内存" title="链接到此段落">&para;</a></h4>
+<p><strong>背景</strong>：某个微服务系统在没有任何用户使用时，也占用了大量的内存。导致可以使用的内存大大减少。</p>
+<p><strong>问题根源</strong>：</p>
+<p>很多微服务会选择在拦截器<code>preHandle</code>方法中去解析请求头中的数据，并放入一些数据到<code>ThreadLocal</code>中方便后续使用。</p>
+<p><strong>可行方案</strong>：</p>
+<p>在拦截器的<code>afterCompletion</code>方法中，必须要将<code>ThreadLocal</code>中的数据清理掉。</p>
+<hr />
+<h4 id="案例五文章内容审核接口的内存问题">案例五：文章内容审核接口的内存问题<a class="headerlink" href="#案例五文章内容审核接口的内存问题" title="链接到此段落">&para;</a></h4>
+<p><strong>背景</strong>：文章微服务中提供了文章审核接口，会调用阿里云的内容安全接口进行文章中文字和图片的审核，在测试过程中出现内存占用较大的问题。</p>
+<p><img alt="61a78ae5-5bb2-4f56-85b3-30e7e669a630" src="../images/61a78ae5-5bb2-4f56-85b3-30e7e669a630.png" /></p>
+<p><strong>可行方案</strong>：</p>
+<p><strong>方案一</strong>：使用SpringBoot中的@Async注解进行<strong>异步</strong>的审核。</p>
+<p><img alt="bbb250e4-59b1-418a-b155-16332fd3f9fc" src="../images/bbb250e4-59b1-418a-b155-16332fd3f9fc.png" /></p>
+<p><strong>存在问题</strong>：</p>
+<ol>
+<li>
+<p>线程池参数设置不当，会导致大量线程的创建或者队列中保存大量的数据。</p>
+</li>
+<li>
+<p>任务没有持久化，一旦走线程池的拒绝策略或者服务宕机、服务器掉电等情况很有可能会丢失任务。</p>
+</li>
+</ol>
+<p><br></p>
+<p><strong>方案二</strong>：使用生产者和消费者模式进行处理，队列数据可以实现持久化到数据库。</p>
+<p><img alt="96dc90b2-fead-42d6-9f85-4b5d966a4a44" src="../images/96dc90b2-fead-42d6-9f85-4b5d966a4a44.png" /></p>
+<p><strong>存在问题</strong>：</p>
+<ol>
+<li>
+<p>队列参数设置不正确，会保存大量的数据。</p>
+</li>
+<li>
+<p>实现复杂，需要自行实现持久化的机制，否则数据会丢失。</p>
+</li>
+</ol>
+<p><br></p>
+<p><strong>方案三</strong>：使用<code>mq</code>消息队列进行处理，由<code>mq</code>来保存文章的数据。发送消息的服务和拉取消息的服务可以是同一个，也可以不是同一个。（推荐）</p>
+<p><img alt="c1d670d5-7b0d-42bd-b193-36ab9bbe69b7" src="../images/c1d670d5-7b0d-42bd-b193-36ab9bbe69b7.png" /></p>
+<p><strong>问题根源</strong>：</p>
+<p>在项目中如果要使用异步进行业务处理，或者实现<strong>生产者–消费者</strong>的模型，如果在Java代码中实现，会占用大量的内存去保存中间数据。</p>
+<p><strong>解决思路</strong>：</p>
+<p>尽量使用Mq消息队列，可以很好地将中间数据单独进行保存，不会占用Java的内存。同时也可以将生产者和消费者拆分成不同的微服务。</p>
+<hr />
+<h2 id="gc调优">GC调优<a class="headerlink" href="#gc调优" title="链接到此段落">&para;</a></h2>
+<p>GC调优指的是对垃圾回收（Garbage Collection）进行调优。GC调优的主要目标是避免由垃圾回收引起程序性能下降。</p>
+<p>GC调优的核心分成三部分：</p>
+<p>✓ 1、通用JVM参数的设置。</p>
+<p>✓ 2、特定垃圾回收器的JVM参数的设置。</p>
+<p>✓ 3、解决由频繁的full GC引起的程序性能问题。</p>
+<p><br></p>
+<h3 id="gc调优指标">GC调优指标<a class="headerlink" href="#gc调优指标" title="链接到此段落">&para;</a></h3>
+<p>判断GC是否需要调优，需要从三方面来考虑，与GC算法的评判标准类似：</p>
+<ol>
+<li>
+<p><strong>吞吐量</strong>(Throughput) 吞吐量分为业务吞吐量和垃圾回收吞吐量业务吞吐量指的在一段时间内，程序需要完成的业务数量。</p>
+<p>比如企业中对于吞吐量的要求可能会是这样的：</p>
+<ul>
+<li>
+<p>支持用户每天生成10000笔订单</p>
+</li>
+<li>
+<p>在晚上8点到10点，支持用户查询50000条商品信息</p>
+</li>
+</ul>
+<p>保证高吞吐量的常规手段有两条：</p>
+<ul>
+<li>
+<p>优化业务执行性能，减少单次业务的执行时间</p>
+</li>
+<li>
+<p>优化垃圾回收吞吐量</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>延迟</strong>指的是从用户发起一个请求到收到响应这其中经历的时间。</p>
+<p>比如企业中对于延迟的要求可能会是这样的：</p>
+<ul>
+<li>所有的请求必须在5秒内返回给用户
+    结果延迟 = GC延迟+ 业务执行时间，所以如果GC时间过长，会影响到用户的使用。</li>
+</ul>
+</li>
+<li>
+<p><strong>内存使用量</strong>指的是Java应用占用系统内存的最大值，一般通过JVM参数调整，在满足上述两个指标的前提下，这个值越小越好。</p>
+</li>
+</ol>
+<h3 id="发现问题_1">发现问题<a class="headerlink" href="#发现问题_1" title="链接到此段落">&para;</a></h3>
+<p><img alt="28d03e48-ca4e-41f6-9973-ab0c39176d99" src="../images/28d03e48-ca4e-41f6-9973-ab0c39176d99.png" /></p>
+<h4 id="jstat工具">jstat工具<a class="headerlink" href="#jstat工具" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p><strong>Jstat</strong>工具是JDK自带的一款监控工具，可以提供各种垃圾回收、类加载、编译信息等不同的数据。</p>
+</li>
+<li>
+<p>使用方法为：<code>jstat -gc 进程ID</code> 每次统计的间隔（毫秒）统计次数</p>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">jstat -gc 输出参数说明</p>
+<ul>
+<li>
+<p>C代表Capacity容量，U代表Used使用量</p>
+</li>
+<li>
+<p>S –幸存者区，E –伊甸园区，O –老年代，M –元空间</p>
+</li>
+<li>
+<p>YGC、YGT：年轻代GC次数和GC耗时（单位：秒）</p>
+</li>
+<li>
+<p>FGC、FGCT：Full GC次数和Full GC耗时</p>
+</li>
+<li>
+<p>GCT：GC总耗时</p>
+</li>
+</ul>
+</div>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>
+<p>操作简单</p>
+</li>
+<li>
+<p>无额外的软件安装</p>
+</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>无法精确到GC产生的时间，只能用于判断GC是否存在问题</li>
+</ul>
+<p><br></p>
+<h4 id="visualvm插件">visualvm插件<a class="headerlink" href="#visualvm插件" title="链接到此段落">&para;</a></h4>
+<p><strong>VisualVm</strong>中提供了一款<strong>Visual GC</strong>插件，实时监控Java进程的堆内存结构、堆内存变化趋势以及垃圾回收时间的变化趋势。同时还可以监控对象晋升的直方图。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>适合开发使用，能直观的看到堆内存和GC的变化趋势</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>
+<p>对程序运行性能有一定影响</p>
+</li>
+<li>
+<p>生产环境程序员一般没有权限进行操作</p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="prometheus--grafana">Prometheus + Grafana<a class="headerlink" href="#prometheus--grafana" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>Prometheus+Grafana是企业中运维常用的监控方案，其中Prometheus用来采集系统或者应用的相关数据，同时具备告警功能。Grafana可以将Prometheus采集到的数据以可视化的方式进行展示。</p>
+</li>
+<li>
+<p>开发人员要学会如何读懂Grafana展示的Java虚拟机相关的参数。</p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="gc日志">GC日志<a class="headerlink" href="#gc日志" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>通过GC日志，可以更好的看到垃圾回收细节上的数据，同时也可以根据每款垃圾回收器的不同特点更好地发现存在的问题。</p>
+</li>
+<li>
+<p>使用方法（JDK 8及以下）：<code>-XX:+PrintGCDetails -Xloggc:文件名</code></p>
+</li>
+<li>
+<p>使用方法（JDK 9+）：<code>-Xlog:gc*:file=文件名</code></p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="gc-viewer">GC Viewer<a class="headerlink" href="#gc-viewer" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>GCViewer是一个将GC日志转换成可视化图表的小工具，地址： <a href="https://github.com/chewiebug/GCViewer">github</a></p>
+</li>
+<li>
+<p>使用方法：<code>java -jar gcviewer_1.3.4.jar 日志文件.log</code></p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="gceasy">GCeasy<a class="headerlink" href="#gceasy" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>GCeasy是业界首款使用AI机器学习技术在线进行GC分析和诊断的工具。定位内存泄漏、GC延迟高的问题，提供JVM参数优化建议，支持在线的可视化工具图表展示。</p>
+</li>
+<li>
+<p>官方网站：<a href="https://gceasy.io/">GCeasy</a></p>
+</li>
+</ul>
+<p><br></p>
+<h4 id="常见的gc模式">常见的GC模式<a class="headerlink" href="#常见的gc模式" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p><strong>正常情况</strong>——特点：呈现锯齿状，对象创建之后内存上升，一旦发生垃圾回收之后下降到底部，并且每次下降之后的内存大小接近，存留的对象较少。</p>
+</li>
+<li>
+<p><strong>缓存对象过多</strong>——特点：呈现锯齿状，对象创建之后内存上升，一旦发生垃圾回收之后下降到底部，并且每次下降之后的内存大小接近，处于<strong>比较高的位置</strong>。</p>
+<div class="admonition note">
+<p class="admonition-title">问题产生原因</p>
+<p>程序中保存了大量的缓存对象，导致GC之后无法释放，可以使用MAT或者HeapHero分析内存占用的原因。</p>
+</div>
+</li>
+<li>
+<p><strong>内存泄漏</strong>——特点：呈现锯齿状，每次垃圾回收之后下降到的内存<strong>位置越来越高</strong>，最后由于垃圾回收无法释放空间导致对象无法分配产生OutOfMemory的错误。</p>
+<div class="admonition note">
+<p class="admonition-title">问题产生原因</p>
+<p>程序中保存了大量的内存泄漏对象，导致GC之后无法释放，可以使用MAT或者HeapHero进行分析是哪些对象产生了内存泄漏。</p>
+</div>
+</li>
+<li>
+<p><strong>持续的FullGC</strong>——特点：在某个时间点产生多次Full GC，CPU使用率同时飙高，用户请求基本无法处理。一段时间之后恢复正常。</p>
+<div class="admonition note">
+<p class="admonition-title">问题产生原因</p>
+<p>在该时间范围请求量激增，程序开始生成更多对象，同时垃圾收集无法跟上对象创建速率，导致持续地在进行FULL GC。</p>
+</div>
+</li>
+<li>
+<p><strong>元空间不足导致的FULLGC</strong>——特点：堆内存的大小并不是特别大，但是持续发生FULLGC。</p>
+<div class="admonition note">
+<p class="admonition-title">问题产生原因</p>
+<p>元空间大小不足，导致持续full GC回收元空间的数据。</p>
+</div>
+</li>
+</ul>
+<hr />
+<h3 id="解决gc问题的手段">解决GC问题的手段<a class="headerlink" href="#解决gc问题的手段" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p>优化基础JVM参数</p>
+<blockquote>
+<p>基础JVM参数的设置不当，会导致频繁FULLGC的产生</p>
+</blockquote>
+</li>
+<li>
+<p>减少对象产生</p>
+<blockquote>
+<p>大多数场景下的FULLGC是由于对象产生速度过快导致的，减少对象产生可以有效的缓解FULLGC的发生</p>
+</blockquote>
+</li>
+<li>
+<p>更换垃圾回收器</p>
+<blockquote>
+<p>选择适合当前业务场景的垃圾回收器，减少延迟、提高吞吐量</p>
+</blockquote>
+</li>
+<li>
+<p>优化垃圾回收器参数</p>
+<blockquote>
+<p>优化垃圾回收器的参数，能在一定程度上提升GC效率</p>
+</blockquote>
+</li>
+</ol>
+<hr />
+<h4 id="优化基础jvm参数">优化基础JVM参数<a class="headerlink" href="#优化基础jvm参数" title="链接到此段落">&para;</a></h4>
+<p>◼ 参数1 ：<code>-Xmx</code> 和 <code>–Xms</code></p>
+<p><code>-Xmx</code>参数设置的是最大堆内存，但是由于程序是运行在服务器或者容器上，计算可用内存时，要将元空间、操作系统、其它软件占用的内存排除掉。</p>
+<p>案例： 服务器内存4G，<strong>操作系统+元空间最大值+其它软件</strong> 占用1.5G，-Xmx可以设置为2g。</p>
+<p>最合理的设置方式应该是根据最大并发量估算服务器的配置，然后再根据服务器配置计算最大堆内存的值。</p>
+<p><code>-Xms</code>用来设置初始堆大小，建议将<code>-Xms</code>设置的和<code>-Xmx</code><strong>一样大</strong>，有以下几点好处：</p>
+<p>✓ 运行时性能更好，堆的扩容是需要向操作系统申请内存的，这样会导致程序性能短期下降。</p>
+<p>✓ 可用性问题，如果在扩容时其他程序正在使用大量内存，很容易因为操作系统内存不足分配失败。</p>
+<p>✓ 启动速度更快，Oracle官方文档的原话：如果初始堆太小，Java 应用程序启动会变得很慢，因为 JVM 被迫频繁执行垃圾收集，直到堆增长到更合理的大小。为了获得最佳启动性能，请将初始堆大小设置为与最大堆大小相同。</p>
+<p>◼ 参数2 ：<code>-XX:MaxMetaspaceSize</code> 和 <code>–XX:MetaspaceSize</code></p>
+<p><code>-XX:MaxMetaspaceSize=值</code> 参数指的是最大元空间大小，默认值比较大，如果出现元空间内存泄漏会让操作系统可用内存不可控，建议根据测试情况设置最大值，一般设置为256m。</p>
+<p><code>-XX:MetaspaceSize=值</code> 参数指的是到达这个值之后会触发FULLGC[阈值]（网上很多文章的初始元空间大小是错误的），后续什么时候再触发JVM会自行计算。如果设置为和MaxMetaspaceSize一样大，就不会FULLGC，但是对象也无法回收。</p>
+<p>◼ 参数3 ： <code>-Xss</code>虚拟机栈大小</p>
+<p>如果我们不指定栈的大小，JVM 将创建一个具有默认大小的栈。大小取决于操作系统和计算机的体系结构。</p>
+<p>比如Linux x86 64位 ： 1MB，如果不需要用到这么大的栈内存，完全可以将此值调小节省内存空间，合理值为256k – 1m之间。</p>
+<p>使用：-Xss256k</p>
+<p>◼ 参数4 ： <strong>不建议手动设置</strong>的参数</p>
+<p>由于JVM底层设计极为复杂，一个参数的调整也许让某个接口得益，但同样有可能影响其他更多接口。</p>
+<ul>
+<li>
+<p><code>-Xmn</code> 年轻代的大小，默认值为整个堆的1/3，可以根据峰值流量计算最大的年轻代大小，尽量让对象只存放在年轻代，不进入老年代。
+  但是实际的场景中，接口的响应时间、创建对象的大小、程序内部还会有一些定时任务等不确定因素都会导致这个值的大小并不能仅凭计算得出，如果设置该值要进行大量的测试。
+  G1垃圾回收器尽量不要设置该值，G1会动态调整年轻代的大小。</p>
+</li>
+<li>
+<p><code>‐XX:SurvivorRatio</code> 伊甸园区和幸存者区的大小比例，默认值为8。</p>
+</li>
+<li>
+<p><code>‐XX:MaxTenuringThreshold</code> 最大晋升阈值，年龄大于此值之后，会进入老年代。另外JVM有动态年龄判断机制：将年龄从小到大的对象占据的空间加起来，如果大于survivor区域的50%，然后把等于或大于该年龄的对象，放入到老年代。</p>
+</li>
+</ul>
+<p>◼ 其他参数 ：</p>
+<ul>
+<li>
+<p><code>-XX:+DisableExplicitGC</code>禁止在代码中使用System.gc()， System.gc()可能会引起FULLGC，在代码中尽量不要使用。使用DisableExplicitGC参数可以禁止使用System.gc()方法调用。</p>
+</li>
+<li>
+<p><code>-XX:+HeapDumpOnOutOfMemoryError</code>：发生OutOfMemoryError错误时，自动生成hprof内存快照文件。</p>
+</li>
+<li>
+<p><code>-XX:HeapDumpPath=&lt;path&gt;</code>:：指定hprof文件的输出路径。</p>
+</li>
+<li>
+<p>打印GC日志
+  JDK8及之前 ： <code>-XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:文件路径</code>
+  JDK9及之后 ： <code>-Xlog:gc*:file=文件路径</code></p>
+</li>
+</ul>
+<hr />
+<h5 id="jvm参数模板">JVM参数模板<a class="headerlink" href="#jvm参数模板" title="链接到此段落">&para;</a></h5>
+<div class="highlight"><pre><span></span><code>-Xms1g
+-Xmx1g
+-Xss256k
+-XX:MaxMetaspaceSize<span class="o">=</span>512m<span class="w"> </span>
+-XX:+DisableExplicitGC
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath<span class="o">=</span>/opt/logs/my-service.hprof
+-XX:+PrintGCDetails
+-XX:+PrintGCDateStamps
+-Xloggc:文件路径
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>JDK9及之后gc日志输出修改为 -Xlog:gc*:file=文件名</p>
+<p>堆内存大小和栈内存大小根据实际情况灵活调整。</p>
+</div>
+<hr />
+<h2 id="性能调优">性能调优<a class="headerlink" href="#性能调优" title="链接到此段落">&para;</a></h2>
+<p>本小节着重学习发现问题和诊断问题的方法，目标是准确定位到性能问题的根源。</p>
+<p>应用程序在运行过程中经常会出现性能问题，比较常见的性能问题现象是：</p>
+<ol>
+<li>
+<p>通过top命令查看CPU占用率高，接近100甚至多核CPU下超过100都是有可能的。</p>
+</li>
+<li>
+<p>请求单个服务处理时间特别长，多服务使用skywalking等监控系统来判断是哪一个环节性能低下。</p>
+</li>
+<li>
+<p>程序启动之后运行正常，但是在运行一段时间之后无法处理任何的请求（内存和GC正常）。</p>
+</li>
+</ol>
+<h3 id="线程转储的查看方式">线程转储的查看方式<a class="headerlink" href="#线程转储的查看方式" title="链接到此段落">&para;</a></h3>
+<p>线程转储（Thread Dump）提供了对所有运行中的线程当前状态的快照。</p>
+<p>线程转储可以通过jstack、visualvm等工具获取。其中包含了线程名、优先级、线程ID、线程状态、线程栈信息等等内容，可以用来解决<strong>CPU占用率高、死锁</strong>等问题。</p>
+<p>线程转储中的几个核心内容：</p>
+<ul>
+<li>
+<p>名称： 线程名称，通过给线程设置合适的名称更容易“顾名思义” </p>
+</li>
+<li>
+<p>优先级（prio）：线程的优先级</p>
+</li>
+<li>
+<p>Java ID（tid）：JVM中线程的唯一ID </p>
+</li>
+<li>
+<p>本地 ID (nid)：操作系统分配给线程的唯一ID </p>
+</li>
+<li>
+<p>状态：线程的状态，分为：</p>
+<ul>
+<li>
+<p>NEW – 新创建的线程，尚未开始执行</p>
+</li>
+<li>
+<p>RUNNABLE –正在运行或准备执行</p>
+</li>
+<li>
+<p>BLOCKED – 等待获取监视器锁以进入或重新进入同步块/方法</p>
+</li>
+<li>
+<p>WAITING – 等待其他线程执行特定操作，没有时间限制</p>
+</li>
+<li>
+<p>TIMED_WAITING – 等待其他线程在指定时间内执行特定操作</p>
+</li>
+<li>
+<p>TERMINATED – 已完成执行</p>
+</li>
+</ul>
+</li>
+<li>
+<p>栈追踪： 显示整个方法的栈帧信息</p>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>有关线程状态的详细部分，可查看 并发编程部分的笔记</p>
+</div>
+<p>线程转储的可视化在线分析平台：</p>
+<ol>
+<li>
+<p><a href="https://jstack.review/">https://jstack.review</a></p>
+</li>
+<li>
+<p><a href="https://fastthread.io/">https://fastthread.io</a></p>
+</li>
+</ol>
+<hr />
+<h3 id="案例1cpu占用率高问题的解决方案">案例1：CPU占用率高问题的解决方案<a class="headerlink" href="#案例1cpu占用率高问题的解决方案" title="链接到此段落">&para;</a></h3>
+<p><strong>问题背景</strong>：监控人员通过prometheus的告警发现CPU占用率一直处于很高的情况，通过top命令看到是由于Java程序引起的，希望能快速定位到是哪一部分代码导致了性能问题。</p>
+<p>解决思路：</p>
+<ol>
+<li>
+<p>通过<code>top –c</code> 命令找到CPU占用率高的进程，获取它的进程ID。(Linux)</p>
+</li>
+<li>
+<p>使用<code>top -p 进程ID</code> 单独监控某个进程，按H(大写)可以查看到所有的线程以及线程对应的CPU使用率，找到CPU使用率特别高的线程（记住线程ID）。</p>
+</li>
+<li>
+<p>使用<code>jstack 进程ID</code> 命令可以查看到所有线程正在执行的栈信息。使用 <code>jstack进程ID &gt; 文件名</code> 保存到文件中方便查看。</p>
+</li>
+<li>
+<p>找到nid与线程ID相同的栈信息，需要将之前记录下的十进制线程号转换成16进制。通过 <code>printf ‘%x\n’ 线程ID</code> 命令直接获得16进制下的线程ID。</p>
+</li>
+<li>
+<p>找到栈信息对应的源代码，并分析问题产生原因。</p>
+</li>
+</ol>
+<p><br></p>
+<h3 id="案例2接口响应时间很长的问题">案例2：接口响应时间很长的问题<a class="headerlink" href="#案例2接口响应时间很长的问题" title="链接到此段落">&para;</a></h3>
+<p><strong>问题背景</strong>：在程序运行过程中，发现有几个接口的响应时间特别长，需要快速定位到是哪一个方法的代码执行过程中出现了性能问题。</p>
+<blockquote>
+<p>已经确定是某个接口性能出现了问题，但是由于方法嵌套比较深，需要借助于<code>arthas</code>定位到具体的方法。</p>
+</blockquote>
+<p>使用arthas的<code>trace</code>命令，可以展示出整个方法的调用路径以及每一个方法的执行耗时。</p>
+<p>命令： <code>trace 类名 方法名</code></p>
+<ul>
+<li>
+<p>添加 <code>--skipJDKMethod false</code> 参数可以输出JDK核心包中的方法及耗时。</p>
+</li>
+<li>
+<p>添加 <code>'#cost &gt; 毫秒值'</code> 参数，只会显示耗时超过该毫秒值的调用。</p>
+</li>
+<li>
+<p>添加 <code>–n 数值</code> 参数，最多显示该数值条数的数据。</p>
+</li>
+<li>
+<p>所有监控都结束之后，输入<code>stop</code>结束监控，重置arthas增强的对象。</p>
+</li>
+</ul>
+<p><br></p>
+<p>在使用trace定位到性能较低的方法之后，使用<code>watch</code>命令监控该方法，可以获得更为详细的方法信息。</p>
+<p>命令：<code>watch 类名 方法名 ‘{params, returnObj}’ ‘#cost&gt;毫秒值' -x 2</code></p>
+<ul>
+<li>
+<p><code>‘{params, returnObj}‘</code>代表打印参数和返回值。</p>
+</li>
+<li>
+<p><code>-x</code> 代表打印的结果中如果有嵌套（比如对象里有属性），最多只展开2层。允许设置的最大值为4。</p>
+</li>
+</ul>
+<p><br></p>
+<h3 id="案例3定位偏底层的性能问题">案例3：定位偏底层的性能问题<a class="headerlink" href="#案例3定位偏底层的性能问题" title="链接到此段落">&para;</a></h3>
+<p><strong>问题背景</strong>：有一个接口中使用了for循环向ArrayList中添加数据，但是最终发现执行时间比较长，需要定位是由于什么原因导致的性能低下。</p>
+<p>思路：</p>
+<p>Arthas提供了<strong>性能火焰图</strong>的功能，可以非常直观地显示所有方法中哪些方法执行时间比较长。</p>
+<p>Arthas的profile命令(Windows不支持)</p>
+<p>使用arthas的profile命令，生成性能监控的火焰图。</p>
+<p>命令1： <code>profiler star</code>t 开始监控方法执行性能</p>
+<p>命令2： <code>profiler stop --format html</code> 以HTML的方式生成火焰图火焰图中一般找绿色部分Java中栈顶上比较平的部分，很可能就是性能的瓶颈。</p>
+<p><img alt="c9d310e9-4434-4d52-b31e-31af79d1965b" src="../images/c9d310e9-4434-4d52-b31e-31af79d1965b.png" /></p>
+<p>偏底层的性能问题，特别是由于JDK中某些方法被大量调用导致的性能低下，可以使用火焰图非常直观的找到原因。</p>
+<p>这个案例中是由于创建ArrayList时没有手动指定容量，导致使用默认的容量而在添加对象过程中发生了多次的<strong>扩容</strong>，扩容需要将原来数组中的元素复制到新的数组中，消耗了大量的时间。通过火焰图可以看到大量的调用，修复完之后节省了20% ~ 50%的时间。</p>
+<p><br></p>
+<h3 id="案例4线程被耗尽问题">案例4：线程被耗尽问题<a class="headerlink" href="#案例4线程被耗尽问题" title="链接到此段落">&para;</a></h3>
+<p><strong>问题背景</strong>：程序在启动运行一段时间之后，就无法处理任何请求了。将程序重启之后继续运行，依然会出现相同的情况。</p>
+<p><strong>解决思路</strong>：</p>
+<p>线程耗尽问题，一般是由于执行时间过长，分析方法分成两步：</p>
+<ul>
+<li>
+<p>检测是否有<strong>死锁</strong>产生，无法自动解除的死锁会将线程永远阻塞。</p>
+</li>
+<li>
+<p>如果没有死锁，再使用案例1的打印线程栈的方法检测线程正在执行哪个方法，一般这些大量出现的方法就是慢方法。</p>
+</li>
+</ul>
+<p><br></p>
+<p>线程死锁可以通过三种方法<strong>定位问题</strong>：</p>
+<ol>
+<li>
+<p><code>jstack-l 进程ID &gt; 文件名</code> 将线程栈保存到本地。在文件中<em>搜索</em><code>deadlock</code>即可找到死锁位置。</p>
+</li>
+<li>
+<p>开发环境中使用visual vm或者Jconsole工具，都可以检测出死锁。使用线程快照生成工具就可以看到死锁的根源。生产环境的服务一般不会允许使用这两种工具连接。</p>
+</li>
+<li>
+<p>使用<a href="https://fastthread.io/">fastthread</a>自动检测线程问题。 </p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Fastthread和Gceasy类似，是一款在线的AI自动线程问题检测工具，可以提供线程分析报告。通过报告查看是否存在死锁问题。</p>
+</div>
+</li>
+</ol>
+<hr />
+<h3 id="jmh">JMH<a class="headerlink" href="#jmh" title="链接到此段落">&para;</a></h3>
+<p>问：你是如何判断一个方法需要耗时多少时间的？</p>
+<p>答：我会在方法上打印开始时间和结束时间，他们的差值就是方法的执行耗时。手动通过postman或者jmeter发起请求，在控制台上看输出的时间。</p>
+<div class="admonition danger">
+<p class="admonition-title">注意</p>
+<p>这样做是不准确的</p>
+<p>第一测试时有些对象创建是<strong>懒加载</strong>的，所以会影响第一次的请求时间</p>
+<p>第二虚拟机中<strong>JIT即时编译器</strong>会优化你的代码</p>
+<p>所以这个测试得出的时间并不一定是最终用户处理的时间。</p>
+<p><em>Java程序在运行过程中，JIT即时编译器会实时对代码进行性能优化，所以仅凭少量的测试是无法真实反应运行系统最终给用户提供的性能。</em></p>
+</div>
+<p>OpenJDK中提供了一款叫<code>JMH</code>（Java Microbenchmark Harness）的工具，可以准确地对Java代码进行基准测试，量化方法的执行性能。</p>
+<p>官网地址： <a href="https://github.com/openjdk/jmh">JMH</a></p>
+<p>JMH会首先执行预热过程，确保JIT对代码进行优化之后再进行真正的迭代测试，最后输出测试的结果。</p>
+<p>JMH环境搭建：</p>
+<ol>
+<li>创建基准测试项目，在CMD窗口中，使用以下命令创建JMH环境项目：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>mvn<span class="w"> </span>archetype:generate<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-DinteractiveMode<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-DarchetypeGroupId<span class="o">=</span>org.openjdk.jmh<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-DarchetypeArtifactId<span class="o">=</span>jmh-java-benchmark-archetype<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-DgroupId<span class="o">=</span>org.sample<span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-DartifactId<span class="o">=</span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+<span class="w"> </span>-Dversion<span class="o">=</span><span class="m">1</span>.0
+</code></pre></div>
+<ol>
+<li>
+<p>修改POM文件中的JDK版本号和JMH版本号，JMH最新版本号参考Github。</p>
+</li>
+<li>
+<p>编写测试方法，几个需要注意的点：</p>
+<ul>
+<li>
+<p>死代码问题（无用代码，JIT会跳过不执行）</p>
+</li>
+<li>
+<p>黑洞的用法（黑洞消费，避免死代码产生）</p>
+</li>
+</ul>
+</li>
+<li>
+<p>通过maven的verify命令，检测代码问题并打包成jar包。</p>
+</li>
+<li>
+<p>通过<code>java -jar target/benchmarks.jar</code> 命令执行基准测试。</p>
+</li>
+<li>
+<p>测试结果通过 <a href="https://jmh.morethan.io/">https://jmh.morethan.io/</a> 生成可视化的结果。</p>
+</li>
+</ol>
+<p><br></p>
+<p>案例 ：日期格式化方法性能测试</p>
+<ol>
+<li>
+<p>Date对象使用的SimpleDateFormatter是线程不安全的，所以每次需要重新创建对象或者将对象放入ThreadLocal中进行保存。其中每次重新创建对象性能比较差，将对象放入ThreadLocal之后性能相对还是比较好的。</p>
+</li>
+<li>
+<p>LocalDateTime对象使用的DateTimeFormatter线程安全，并且性能较好，如果能将DateTimeFormatter对象保存下来，性能可以得到进一步的提升。</p>
+</li>
+</ol>
+<hr />
+<h3 id="综合案例">综合案例<a class="headerlink" href="#综合案例" title="链接到此段落">&para;</a></h3>
+<p>小李的项目中有一个获取用户信息的接口性能比较差，他希望能对这个接口在代码中进行彻底的优化，提升性能。</p>
+<p>接口代码优化过程如下（首先需要使用arthas找到接口耗时长的原因）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//初始代码</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">user1</span><span class="p">(){</span>
+<span class="w">    </span><span class="c1">//1.从数据库获取前端需要的详情数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDetails</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUserDetails</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//2.获取缓存中的用户数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUsers</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">SimpleDateFormat</span><span class="w"> </span><span class="n">simpleDateFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleDateFormat</span><span class="p">(</span><span class="s">&quot;yyyy-MM-dd HH:mm:ss&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//3.遍历详情集合，从缓存中获取用户名，生成VO进行填充</span>
+<span class="w">    </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userVOS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UserDetails</span><span class="w"> </span><span class="n">userDetail</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">userDetails</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UserVO</span><span class="w"> </span><span class="n">userVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserVO</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//可以使用BeanUtils对象拷贝</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setRegister</span><span class="p">(</span><span class="n">simpleDateFormat</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getRegister2</span><span class="p">()));</span>
+<span class="w">        </span><span class="c1">//填充name</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">())){</span>
+<span class="w">                </span><span class="n">userVO</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">//加入集合</span>
+<span class="w">        </span><span class="n">userVOS</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">userVO</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">userVOS</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+
+<span class="c1">//使用HasmMap存放用户名字</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">user2</span><span class="p">(){</span>
+<span class="w">    </span><span class="c1">//1.从数据库获取前端需要的详情数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDetails</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUserDetails</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//2.获取缓存中的用户数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUsers</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">//将list转换成hashmap</span>
+<span class="w">    </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span><span class="n">user</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">SimpleDateFormat</span><span class="w"> </span><span class="n">simpleDateFormat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleDateFormat</span><span class="p">(</span><span class="s">&quot;yyyy-MM-dd HH:mm:ss&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">//3.遍历详情集合，从缓存中获取用户名，生成VO进行填充</span>
+<span class="w">    </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userVOS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UserDetails</span><span class="w"> </span><span class="n">userDetail</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">userDetails</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UserVO</span><span class="w"> </span><span class="n">userVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserVO</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//可以使用BeanUtils对象拷贝</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setRegister</span><span class="p">(</span><span class="n">simpleDateFormat</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getRegister2</span><span class="p">()));</span>
+<span class="w">        </span><span class="c1">//填充name</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">()).</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">//加入集合</span>
+<span class="w">        </span><span class="n">userVOS</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">userVO</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">userVOS</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+
+<span class="c1">//优化日期格式化</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">user3</span><span class="p">(){</span>
+<span class="w">    </span><span class="c1">//1.从数据库获取前端需要的详情数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDetails</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUserDetails</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//2.获取缓存中的用户数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUsers</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">//将list转换成hashmap</span>
+<span class="w">    </span><span class="n">HashMap</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">User</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">users</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">user</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span><span class="n">user</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">//3.遍历详情集合，从缓存中获取用户名，生成VO进行填充</span>
+<span class="w">    </span><span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userVOS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UserDetails</span><span class="w"> </span><span class="n">userDetail</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">userDetails</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UserVO</span><span class="w"> </span><span class="n">userVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserVO</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//可以使用BeanUtils对象拷贝</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setRegister</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getRegister</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">formatter</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">//填充name</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">()).</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">//加入集合</span>
+<span class="w">        </span><span class="n">userVOS</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">userVO</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">userVOS</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+
+<span class="c1">//使用stream流改写for循环</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">user4</span><span class="p">(){</span>
+<span class="w">    </span><span class="c1">//1.从数据库获取前端需要的详情数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDetails</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUserDetails</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//2.获取缓存中的用户数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUsers</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">//将list转换成hashmap</span>
+<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toMap</span><span class="p">(</span><span class="n">User</span><span class="p">::</span><span class="n">getId</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">o</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">//3.遍历详情集合，从缓存中获取用户名，生成VO进行填充</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">userDetails</span><span class="p">.</span><span class="na">stream</span><span class="p">().</span><span class="na">map</span><span class="p">(</span><span class="n">userDetail</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UserVO</span><span class="w"> </span><span class="n">userVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserVO</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//可以使用BeanUtils对象拷贝</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setRegister</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getRegister</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">formatter</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">//填充name</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">()).</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">userVO</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}).</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+
+<span class="p">}</span>
+
+<span class="c1">//使用并行流优化性能</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserVO</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">user5</span><span class="p">(){</span>
+<span class="w">    </span><span class="c1">//1.从数据库获取前端需要的详情数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UserDetails</span><span class="o">&gt;</span><span class="w"> </span><span class="n">userDetails</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUserDetails</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//2.获取缓存中的用户数据</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">userService</span><span class="p">.</span><span class="na">getUsers</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">//将list转换成hashmap</span>
+<span class="w">    </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">users</span><span class="p">.</span><span class="na">parallelStream</span><span class="p">().</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toMap</span><span class="p">(</span><span class="n">User</span><span class="p">::</span><span class="n">getId</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">o</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">//3.遍历详情集合，从缓存中获取用户名，生成VO进行填充</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">userDetails</span><span class="p">.</span><span class="na">parallelStream</span><span class="p">().</span><span class="na">map</span><span class="p">(</span><span class="n">userDetail</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">UserVO</span><span class="w"> </span><span class="n">userVO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UserVO</span><span class="p">();</span>
+<span class="w">        </span><span class="c1">//可以使用BeanUtils对象拷贝</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setId</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setRegister</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getRegister</span><span class="p">().</span><span class="na">format</span><span class="p">(</span><span class="n">formatter</span><span class="p">));</span>
+<span class="w">        </span><span class="c1">//填充name</span>
+<span class="w">        </span><span class="n">userVO</span><span class="p">.</span><span class="na">setName</span><span class="p">(</span><span class="n">map</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">userDetail</span><span class="p">.</span><span class="na">getId</span><span class="p">()).</span><span class="na">getName</span><span class="p">());</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">userVO</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}).</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>在大多数情况下，对于简单的遍历操作，传统的 for 循环性能通常更好（尤其是在数据量小的情况下）。</p>
+<p>但 Stream 的真正优势不在于极致的微秒级性能，而在于更高的抽象层次、可读性、可维护性，以及在处理复杂数据操作和并行化方面的巨大潜力。</p>
+</div>
+<hr />
+<p><strong>上一节</strong>： <a href="../JVM-base/">JVM基础</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
