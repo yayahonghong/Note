@@ -338,7 +338,7 @@ public class RedisIdWorker {
       # 恢复库存：redis.incr("product_1_stock")
   ```
 
-##### **4. 消息队列削峰**
+**消息队列削峰**
 
 - 将请求放入队列（如 Kafka、RabbitMQ），由消费者顺序处理：
 
@@ -356,9 +356,9 @@ public class RedisIdWorker {
 
 
 
-### 一人一单
+## 一人一单
 
-#### 单实例部署
+### 单实例部署
 
 某些业务只允许用户进行一次交易
 
@@ -376,25 +376,18 @@ synchronized (userId.toString().intern()) {
         }
 ```
 
-> [!TIP]
->
-> 以上代码只对同一个用户加锁，避免不同用户被阻塞的性能问题（intern()将字符串加入字符串常量池，避免同一个用户id有多个对象，同步失效）
->
-> Spring的事务管理基于AOP代理对象实现，如果在类的方法内调用自身的方法，等同于this.xxx()，并没有通过代理对象实现事务增强，解决方案为先获取代理对象，然后再通过代理对象调用该方法
->
-> 需要引入`aspectjweaver`依赖，并在启动类上加上`@EnableAspectJAutoProxy(exposeProxy = true)`注解
+!!!info
+    以上代码只对同一个用户加锁，避免不同用户被阻塞的性能问题（intern()将字符串加入字符串常量池，避免同一个用户id有多个对象，同步失效）
+
+    Spring的事务管理基于AOP代理对象实现，如果在类的方法内调用自身的方法，等同于this.xxx()，并没有通过代理对象实现事务增强，解决方案为先获取代理对象，然后再通过代理对象调用该方法
+
+    需要引入`aspectjweaver`依赖，并在启动类上加上`@EnableAspectJAutoProxy(exposeProxy = true)`注解
 
 
 
 #### 多实例部署
 
-> [!CAUTION]
->
-> 以上方案在多实例集群模式下仍会发生线程安全问题
-
-
-
-原因是多个实例各自都有自身的`JVM`去实现同步锁，无法共享
+以上方案在多实例集群模式下仍会发生线程安全问题，原因是多个实例各自都有自身的`JVM`实现同步锁，无法共享
 
 
 
@@ -421,9 +414,9 @@ synchronized (userId.toString().intern()) {
 
 
 
-### 基于Redis的分布式锁
+## 基于Redis的分布式锁
 
-#### 简单实现
+### 简单实现
 
 实现分布式锁时需要实现的两个基本方法：
 
@@ -432,12 +425,11 @@ synchronized (userId.toString().intern()) {
 ```bash
 SET lock thread1 EX 10 NX
 ```
+!!!tip
+    EX参数设置过期时间，NX参数实现与`SETNX`相同的功能
 
-> [!CAUTION]
->
-> EX参数设置过期时间，NX参数实现与`SETNX`相同的功能
->
-> 不建议直接使用`SETNX`,因为无法同时设置过期时间，可能发生获得锁后服务宕机，而未设置过期时间，最终导致死锁。
+!!!danger
+    不建议直接使用`SETNX`,因为无法同时设置过期时间，可能发生获得锁后服务宕机，而未设置过期时间，最终导致死锁。
 
 
 
@@ -454,45 +446,42 @@ DEL lock
 示例：
 
 ```java
-    @Override
-    public boolean tryLock(long timeout) {
-        // 获取当前线程ID
-        long threadId = Thread.currentThread().getId();
+@Override
+public boolean tryLock(long timeout) {
+    // 获取当前线程ID
+    long threadId = Thread.currentThread().getId();
 
-        Boolean success = stringRedisTemplate.opsForValue()
-                .setIfAbsent(KEY_PREFIX + name, threadId + "", timeout, TimeUnit.SECONDS);
+    Boolean success = stringRedisTemplate.opsForValue()
+            .setIfAbsent(KEY_PREFIX + name, threadId + "", timeout, TimeUnit.SECONDS);
 
-        return Boolean.TRUE.equals(success);
-    }
+    return Boolean.TRUE.equals(success);
+}
 
-    @Override
-    public void unlock() {
-        // 释放锁
-        stringRedisTemplate.delete(KEY_PREFIX + name);
-    }
+@Override
+public void unlock() {
+    // 释放锁
+    stringRedisTemplate.delete(KEY_PREFIX + name);
+}
 ```
 
 
 
-#### 锁误删问题
+### 锁误删问题
 
-主要发生在某个线程阻塞时锁超时释放了，其他线程就可以获得锁，当被阻塞的线程恢复后就会删除不属于自己的锁
+主要发生在某个线程阻塞时锁被超时释放了，其他线程就可以获得锁，当被阻塞的线程恢复后就会删除不属于自己的锁
 
 ![image-20250313214623010](./images/image-20250313214623010.png)
 
-**解决方案**
+**解决方案**：
 
 为线程的锁加入唯一标识，释放前判断锁是否属于自己
 
-> [!TIP]
->
-> 可使用UUID
 
 
 
-##### 原子性问题
+### 原子性问题
 
-如果查询和删除锁不能原子性执行，就仍然有可能发生锁误删问题
+如果查询和删除锁不能原子性执行，仍然有可能发生锁误删问题
 
 ![image-20250313220527221](./images/image-20250313220527221.png)
 
@@ -500,7 +489,7 @@ DEL lock
 
 **Lua脚本**
 
-Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，确保多条命令执行时的原子性。Lua是一种编程语言，基本语法可以参考网站：https://www.runoob.com/lua/lua-tutorial.html
+Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，确保多条命令执行时的原子性。Lua是一种编程语言，基本语法可以参考[网站](https://www.runoob.com/lua/lua-tutorial.html)
 
 
 
@@ -514,9 +503,8 @@ EVAL "<脚本内容>"
 EVAL "return redis.call('set','key','value')" 0
 ```
 
-> [!TIP]
->
-> 参数**0**表示需要的key类型的参数个数
+!!!note
+    参数**0**表示需要的key类型的参数个数
 
 
 
@@ -567,7 +555,7 @@ return 0
 
 
 
-#### Redission
+### Redission
 
 基于`SETNX`实现的分布式锁存在下面的问题
 
@@ -583,7 +571,7 @@ return 0
 
 
 
-##### 快速入门
+#### 快速入门
 
 引入依赖
 
@@ -622,7 +610,7 @@ public class RedisConfig {
 
 
 
-##### 可重入锁原理
+#### 可重入锁原理
 
 利用hash结构记录线程id和重入次数
 
@@ -678,7 +666,7 @@ end;
 
 
 
-##### 重试机制和看门狗
+#### 重试机制和看门狗
 
 •**可重试**：利用信号量和PubSub功能实现等待、唤醒，获取锁失败的重试机制
 
@@ -686,7 +674,7 @@ end;
 
 
 
-##### 主从一致性
+#### 主从一致性
 
 原理：多个独立的Redis节点，必须在所有节点都获取重入锁，才算获取锁成功
 
@@ -696,16 +684,11 @@ end;
 
 
 
-### 基于Redis的消息队列
-
-> [!TIP]
->
-> 消息队列可参考 [RabbitMQ](./../SpringCloud/SpringCloud微服务.md)
+## 基于Redis的消息队列
 
 **消息队列**（**M**essage **Q**ueue），字面意思就是存放消息的队列。最简单的消息队列模型包括3个角色：
 
 - 消息队列：存储和管理消息，也被称为消息代理（Message Broker）
-
 - 生产者：发送消息到消息队列
 - 消费者：从消息队列获取消息并处理消息
 
@@ -719,32 +702,29 @@ Redis提供了三种不同的方式来实现消息队列：
 
 
 
-#### 使用list实现
+### 使用list实现
 
 Redis的list数据结构是一个双向链表，很容易模拟出队列效果。队列是入口和出口不在一边，因此我们可以利用：LPUSH 结合 RPOP、或者 RPUSH 结合 LPOP来实现。
 
 不过要注意的是，当队列中没有消息时RPOP或LPOP操作会返回null，并不像JVM的阻塞队列那样会阻塞并等待消息。因此这里应该使用**BRPOP**或者**BLPOP**来实现阻塞效果。
 
 
-
-基于List的消息队列有哪些优缺点？
-
-优点：
+**优点**：
 
 - 利用Redis存储，不受限于JVM内存上限
 - 基于Redis的持久化机制，数据安全性有保证
 - 可以满足消息有序性
 
-缺点：
+**缺点**：
 
 - 无法避免消息丢失
 - 只支持单消费者
 
 
 
-#### 使用PubSub实现
+### 使用PubSub实现
 
-**PubSub**（发布订阅）是Redis2.0版本引入的消息传递模型。顾名思义，消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有订阅者都能收到相关消息。
+**PubSub**（发布订阅）是Redis2.0版本引入的消息传递模型。消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有订阅者都能收到相关消息。
 
 - `SUBSCRIBE channel [channel]` ：订阅一个或多个频道
 - `PUBLISH channel msg` ：向一个频道发送消息
@@ -752,11 +732,11 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 
 
-优点：
+**优点**：
 
 - 采用发布订阅模型，支持多生产、多消费
 
-缺点：
+**缺点**：
 
 - 不支持数据持久化
 - 无法避免消息丢失
@@ -764,21 +744,17 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 
 
-
-
-#### 使用Stream实现
+### 使用Stream实现
 
 `Stream`是Redis5.0引入的一种数据类型，可以实现功能较完善的消息队列
-
 
 
 发送消息
 
 ![image-20250316155920428](./images/image-20250316155920428.png)
 
-> [!NOTE]
->
-> `xadd user * name ysh age 22`  
+!!!example
+    `xadd user * name ysh age 22`  
 
 
 
@@ -786,11 +762,11 @@ Redis的list数据结构是一个双向链表，很容易模拟出队列效果�
 
 ![image-20250316160247412](./images/image-20250316160247412.png)
 
-> [!NOTE]
->
-> `xread cout 1 block 2000 streams user $` 阻塞式读取
+!!!example
+    `xread cout 1 block 2000 streams user $` 阻塞式读取
 
-<font color=red>注意：</font>当我们指定起始ID为$时，代表读取最新的消息，如果我们处理一条消息的过程中，又有超过1条以上的消息到达队列，则下次获取时也只能获取到最新的一条，会出现漏读消息的问题
+!!!warning "注意"
+    当我们指定起始ID为$时，代表读取最新的消息，如果我们处理一条消息的过程中，又有超过1条以上的消息到达队列，则下次获取时也只能获取到最新的一条，会出现漏读消息的问题。
 
 
 
@@ -825,18 +801,16 @@ xgroup delconsumer key groupName consumerName
 
 
 
-
-
-### Feed流模式（推流）
+## Feed流模式（推流）
 
 Feed流产品有两种常见的模式：
 
 - TimeLine:不做内容筛选，简单的按照内容发布时间排序，常用于好友或关注。例如朋友圈
-  - 优点：信息全面，不会有缺失，并且实现也相对简单
-  - 优点：信息噪音多，用户不一定感兴趣，内容获取效率低
+    - 优点：信息全面，不会有缺失，并且实现也相对简单
+    - 优点：信息噪音多，用户不一定感兴趣，内容获取效率低
 - 智能排序:利用智能算法屏蔽违规的、用户不感兴趣的内容，推送用户感兴趣的信息来吸引用户
-  - 优点：投喂用户感兴趣的信息，用户黏度很高，容易沉迷
-  - 缺点：算法如果不精准，可能起反作用
+    - 优点：投喂用户感兴趣的信息，用户黏度很高，容易沉迷
+    - 缺点：算法如果不精准，可能起反作用
 
 
 
@@ -848,25 +822,18 @@ Feed流产品有两种常见的模式：
 
 - 推拉结合：以上两者结合（用户千万以上推荐）
 
-> [!TIP]
->
-> 实现方式：
->
-> 创建发件箱和收件箱，按照推送方式将推送内容的标识（通常为ID）发送到对应位置
+!!!note "实现方式"
+    创建发件箱和收件箱，按照推送方式将推送内容的标识（通常为ID）发送到对应位置
+
+
+!!!warning
+    Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
+    应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
+    每次查询时需要的参数为上次查询最后一条记录的值，与上一条记录值相同的记录数（offset）
 
 
 
-Feed流中的数据会不断更新，数据的角标也会变化，所以不能使用传统的分页查询
-
-> [!NOTE]
->
-> 应该采用滚动分页法，即每次查询记录最后一条数据的值而不是角标，下一次查询再从该元素开始
->
-> 每次查询时需要的参数为 上次查询最后一条记录的值，与上一条记录值相同的记录数（offset）
-
-
-
-### GEO数据（Redis）
+## GEO数据
 
 GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中加入了对GEO的支持，允许存储地理坐标信息，帮助我们根据经纬度来检索数据。常见的命令有：
 
@@ -886,13 +853,9 @@ GEO就是Geolocation的简写形式，代表地理坐标。Redis在3.2版本中�
 
 
 
-### BitMap
+## BitMap
 
-> [!NOTE]
->
-> 把每一个bit位对应当月的每一天，形成了映射关系。用0和1标示业务状态，这种思路就称为**位图（BitMap**）。
-
-**Redis**中是利用string类型数据结构实现**BitMap**，因此最大上限是512M，转换为bit则是 2^32个bit位。
+**Redis**中利用string类型数据结构实现**BitMap**，因此最大上限是512M，转换为bit则是 2^32个bit位。
 
 BitMap的操作命令有：
 
@@ -911,30 +874,7 @@ BitMap的操作命令有：
 [BITPOS](https://redis.io/commands/bitpos) ：查找bit数组中指定范围内第一个0或1出现的位置
 
 
-
-该数据结构适用于用户**签到类业务**
-
-**问题1**：什么叫做连续签到天数？
-
-从最后一次签到开始向前统计，直到遇到第一次未签到为止，计算总的签到次数，就是连续签到天数。
-
-
-
-**问题2**：如何得到本月到今天为止的所有签到数据？
-
- BITFIELD key GET u[dayOfMonth] 0
-
-
-
-**问题3**：如何从后向前遍历每个bit位？
-
-与 1 做（按位）与运算，就能得到最后一个bit位。
-
-随后右移1位，下一个bit位就成为了最后一个bit位。
-
-
-
-### HyperLogLog&&UV统计
+## HyperLogLog&&UV统计
 
 - **UV**：全称**U**nique **V**isitor，也叫独立访客量，是指通过互联网访问、浏览这个网页的自然人。1天内同一个用户多次访问该网站，只记录1次。
 
@@ -942,23 +882,13 @@ BitMap的操作命令有：
 
 
 
-UV统计在服务端做会比较麻烦，因为要判断该用户是否已经统计过了，需要将统计过的用户信息保存。但是如果每个访问的用户都保存到Redis中，数据量会非常恐怖。
+UV统计在服务端做会比较麻烦，因为要判断该用户是否已经统计过了，需要将统计过的用户信息保存。但是如果每个访问的用户都保存到Redis中，数据量会非常大。
 
 
 
 Hyperloglog(HLL)是从Loglog算法派生的概率算法，用于确定非常大的集合的基数，而不需要存储其所有值。相关算法原理可以参考：[https://juejin.cn/post/6844903785744056333#heading-0](https://juejin.cn/post/6844903785744056333)
 
-Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16kb，内存占用低的令人发指！作为代价，其测量结果是概率性的，有小于0.81％的误差。不过对于UV统计来说，这完全可以忽略。
-
-> [!NOTE]
->
-> Redis命令
->
-> `PFADD`
->
-> `PFCOUNT`
-
-
+Redis中的HLL是基于string结构实现的，单个HLL的内存永远小于16kb，内存占用低，但是其测量结果是概率性的，有小于0.81％的误差。不过对于UV统计来说，这完全可以忽略。
 
 ```java
 // 测试代码
