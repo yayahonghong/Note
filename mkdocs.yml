@@ -182,6 +182,10 @@ nav:
       - 认识Redis: Redis/认识Redis.md
       - Redis客户端: Redis/Redis客户端.md
       - Redis应用场景: Redis/Redis应用场景.md
+      - 集群: Redis/集群.md
+      - 多级缓存: Redis/多级缓存.md
+      - 最佳实践: Redis/最佳实践.md
+      - 面试题: Redis/面试.md
   - 网络与中间件:
     - Netty: Netty/Netty.md
     - Kafka: Kafka.md
