@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://note.pua.asia/MySQL/MySQL%E7%AE%A1%E7%90%86/">
+        <link rel="canonical" href="https://note.pua.asia/Redis/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
       
       
-        <link rel="prev" href="../%E9%94%81/">
+        <link rel="prev" href="../%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
       
       
-        <link rel="next" href="../%E8%BF%90%E7%BB%B4/">
+        <link rel="next" href="../%E9%9D%A2%E8%AF%95/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>MySQL管理 - YSH的学习笔记</title>
+        <title>最佳实践 - YSH的学习笔记</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#系统数据库" class="md-skip">
+        <a href="#redis键值设计" class="md-skip">
           跳转至
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MySQL管理
+              最佳实践
             
           </span>
         </div>
@@ -337,7 +337,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../SQL/" class="md-tabs__link">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
           
   
   
@@ -1850,8 +1850,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1867,11 +1865,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
         
           
           <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
@@ -1887,7 +1885,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             MySQL
@@ -1901,7 +1899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../SQL/" class="md-nav__link">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
         
   
   
@@ -1924,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
         
   
   
@@ -1947,7 +1945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
         
   
   
@@ -1970,7 +1968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
         
   
   
@@ -1993,7 +1991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
         
   
   
@@ -2016,7 +2014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
         
   
   
@@ -2039,7 +2037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
         
   
   
@@ -2062,7 +2060,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
         
   
   
@@ -2085,12 +2083,252 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E9%94%81/" class="md-nav__link">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%9B%86%E7%BE%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    集群
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    多级缓存
     
   </span>
   
@@ -2120,7 +2358,7 @@
   
   
   <span class="md-ellipsis">
-    MySQL管理
+    最佳实践
     
   </span>
   
@@ -2133,7 +2371,7 @@
   
   
   <span class="md-ellipsis">
-    MySQL管理
+    最佳实践
     
   </span>
   
@@ -2154,20 +2392,203 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#系统数据库" class="md-nav__link">
+  <a href="#redis键值设计" class="md-nav__link">
     <span class="md-ellipsis">
-      系统数据库
+      Redis键值设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis键值设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#优雅的key结构" class="md-nav__link">
+    <span class="md-ellipsis">
+      优雅的key结构
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#mysql命令行客户端" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#拒绝bigkey" class="md-nav__link">
     <span class="md-ellipsis">
-      MySQL命令行客户端
+      拒绝BigKey
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="拒绝BigKey">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bigkey的危害" class="md-nav__link">
+    <span class="md-ellipsis">
+      BigKey的危害
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#发现bigkey" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现BigKey
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#删除bigkaey" class="md-nav__link">
+    <span class="md-ellipsis">
+      删除BigKaey
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#恰当的数据类型" class="md-nav__link">
+    <span class="md-ellipsis">
+      恰当的数据类型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="恰当的数据类型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#例1" class="md-nav__link">
+    <span class="md-ellipsis">
+      例1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#例2" class="md-nav__link">
+    <span class="md-ellipsis">
+      例2
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#批处理优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      批处理优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="批处理优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MSET
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipline管道" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipline（管道）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#集群下的批处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      集群下的批处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#服务器端优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务器端优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="服务器端优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#持久化配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      持久化配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#慢查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      慢查询
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#命令及安全配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      命令及安全配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#内存配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#服务器端集群优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务器端集群优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2187,245 +2608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E8%BF%90%E7%BB%B4/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    运维
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    Redis
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_2">
-            <span class="md-nav__icon md-icon"></span>
-            Redis
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    SQL与NoSQL
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    认识Redis
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Redis客户端
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Redis应用场景
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/%E9%9B%86%E7%BE%A4/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    集群
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    多级缓存
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    最佳实践
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../Redis/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+      <a href="../%E9%9D%A2%E8%AF%95/" class="md-nav__link">
         
   
   
@@ -2842,20 +3025,203 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#系统数据库" class="md-nav__link">
+  <a href="#redis键值设计" class="md-nav__link">
     <span class="md-ellipsis">
-      系统数据库
+      Redis键值设计
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis键值设计">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#优雅的key结构" class="md-nav__link">
+    <span class="md-ellipsis">
+      优雅的key结构
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#mysql命令行客户端" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#拒绝bigkey" class="md-nav__link">
     <span class="md-ellipsis">
-      MySQL命令行客户端
+      拒绝BigKey
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="拒绝BigKey">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bigkey的危害" class="md-nav__link">
+    <span class="md-ellipsis">
+      BigKey的危害
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#发现bigkey" class="md-nav__link">
+    <span class="md-ellipsis">
+      发现BigKey
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#删除bigkaey" class="md-nav__link">
+    <span class="md-ellipsis">
+      删除BigKaey
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#恰当的数据类型" class="md-nav__link">
+    <span class="md-ellipsis">
+      恰当的数据类型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="恰当的数据类型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#例1" class="md-nav__link">
+    <span class="md-ellipsis">
+      例1
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#例2" class="md-nav__link">
+    <span class="md-ellipsis">
+      例2
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#批处理优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      批处理优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="批处理优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MSET
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipline管道" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipline（管道）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#集群下的批处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      集群下的批处理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#服务器端优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务器端优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="服务器端优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#持久化配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      持久化配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#慢查询" class="md-nav__link">
+    <span class="md-ellipsis">
+      慢查询
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#命令及安全配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      命令及安全配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#内存配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      内存配置
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#服务器端集群优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务器端集群优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2875,7 +3241,7 @@
 
 
   
-    <a href="https://github.com/yayahonghong/Note/edit/main/docs/MySQL/MySQL管理.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/最佳实践.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2884,138 +3250,529 @@
     
       
     
-    <a href="https://github.com/yayahonghong/Note/raw/main/docs/MySQL/MySQL管理.md" title="查看本页的源代码" class="md-content__button md-icon">
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/最佳实践.md" title="查看本页的源代码" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-  <h1>MySQL管理</h1>
+  <h1>最佳实践</h1>
 
-<h3 id="系统数据库">系统数据库<a class="headerlink" href="#系统数据库" title="链接到此段落">&para;</a></h3>
-<p>MySQL自带数据库说明：</p>
+<h2 id="redis键值设计">Redis键值设计<a class="headerlink" href="#redis键值设计" title="链接到此段落">&para;</a></h2>
+<h3 id="优雅的key结构">优雅的key结构<a class="headerlink" href="#优雅的key结构" title="链接到此段落">&para;</a></h3>
+<p>Redis的Key虽然可以自定义，但最好遵循下面的几个最佳实践约定：</p>
+<ul>
+<li>遵循基本格式：[业务名称]:[数据名]:[id]</li>
+<li>长度不超过44字节</li>
+<li>不包含特殊字符</li>
+</ul>
+<p>这样设计的好处：</p>
+<ul>
+<li>可读性强</li>
+<li>避免key冲突</li>
+<li>方便管理</li>
+<li>更节省内存： key是string类型，底层编码包含int、embstr和raw三种。embstr在小于44字节使用，采用连续内存空间，内存占用更小。当字节数大于44字节时，会转为raw模式存储，在raw模式下，内存空间不是连续的，而是采用一个指针指向了另外一段内存空间，在这段空间里存储SDS内容，这样空间不连续，访问的时候性能也就会收到影响，还有可能产生内存碎片</li>
+</ul>
+<h3 id="拒绝bigkey">拒绝BigKey<a class="headerlink" href="#拒绝bigkey" title="链接到此段落">&para;</a></h3>
+<p>BigKey通常以Key的大小和Key中成员的数量来综合判定，例如：</p>
+<ul>
+<li>Key本身的数据量过大：一个String类型的Key，它的值为5 MB</li>
+<li>Key中的成员数过多：一个ZSET类型的Key，它的成员数量为10,000个</li>
+<li>Key中成员的数据量过大：一个Hash类型的Key，它的成员数量虽然只有1,000个但这些成员的Value（值）总大小为100 MB</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>redis中可使用命令<code>MEMORY USAGE key</code>查看Key占用内存</p>
+</div>
+<p>推荐值：</p>
+<ul>
+<li>单个key的value小于10KB</li>
+<li>对于集合类型的key，建议元素数量小于1000</li>
+</ul>
+<h4 id="bigkey的危害">BigKey的危害<a class="headerlink" href="#bigkey的危害" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>网络阻塞<ul>
+<li>对BigKey执行读请求时，少量的QPS就可能导致带宽使用率被占满，导致Redis实例，乃至所在物理机变慢</li>
+</ul>
+</li>
+<li>数据倾斜<ul>
+<li>BigKey所在的Redis实例内存使用率远超其他实例，无法使数据分片的内存资源达到均衡</li>
+</ul>
+</li>
+<li>Redis阻塞<ul>
+<li>对元素较多的hash、list、zset等做运算会耗时较久，使主线程被阻塞</li>
+</ul>
+</li>
+<li>CPU压力<ul>
+<li>对BigKey的数据序列化和反序列化会导致CPU的使用率飙升，影响Redis实例和本机其它应用</li>
+</ul>
+</li>
+</ul>
+<h4 id="发现bigkey">发现BigKey<a class="headerlink" href="#发现bigkey" title="链接到此段落">&para;</a></h4>
+<ol>
+<li>
+<p><code>redis-cli --bigkeys</code> 命令</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>利用redis-cli提供的--bigkeys参数，可以遍历分析所有key，并返回Key的整体统计信息与每个数据的Top1的key（不一定是BigKey）</p>
+</div>
+</li>
+<li>
+<p>scan扫描</p>
+<p>编程，利用scan扫描Redis中的所有key，利用strlen、hlen等命令判断key的长度（此处不建议使用MEMORY USAGE）</p>
+</li>
+<li>
+<p>第三方工具</p>
+<p>利用第三方工具，如 <a href="https://github.com/sripathikrishnan/redis-rdb-tools">Redis-Rdb-Tools</a> 分析RDB快照文件，全面分析内存使用情况</p>
+</li>
+<li>
+<p>网络监控</p>
+<ul>
+<li>自定义工具，监控进出Redis的网络数据，超出预警值时主动告警</li>
+<li>一般阿里云搭建的云服务器就有相关监控页面</li>
+</ul>
+</li>
+</ol>
+<h4 id="删除bigkaey">删除BigKaey<a class="headerlink" href="#删除bigkaey" title="链接到此段落">&para;</a></h4>
+<p>BigKey内存占用较多，即便时删除这样的key也需要耗费很长时间，导致Redis主线程阻塞，引发一系列问题。</p>
+<ul>
+<li>
+<p>redis 3.0 及以下版本</p>
+<ul>
+<li>如果是集合类型，则遍历BigKey的元素，先逐个删除子元素，最后删除BigKey</li>
+</ul>
+</li>
+<li>
+<p>Redis 4.0以后</p>
+<ul>
+<li>Redis在4.0后提供了异步删除的命令：<code>unlink</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="恰当的数据类型">恰当的数据类型<a class="headerlink" href="#恰当的数据类型" title="链接到此段落">&para;</a></h2>
+<h3 id="例1">例1<a class="headerlink" href="#例1" title="链接到此段落">&para;</a></h3>
+<p>比如存储一个User对象，我们有三种存储方式：</p>
+<ul>
+<li>
+<p>方式一：json字符串</p>
+<p>| user:1 | {"name": "Jack", "age": 21} |</p>
+<p>优点：实现简单粗暴</p>
+<p>缺点：数据耦合，不够灵活</p>
+</li>
+<li>
+<p>方式二：字段拆分</p>
 <table>
 <thead>
 <tr>
-<th>数据库</th>
-<th>作用</th>
+<th style="text-align: center;">user:1:name</th>
+<th style="text-align: center;">Jack</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>mysql</td>
-<td>存储MySQL服务器正常运行所需要的各种信息 （时区、主从、用 户、权限等）</td>
-</tr>
-<tr>
-<td>information_schema</td>
-<td>提供了访问数据库元数据的各种表和视图，包含数据库、表、字段类 型及访问权限等</td>
-</tr>
-<tr>
-<td>performance_schema</td>
-<td>为MySQL服务器运行时状态提供了一个底层监控功能，主要用于收集 数据库服务器性能参数</td>
-</tr>
-<tr>
-<td>sys</td>
-<td>包含了一系列方便 DBA 和开发人员利用 performance_schema 性能数据库进行性能调优和诊断的视图</td>
+<td style="text-align: center;">user:1:age</td>
+<td style="text-align: center;">21</td>
 </tr>
 </tbody>
 </table>
-<h3 id="mysql命令行客户端">MySQL命令行客户端<a class="headerlink" href="#mysql命令行客户端" title="链接到此段落">&para;</a></h3>
-<ul>
-<li>mysql</li>
+<p>优点：可以灵活访问对象任意字段</p>
+<p>缺点：占用空间大、没办法做统一控制</p>
+</li>
+<li>
+<p>方式三：hash（推荐）</p>
+<p><table>
+    <tr>
+        <td rowspan="2">user:1</td>
+        <td>name</td>
+        <td>jack</td>
+    </tr>
+    <tr>
+        <td>age</td>
+        <td>21</td>
+    </tr>
+</table></p>
+<p>优点：底层使用ziplist，空间占用小，可以灵活访问对象的任意字段</p>
+<p>缺点：代码相对复杂</p>
+</li>
 </ul>
-<div class="highlight"><pre><span></span><code>语法<span class="w"> </span>：<span class="w">    </span>
-<span class="w">    </span>mysql<span class="w">   </span><span class="o">[</span>options<span class="o">]</span><span class="w">   </span><span class="o">[</span>database<span class="o">]</span>
-选项<span class="w"> </span>：<span class="w"> </span>
-<span class="w">    </span>-u,<span class="w"> </span>--user<span class="o">=</span>name<span class="w">         </span><span class="c1">#指定用户名</span>
-<span class="w">    </span>-p,<span class="w"> </span>--password<span class="o">[=</span>name<span class="o">]</span><span class="w">           </span><span class="c1">#指定密码</span>
-<span class="w">    </span>-h,<span class="w"> </span>--host<span class="o">=</span>name<span class="w">         </span><span class="c1">#指定服务器IP或域名</span>
-<span class="w">    </span>-P,<span class="w"> </span>--port<span class="o">=</span>port<span class="w">             </span><span class="c1">#指定连接端口</span>
-<span class="w">    </span>-e,<span class="w"> </span>--execute<span class="o">=</span>name<span class="w">          </span><span class="c1">#执行SQL语句并退出</span>
-</code></pre></div>
-<p><br></p>
-<ul>
-<li>mysqladmin，用于执行各种管理操作</li>
-</ul>
-<div class="highlight"><pre><span></span><code>mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>status<span class="w">    </span><span class="c1"># 查看服务器状态</span>
-mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>variables<span class="w"> </span><span class="c1"># 查看服务器变量</span>
-mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>shutdown<span class="w">  </span><span class="c1"># 关闭服务器</span>
-mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>flush-logs<span class="w">      </span><span class="c1"># 刷新日志</span>
-mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>flush-privileges<span class="w"> </span><span class="c1"># 刷新权限</span>
-mysqladmin<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span>flush-status<span class="w">    </span><span class="c1"># 重置状态计数器</span>
-</code></pre></div>
-<p><br></p>
-<ul>
-<li>mysqlbinlog，由于服务器生成的二进制日志文件以二进制格式保存，所以如果想要检查这些文本的文本格式，就会使用到mysqlbinlog 日志管理工具</li>
-</ul>
-<div class="highlight"><pre><span></span><code>语法<span class="w"> </span>：<span class="w">    </span>
-<span class="w">    </span>mysqlbinlog<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w">  </span>log-files1<span class="w"> </span>log-files2<span class="w"> </span>...
+<h3 id="例2">例2<a class="headerlink" href="#例2" title="链接到此段落">&para;</a></h3>
+<p>假如有hash类型的key，其中有100万对field和value，field是自增id，这个key存在什么问题？如何优化？</p>
+<table>
+    <tr style="color:red">
+        <td>key</td>
+        <td>field</td>
+        <td>value</td>
+    </tr>
+    <tr>
+        <td rowspan="3">someKey</td>
+        <td>id:0</td>
+        <td>value0</td>
+    </tr>
+    <tr>
+        <td>.....</td>
+        <td>.....</td>
+    </tr>
+    <tr>
+        <td>id:999999</td>
+        <td>value999999</td>
+    </tr>
+</table>
 
-选项<span class="w"> </span>：<span class="w"> </span>
-<span class="w">    </span>-d,<span class="w"> </span>--database<span class="o">=</span>name<span class="w">         </span>指定数据库名称，只列出指定的数据库相关操作。
-<span class="w">    </span>-o,<span class="w"> </span>--offset<span class="o">=</span><span class="c1">#              忽略掉日志中的前n行命令。</span>
-<span class="w">    </span>-r,--result-file<span class="o">=</span>name<span class="w">       </span>将输出的文本格式日志输出到指定文件。
-<span class="w">    </span>-s,<span class="w"> </span>--short-form<span class="w">            </span>显示简单格式，<span class="w"> </span>省略掉一些信息。
-<span class="w">    </span>--start-datatime<span class="o">=</span>date1<span class="w">  </span>--stop-datetime<span class="o">=</span>date2<span class="w">       </span>指定日期间隔内的所有日志。
-<span class="w">    </span>--start-position<span class="o">=</span>pos1<span class="w"> </span>--stop-position<span class="o">=</span>pos2<span class="w">          </span>指定位置间隔内的所有日志。
-</code></pre></div>
-<p><br></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>存在的问题：</p>
 <ul>
-<li>mysqlshow，对象查找工具，用来很快地查找存在哪些数据库、数据库中的表、表中的列或者索 引。</li>
+<li>hash的entry数量超过500时，会使用哈希表而不是ZipList，内存占用较多</li>
+<li>可以通过hash-max-ziplist-entries配置entry上限。但是如果entry过多就会导致BigKey问题</li>
 </ul>
-<div class="highlight"><pre><span></span><code>语法<span class="w"> </span>：<span class="w">    </span>
-<span class="w">    </span>mysqlshow<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="o">[</span>db_name<span class="w"> </span><span class="o">[</span>table_name<span class="w"> </span><span class="o">[</span>col_name<span class="o">]]]</span>
-选项<span class="w"> </span>：<span class="w"> </span>
-<span class="w">    </span>--count<span class="w">     </span>显示数据库及表的统计信息（数据库，表<span class="w"> </span>均可以不指定）
-<span class="w">    </span>-i<span class="w">      </span>显示指定数据库或者指定表的状态信息
-示例：
-<span class="w">    </span><span class="c1">#查询test库中每个表中的字段书，及行数</span>
-<span class="w">    </span>mysqlshow<span class="w"> </span>-uroot<span class="w"> </span>-p2143<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--count
+</div>
+<ul>
+<li>方案一</li>
+</ul>
+<p>拆分为string类型</p>
+<table>
+    <tr style="color:red">
+        <td>key</td>
+        <td>value</td>
+    </tr>
+    <tr>
+        <td>id:0</td>
+        <td>value0</td>
+    </tr>
+    <tr>
+        <td>.....</td>
+        <td>.....</td>
+    </tr>
+    <tr>
+        <td>id:999999</td>
+        <td>value999999</td>
+    </tr>
+</table>
 
-<span class="w">    </span><span class="c1">#查询test库中book表的详细情况</span>
-<span class="w">    </span>mysqlshow<span class="w"> </span>-uroot<span class="w"> </span>-p2143<span class="w"> </span><span class="nb">test</span><span class="w"> </span>book<span class="w"> </span>--count
-</code></pre></div>
-<p><br></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>存在的问题：</p>
 <ul>
-<li>mysqldump，用来备份数据库或在不同数据库之间进行数据迁移。备份内容包含创建表，及 插入表的SQL语句。</li>
+<li>string结构底层没有太多内存优化，内存占用较多</li>
+<li>想要批量获取这些数据比较麻烦</li>
 </ul>
-<div class="highlight"><pre><span></span><code>语法<span class="w"> </span>：<span class="w">    </span>
-<span class="w">    </span>mysqldump<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>db_name<span class="w"> </span><span class="o">[</span>tables<span class="o">]</span>
-<span class="w">    </span>mysqldump<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>--database/-B<span class="w"> </span>db1<span class="w"> </span><span class="o">[</span>db2<span class="w"> </span>db3...<span class="o">]</span>
-<span class="w">    </span>mysqldump<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>--all-databases/-A
-连接选项<span class="w"> </span>：<span class="w">  </span>
-<span class="w">    </span>-u,<span class="w"> </span>--user<span class="o">=</span>name<span class="w">                 </span>指定用户名
-<span class="w">    </span>-p,<span class="w"> </span>--password<span class="o">[=</span>name<span class="o">]</span><span class="w">           </span>指定密码
-<span class="w">    </span>-h,<span class="w"> </span>--host<span class="o">=</span>name<span class="w">                 </span>指定服务器ip或域名
-<span class="w">    </span>-P,<span class="w"> </span>--port<span class="o">=</span><span class="c1">#                    指定连接端口</span>
-输出选项：
-<span class="w">    </span>--add-drop-database<span class="w">         </span>在每个数据库创建语句前加上<span class="w"> </span>drop<span class="w"> </span>database<span class="w"> </span>语句
-<span class="w">    </span>--add-drop-table<span class="w">            </span>在每个表创建语句前加上<span class="w"> </span>drop<span class="w"> </span>table<span class="w"> </span>语句<span class="w"> </span>,<span class="w"> </span>默认开启<span class="w"> </span><span class="p">;</span><span class="w"> </span>不开启<span class="w"> </span><span class="o">(</span>--skip-add-drop-table<span class="o">)</span>
-<span class="w">    </span>-n,<span class="w"> </span>--no-create-db<span class="w">          </span>不包含数据库的创建语句
-<span class="w">    </span>-t,<span class="w"> </span>--no-create-info<span class="w">        </span>不包含数据表的创建语句
-<span class="w">    </span>-d<span class="w"> </span>--no-data<span class="w">                </span>不包含数据
-<span class="w">    </span>-T,<span class="w"> </span>--tab<span class="o">=</span>name<span class="w">              </span>自动生成两个文件：一个.sql文件，创建表结构的语句；一个.txt文件，数据文件
+</div>
+<ul>
+<li>方案二（推荐）</li>
+</ul>
+<p>拆分为小的hash，将 <code>id / 100</code> 作为key， 将 <code>id % 100</code> 作为field，这样每100个元素为一个Hash</p>
+<table>
+    <tr style="color:red">
+        <td>key</td>
+        <td>field</td>
+        <td>value</td>
+    </tr>
+    <tr>
+        <td rowspan="3">key:0</td>
+        <td>id:00</td>
+        <td>value0</td>
+    </tr>
+    <tr>
+        <td>.....</td>
+        <td>.....</td>
+    </tr>
+    <tr>
+        <td>id:99</td>
+        <td>value99</td>
+    </tr>
+    <tr>
+        <td rowspan="3">key:1</td>
+        <td>id:00</td>
+        <td>value100</td>
+    </tr>
+    <tr>
+        <td>.....</td>
+        <td>.....</td>
+    </tr>
+    <tr>
+        <td>id:99</td>
+        <td>value199</td>
+    </tr>
+    <tr>
+        <td colspan="3">....</td>
+    </tr>
+    <tr>
+        <td rowspan="3">key:9999</td>
+        <td>id:00</td>
+        <td>value999900</td>
+    </tr>
+    <tr>
+        <td>.....</td>
+        <td>.....</td>
+    </tr>
+    <tr>
+        <td>id:99</td>
+        <td>value999999</td>
+    </tr>
+</table>
 
---<span class="w"> </span>备份数据库
-mysqldump<span class="w"> </span>-uroot<span class="w"> </span>-p1234<span class="w"> </span>db01<span class="w"> </span>&gt;<span class="w"> </span>db01.sql
-</code></pre></div>
-<p><br></p>
+<h2 id="批处理优化">批处理优化<a class="headerlink" href="#批处理优化" title="链接到此段落">&para;</a></h2>
+<h3 id="mset">MSET<a class="headerlink" href="#mset" title="链接到此段落">&para;</a></h3>
+<p>redis处理指令是很快的，主要花费的时候在于网络传输。于是乎很容易想到将多条指令批量的传输给redis</p>
+<p>Redis提供了很多Mxxx这样的命令，可以实现批量插入数据，例如：</p>
 <ul>
-<li>mysqlimport ，是客户端数据导入工具，用来导入mysqldump 加 -T 参数后导出的文本文件。</li>
+<li>mset</li>
+<li>hmset</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="err">语法</span><span class="w"> </span><span class="err">：</span><span class="w">    </span>
-<span class="w">    </span><span class="n">mysqlimport</span><span class="w"> </span><span class="p">[</span><span class="k">options</span><span class="p">]</span><span class="w">  </span><span class="n">db_name</span><span class="w">  </span><span class="n">textfile1</span><span class="w">  </span><span class="p">[</span><span class="n">textfile2</span><span class="p">...]</span>
-<span class="err">示例</span><span class="w"> </span><span class="err">：</span><span class="w"> </span>
-<span class="w">    </span><span class="n">mysqlimport</span><span class="w"> </span><span class="o">-</span><span class="n">uroot</span><span class="w"> </span><span class="o">-</span><span class="n">p2143</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">city</span><span class="p">.</span><span class="n">txt</span>
+<p>插入10万条数据</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">testMxx</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[</span><span class="mi">2000</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">100000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;test:key_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">jedis</span><span class="p">.</span><span class="na">mset</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">();</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;time: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">));</span>
+<span class="p">}</span>
 </code></pre></div>
-<p><br></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>不要在一次批处理中传输太多数据，否则单次命令占用带宽过多，导致网络阻塞</p>
+</div>
+<h3 id="pipline管道">Pipline（管道）<a class="headerlink" href="#pipline管道" title="链接到此段落">&para;</a></h3>
+<p>MSET虽然可以批处理，但是却只能操作部分数据类型，因此如果有对复杂数据类型的批处理需要，建议使用Pipeline</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testPipeline</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建管道</span>
+<span class="w">    </span><span class="n">Pipeline</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jedis</span><span class="p">.</span><span class="na">pipelined</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">100000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 放入命令到管道</span>
+<span class="w">        </span><span class="n">pipeline</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="s">&quot;test:key_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;value_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 每放入1000条命令，批量执行</span>
+<span class="w">            </span><span class="n">pipeline</span><span class="p">.</span><span class="na">sync</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">currentTimeMillis</span><span class="p">();</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;time: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="集群下的批处理">集群下的批处理<a class="headerlink" href="#集群下的批处理" title="链接到此段落">&para;</a></h3>
+<p>如MSET或Pipeline这样的批处理需要在一次请求中携带多条命令，而此时如果Redis是一个集群，那批处理命令的多个key必须落在<strong>同一个插槽</strong>中，否则就会导致执行失败。</p>
+<p><strong>解决方案</strong></p>
+<ol>
+<li>
+<p>第一种方案：</p>
 <ul>
-<li>source ，如果需要导入sql文件,可以使用<strong>mysql中的source</strong> 指令</li>
+<li>串行执行，所以这种方式没有什么意义，当然，执行起来就很简单了，缺点就是耗时过久。</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="err">语法</span><span class="w"> </span><span class="err">：</span><span class="w">    </span>
-<span class="k">source</span><span class="w"> </span><span class="o">/</span><span class="n">root</span><span class="o">/</span><span class="n">xxxxx</span><span class="p">.</span><span class="k">sql</span>
+</li>
+<li>
+<p>第二种方案：</p>
+<ul>
+<li>串行slot，简单来说，就是执行前，客户端先计算一下对应的key的slot，一样slot的key就放到一个组里边，不同的，就放到不同的组里边，然后对每个组执行pipeline的批处理，他就能串行执行各个组的命令，这种做法比第一种方法耗时要少，但是缺点呢，相对来说复杂一点，所以这种方案还需要优化一下</li>
+</ul>
+</li>
+<li>
+<p>第三种方案：</p>
+<ul>
+<li>并行slot，相较于第二种方案，在分组完成后串行执行，第三种方案，就变成了并行执行各个命令，所以他的耗时就非常短，但是实现呢，也更加复杂。</li>
+</ul>
+</li>
+<li>
+<p>第四种：</p>
+<ul>
+<li>hash_tag，redis计算key的slot的时候，其实是根据key的有效部分来计算的，通过这种方式就能一次处理所有的key，这种方式耗时最短，实现也简单，但是如果通过操作key的有效部分，那么就会导致所有的key都落在一个节点上，产生数据倾斜的问题，所以我们推荐使用第三种方式。</li>
+</ul>
+</li>
+<li>
+<p>Jedis代码实现</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">testMSet2</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jack&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;21&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">//对Map数据进行分组。根据相同的slot放在一个分组</span>
+<span class="w">        </span><span class="c1">//key就是slot，value就是一个组</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">.</span><span class="na">entrySet</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">stream</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">groupingBy</span><span class="p">(</span>
+<span class="w">                        </span><span class="n">entry</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">ClusterSlotHashUtil</span><span class="p">.</span><span class="na">calculateSlot</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">()))</span>
+<span class="w">                </span><span class="p">);</span>
+<span class="w">        </span><span class="c1">//串行的去执行mset的逻辑</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="na">values</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="o">[</span><span class="n">list</span><span class="p">.</span><span class="na">size</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="o">]</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">2</span><span class="p">;</span>
+<span class="w">                </span><span class="n">Map</span><span class="p">.</span><span class="na">Entry</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">list</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">                </span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span>
+<span class="w">                </span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">jedisCluster</span><span class="p">.</span><span class="na">mset</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 </code></pre></div>
+<ul>
+<li>Srping下的实现</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="w">   </span><span class="nd">@Test</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">testMSetInCluster</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Rose&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;21&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">map</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Female&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">opsForValue</span><span class="p">().</span><span class="na">multiSet</span><span class="p">(</span><span class="n">map</span><span class="p">);</span>
+
+
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stringRedisTemplate</span><span class="p">.</span><span class="na">opsForValue</span><span class="p">().</span><span class="na">multiGet</span><span class="p">(</span><span class="n">Arrays</span><span class="p">.</span><span class="na">asList</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sex&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">strings</span><span class="p">.</span><span class="na">forEach</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">::</span><span class="n">println</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">}</span>
+</code></pre></div>
+<h2 id="服务器端优化">服务器端优化<a class="headerlink" href="#服务器端优化" title="链接到此段落">&para;</a></h2>
+<h3 id="持久化配置">持久化配置<a class="headerlink" href="#持久化配置" title="链接到此段落">&para;</a></h3>
+<p>几点建议：</p>
+<ul>
+<li>用来做缓存的Redis实例尽量不要开启持久化功能</li>
+<li>建议关闭RDB持久化功能，使用AOF持久化</li>
+<li>利用脚本定期在slave节点做RDB，实现数据备份</li>
+<li>设置合理的rewrite阈值，避免频繁的bgrewrite</li>
+<li>配置no-appendfsync-on-rewrite = yes，禁止在rewrite期间做aof，避免因AOF引起的阻塞</li>
+<li>部署有关建议：<ul>
+<li>Redis实例的物理机要预留足够内存，应对fork和rewrite</li>
+<li>单个Redis实例内存上限不要太大，例如4G或8G。可以加快fork的速度、减少主从同步、数据迁移压力</li>
+<li>不要与CPU密集型应用部署在一起</li>
+<li>不要与高硬盘负载应用一起部署。例如：数据库、消息队列</li>
+</ul>
+</li>
+</ul>
+<h3 id="慢查询">慢查询<a class="headerlink" href="#慢查询" title="链接到此段落">&para;</a></h3>
+<p>在Redis执行时耗时超过某个阈值的命令，称为慢查询。</p>
+<p>慢查询的危害：</p>
+<ul>
+<li>由于Redis是单线程的，所以当客户端发出指令后，他们都会进入到redis底层的queue来执行，如果此时有一些慢查询的数据，就会导致大量请求阻塞，从而引起报错</li>
+</ul>
+<p>慢查询的阈值可以通过配置指定：</p>
+<ul>
+<li><code>slowlog-log-slower-than</code>：慢查询阈值，单位是微秒。默认是10000，建议1000</li>
+</ul>
+<p>慢查询会被放入慢查询日志中，日志的长度有上限，可以通过配置指定：</p>
+<ul>
+<li><code>slowlog-max-len</code>：慢查询日志（本质是一个队列）的长度。默认是128，建议1000</li>
+</ul>
+<p>查看慢查询日志列表：</p>
+<ul>
+<li><code>slowlog len</code>：查询慢查询日志长度</li>
+<li><code>slowlog get [n]</code>：读取n条慢查询日志</li>
+<li><code>slowlog reset</code>：清空慢查询列表</li>
+</ul>
+<h3 id="命令及安全配置">命令及安全配置<a class="headerlink" href="#命令及安全配置" title="链接到此段落">&para;</a></h3>
+<p>Redis会绑定在0.0.0.0:6379，这样将会将Redis服务暴露到公网上，而Redis如果没有做身份认证，会出现严重的安全漏洞.
+漏洞重现方式：https://cloud.tencent.com/developer/article/1039000</p>
+<p>漏洞出现的核心的原因有以下几点：</p>
+<ul>
+<li>Redis未设置密码</li>
+<li>利用了Redis的config set命令动态修改Redis配置</li>
+<li>使用了Root账号权限启动Redis</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>一些建议：</p>
+<ul>
+<li>Redis一定要设置密码</li>
+<li>禁止线上使用下面命令：keys、flushall、flushdb、config set等命令。可以利用rename-command禁用。</li>
+<li>bind：限制网卡，禁止外网网卡访问</li>
+<li>开启防火墙</li>
+<li>不要使用Root账户启动Redis</li>
+<li>尽量不是有默认的端口</li>
+</ul>
+</div>
+<h3 id="内存配置">内存配置<a class="headerlink" href="#内存配置" title="链接到此段落">&para;</a></h3>
+<p>当Redis内存不足时，可能导致Key频繁被删除、响应时间变长、QPS不稳定等问题。当内存使用率达到90%以上时就需要我们警惕，并快速定位到内存占用的原因。</p>
+<table>
+<thead>
+<tr>
+<th><strong>内存占用</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据内存</td>
+<td>是Redis最主要的部分，存储Redis的键值信息。主要问题是BigKey问题、内存碎片问题</td>
+</tr>
+<tr>
+<td>进程内存</td>
+<td>Redis主进程本身运行肯定需要占用内存，如代码、常量池等等；这部分内存大约几兆，在⼤多数生产环境中与Redis数据占用的内存相比可以忽略。</td>
+</tr>
+<tr>
+<td>缓冲区内存</td>
+<td>一般包括客户端缓冲区、AOF缓冲区、复制缓冲区等。客户端缓冲区又包括输入缓冲区和输出缓冲区两种。这部分内存占用波动较大，不当使用BigKey，可能导致内存溢出。</td>
+</tr>
+</tbody>
+</table>
+<p>查看Redis目前的内存分配状态：</p>
+<ul>
+<li>
+<p><code>info memory</code>：查看内存分配的情况</p>
+</li>
+<li>
+<p><code>memory xxx</code>：查看key的主要占用情况</p>
+</li>
+</ul>
+<p>内存缓冲区常见的有三种：</p>
+<ul>
+<li>复制缓冲区：主从复制的 <code>repl_backlog_buf</code>，如果太小可能导致频繁的全量复制，影响性能。通过 <code>replbacklog-size</code> 来设置，默认1mb</li>
+<li>AOF缓冲区：AOF刷盘之前的缓存区域，AOF执行rewrite的缓冲区。无法设置容量上限</li>
+<li>客户端缓冲区：分为输入缓冲区和输出缓冲区，输入缓冲区最大1G且不能设置。输出缓冲区可以设置</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>最可能发生问题的就是客户端输出缓冲区</p>
+</div>
+<h3 id="服务器端集群优化">服务器端集群优化<a class="headerlink" href="#服务器端集群优化" title="链接到此段落">&para;</a></h3>
+<p>集群虽然具备高可用特性，能实现自动故障恢复，但是如果使用不当，也会存在一些问题：</p>
+<ul>
+<li>集群完整性问题</li>
+<li>集群带宽问题</li>
+<li>数据倾斜问题</li>
+<li>客户端性能问题</li>
+<li>命令的集群兼容性问题</li>
+<li>lua和事务问题</li>
+</ul>
+<p><strong>问题1、在Redis的默认配置中，如果发现任意一个插槽不可用，则整个集群都会停止对外服务：</strong> </p>
+<p>大家可以设想一下，如果有几个slot不能使用，那么此时整个集群都不能用了，我们在开发中，其实最重要的是可用性，所以需要把如下配置修改成no，即有slot不能使用时，我们的redis集群还是可以对外提供服务</p>
+<div class="highlight"><pre><span></span><code><span class="na">cluster-require-full-coverage</span><span class="w"> </span><span class="s">no</span>
+</code></pre></div>
+<p><strong>问题2、集群带宽问题</strong></p>
+<p>集群节点之间会不断的互相Ping来确定集群中其它节点的状态。每次Ping携带的信息至少包括：</p>
+<ul>
+<li>插槽信息</li>
+<li>集群状态信息</li>
+</ul>
+<p>集群中节点越多，集群状态信息数据量也越大，10个节点的相关信息可能达到1kb，此时每次集群互通需要的带宽会非常高，这样会导致集群中大量的带宽都会被ping信息所占用，这是一个非常可怕的问题，所以我们需要去解决这样的问题</p>
+<p><strong>解决途径：</strong></p>
+<ul>
+<li>避免大集群，集群节点数不要太多，最好少于1000，如果业务庞大，则建立多个集群。</li>
+<li>避免在单个物理机中运行太多Redis实例</li>
+<li>配置合适的 <code>cluster-node-timeout</code> 值</li>
+</ul>
+<p><strong>问题3、命令的集群兼容性问题</strong></p>
+<p>有关这个问题咱们已经探讨过了，当我们使用批处理的命令时，redis要求我们的key必须落在相同的slot上，然后大量的key同时操作时，是无法完成的，所以客户端必须要对这样的数据进行处理，这些方案我们之前已经探讨过了，所以不再这个地方赘述了。</p>
+<p><strong>问题4、lua和事务的问题</strong></p>
+<p>lua和事务都是要保证原子性问题，如果key不在一个节点，那么是无法保证lua的执行和事务的特性的，所以在集群模式是没有办法执行lua和事务的</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong>集群还是主从</strong>
+单体Redis（主从Redis）已经能达到万级别的QPS，并且也具备很强的高可用特性。如果主从能满足业务需求的情况下，所以如果不是在万不得已的情况下，尽量不搭建Redis集群</p>
+</div>
 <hr />
 
 

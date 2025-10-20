@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://note.pua.asia/Redis/%E8%AE%A4%E8%AF%86Redis/">
+        <link rel="canonical" href="https://note.pua.asia/Redis/%E9%9B%86%E7%BE%A4/">
       
       
-        <link rel="prev" href="../SQL%E4%B8%8ENoSQL/">
+        <link rel="prev" href="../Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/">
       
       
-        <link rel="next" href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/">
+        <link rel="next" href="../%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>认识Redis - YSH的学习笔记</title>
+        <title>集群 - YSH的学习笔记</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#redis通用命令" class="md-skip">
+        <a href="#redis集群" class="md-skip">
           跳转至
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              认识Redis
+              集群
             
           </span>
         </div>
@@ -2228,30 +2228,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    认识Redis
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
         
   
   
@@ -2262,102 +2242,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#redis通用命令" class="md-nav__link">
-    <span class="md-ellipsis">
-      Redis通用命令
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key的结构" class="md-nav__link">
-    <span class="md-ellipsis">
-      key的结构
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#数据类型" class="md-nav__link">
-    <span class="md-ellipsis">
-      数据类型
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="数据类型">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#string" class="md-nav__link">
-    <span class="md-ellipsis">
-      String
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hash" class="md-nav__link">
-    <span class="md-ellipsis">
-      Hash
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list" class="md-nav__link">
-    <span class="md-ellipsis">
-      List
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#set" class="md-nav__link">
-    <span class="md-ellipsis">
-      Set
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sortedset" class="md-nav__link">
-    <span class="md-ellipsis">
-      SortedSet
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2413,10 +2297,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../%E9%9B%86%E7%BE%A4/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    集群
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2427,6 +2331,207 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#redis集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis集群
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis集群">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis持久化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis持久化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rdb持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      RDB持久化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aof持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      AOF持久化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#主从集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从集群
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主从集群">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全量同步" class="md-nav__link">
+    <span class="md-ellipsis">
+      全量同步
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#增量同步" class="md-nav__link">
+    <span class="md-ellipsis">
+      增量同步
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#主从同步优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从同步优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#哨兵模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      哨兵模式
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="哨兵模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#搭建哨兵集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建哨兵集群
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redistemplate连接哨兵" class="md-nav__link">
+    <span class="md-ellipsis">
+      RedisTemplate连接哨兵
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      分片集群
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="分片集群">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#搭建分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建分片集群
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#散列插槽" class="md-nav__link">
+    <span class="md-ellipsis">
+      散列插槽
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#集群伸缩" class="md-nav__link">
+    <span class="md-ellipsis">
+      集群伸缩
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#故障转移" class="md-nav__link">
+    <span class="md-ellipsis">
+      故障转移
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redistemplate连接分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      RedisTemplate连接分片集群
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2902,75 +3007,180 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#redis通用命令" class="md-nav__link">
+  <a href="#redis集群" class="md-nav__link">
     <span class="md-ellipsis">
-      Redis通用命令
+      Redis集群
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key的结构" class="md-nav__link">
-    <span class="md-ellipsis">
-      key的结构
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#数据类型" class="md-nav__link">
-    <span class="md-ellipsis">
-      数据类型
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="数据类型">
+    <nav class="md-nav" aria-label="Redis集群">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#string" class="md-nav__link">
+  <a href="#redis持久化" class="md-nav__link">
     <span class="md-ellipsis">
-      String
+      Redis持久化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis持久化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rdb持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      RDB持久化
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#hash" class="md-nav__link">
+  <a href="#aof持久化" class="md-nav__link">
     <span class="md-ellipsis">
-      Hash
+      AOF持久化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#主从集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      主从集群
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主从集群">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#全量同步" class="md-nav__link">
+    <span class="md-ellipsis">
+      全量同步
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#list" class="md-nav__link">
+  <a href="#增量同步" class="md-nav__link">
     <span class="md-ellipsis">
-      List
+      增量同步
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#set" class="md-nav__link">
+  <a href="#主从同步优化" class="md-nav__link">
     <span class="md-ellipsis">
-      Set
+      主从同步优化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#哨兵模式" class="md-nav__link">
+    <span class="md-ellipsis">
+      哨兵模式
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="哨兵模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#搭建哨兵集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建哨兵集群
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#sortedset" class="md-nav__link">
+  <a href="#redistemplate连接哨兵" class="md-nav__link">
     <span class="md-ellipsis">
-      SortedSet
+      RedisTemplate连接哨兵
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      分片集群
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="分片集群">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#搭建分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      搭建分片集群
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#散列插槽" class="md-nav__link">
+    <span class="md-ellipsis">
+      散列插槽
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#集群伸缩" class="md-nav__link">
+    <span class="md-ellipsis">
+      集群伸缩
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#故障转移" class="md-nav__link">
+    <span class="md-ellipsis">
+      故障转移
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redistemplate连接分片集群" class="md-nav__link">
+    <span class="md-ellipsis">
+      RedisTemplate连接分片集群
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2995,7 +3205,7 @@
 
 
   
-    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/认识Redis.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/集群.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3004,172 +3214,528 @@
     
       
     
-    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/认识Redis.md" title="查看本页的源代码" class="md-content__button md-icon">
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/集群.md" title="查看本页的源代码" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-  <h1>认识Redis</h1>
+  <h1>集群</h1>
 
-<p>Redis诞生于2009年，全称是<strong>Remote Dictionary Server</strong>，远程词典服务器，是一个基于内存的键值型NoSQL数据库。</p>
-<p><a href="https://redis.io/">Redis - The Real-time Data Platform</a></p>
-<p><strong>特征</strong>：</p>
+<h2 id="redis集群">Redis集群<a class="headerlink" href="#redis集群" title="链接到此段落">&para;</a></h2>
+<p>单机Redis存在如下问题：</p>
+<ol>
+<li>数据丢失问问题</li>
+<li>并发不足问题</li>
+<li>存储能力问题</li>
+<li>故障恢复问题</li>
+</ol>
+<p><br></p>
+<p>对应解决方案：</p>
+<ol>
+<li>持久化</li>
+<li>主从集群</li>
+<li>分片集群</li>
+<li>哨兵机制</li>
+</ol>
+<h3 id="redis持久化">Redis持久化<a class="headerlink" href="#redis持久化" title="链接到此段落">&para;</a></h3>
+<p>Redis有两种持久化方案：</p>
 <ul>
-<li>键值（key-value）型，value支持多种不同数据结构，功能丰富</li>
-<li>单线程（早期版本），每个命令具备原子性</li>
-<li>低延迟，速度快（基于内存、IO多路复用、良好的编码）。</li>
-<li>支持数据持久化</li>
-<li>支持主从集群、分片集群</li>
-<li>支持多语言客户端</li>
+<li>RDB持久化</li>
+<li>AOF持久化</li>
 </ul>
-<div class="admonition example">
-<p class="admonition-title">简单安装Redis</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## Docker 创建 Redis 容器命令</span>
-docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
---log-opt<span class="w"> </span>max-size<span class="o">=</span>100m<span class="w"> </span><span class="se">\</span>
---log-opt<span class="w"> </span>max-file<span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
--p<span class="w"> </span><span class="m">6379</span>:6379<span class="w"> </span><span class="se">\</span>
---name<span class="w"> </span>redis<span class="w"> </span><span class="se">\</span>
--v<span class="w"> </span>/home/ysh/redis/conf/redis.conf:/etc/redis/redis.conf<span class="w">  </span><span class="se">\</span>
--v<span class="w"> </span>/home/ysh/redis/data:/data<span class="w"> </span><span class="se">\</span>
--d<span class="w"> </span>redis<span class="w"> </span>redis-server<span class="w"> </span>/etc/redis/redis.conf<span class="w"> </span><span class="se">\</span>
---appendonly<span class="w"> </span>yes<span class="w"> </span><span class="se">\</span>
---requirepass<span class="w"> </span><span class="m">123456</span><span class="w"> </span><span class="c1">#密码</span>
+<h4 id="rdb持久化">RDB持久化<a class="headerlink" href="#rdb持久化" title="链接到此段落">&para;</a></h4>
+<p>RDB全称Redis Database Backup file（Redis数据备份文件），也被叫做Redis数据快照。简单来说就是把内存中的所有数据都记录到磁盘中。当Redis实例故障重启后，从磁盘读取快照文件，恢复数据。快照文件称为RDB文件，默认是保存在当前运行目录。</p>
+<p>RDB持久化在四种情况下会执行：</p>
+<ul>
+<li>执行save命令（会阻塞主进程）</li>
+<li>执行bgsave命令（异步执行）</li>
+<li>Redis停机时</li>
+<li>触发RDB条件时</li>
+</ul>
+<p>Redis内部有触发RDB的机制，可以在redis.conf文件中找到，格式如下：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 900秒内，如果至少有1个key被修改，则执行bgsave ， 如果是save &quot;&quot; 则表示禁用RDB</span>
+<span class="na">save</span><span class="w"> </span><span class="s">900 1  </span>
+<span class="na">save</span><span class="w"> </span><span class="s">300 10  </span>
+<span class="na">save</span><span class="w"> </span><span class="s">60 10000 </span>
 </code></pre></div>
-<p>进入容器内部测试redis</p>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis<span class="w"> </span>/bin/bash
+<p>RDB的其它配置也可以在redis.conf文件中设置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 是否压缩 ,建议不开启，压缩也会消耗cpu，磁盘的话不值钱</span>
+<span class="na">rdbcompression</span><span class="w"> </span><span class="s">yes</span>
 
-redis-cli<span class="w"> </span>-h<span class="w"> </span>localhost<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span><span class="w"> </span>-a<span class="w"> </span><span class="m">123456</span>
+<span class="c1">## RDB文件名称</span>
+<span class="na">dbfilename</span><span class="w"> </span><span class="s">dump.rdb  </span>
 
-ping
+<span class="c1">## 文件保存的路径目录</span>
+<span class="na">dir</span><span class="w"> </span><span class="s">./ </span>
 </code></pre></div>
-</div>
-<h2 id="redis通用命令">Redis通用命令<a class="headerlink" href="#redis通用命令" title="链接到此段落">&para;</a></h2>
+<p>bgsave开始时会fork主进程得到子进程，子进程共享主进程的内存数据。完成fork后读取内存数据并写入 RDB 文件。</p>
+<p>fork采用的是copy-on-write技术（写时复制）：</p>
 <ul>
-<li>KEYS：查看符合模板的所有key，支持通配符，<strong>不建议在生产环境使用</strong></li>
-<li>DEL：删除一个（或多个）指定的key</li>
-<li>EXISTS：判断key是否存在</li>
-<li>EXPIRE：给一个key设置有效期（单位秒），有效期到期时该key会被自动删除，不设置有效期时默认为-1（永久有效）</li>
-<li>TTL：查看一个KEY的剩余有效期</li>
+<li>当主进程执行读操作时，访问共享内存；</li>
+<li>当主进程执行写操作时，则会拷贝一份数据，执行写操作。</li>
 </ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>通过help [command] 可以查看一个命令的具体用法</p>
-</div>
-<h2 id="key的结构">key的结构<a class="headerlink" href="#key的结构" title="链接到此段落">&para;</a></h2>
-<p>Redis的key允许有多个单词形成层级结构，多个单词之间用':'隔开，格式如下：
-<div class="highlight"><pre><span></span><code>*项目名:业务名:类型:id*
-</code></pre></div></p>
-<p>例如我们的项目名称叫 ysh，有user和product两种不同类型的数据，我们可以这样定义key：
-<div class="highlight"><pre><span></span><code>user相关的key：ysh:user:1
+<p><img alt="image-20210725151319695" src="../images/image-20210725151319695-1742480998175-1.png" /></p>
+<p>RDB方式bgsave的基本流程？</p>
+<ul>
+<li>fork主进程得到一个子进程，共享内存空间</li>
+<li>子进程读取内存数据并写入新的RDB文件</li>
+<li>用新RDB文件替换旧的RDB文件</li>
+</ul>
+<p>RDB会在什么时候执行？save 60 1000代表什么含义？</p>
+<ul>
+<li>默认是服务停止时</li>
+<li>代表60秒内至少执行1000次修改则触发RDB</li>
+</ul>
+<p>RDB的缺点？</p>
+<ul>
+<li>RDB执行间隔时间长，两次RDB之间写入数据有丢失的风险</li>
+<li>fork子进程、压缩、写出RDB文件都比较耗时</li>
+</ul>
+<h4 id="aof持久化">AOF持久化<a class="headerlink" href="#aof持久化" title="链接到此段落">&para;</a></h4>
+<p>AOF全称为Append Only File（追加文件）。Redis处理的每一个写命令都会记录在AOF文件，可以看做是命令日志文件。</p>
+<p>AOF<strong>默认是关闭的</strong>，需要修改redis.conf配置文件来开启AOF：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 是否开启AOF功能，默认是no</span>
+<span class="na">appendonly</span><span class="w"> </span><span class="s">yes</span>
+<span class="c1">## AOF文件的名称</span>
+<span class="na">appendfilename</span><span class="w"> </span><span class="s">&quot;appendonly.aof&quot;</span>
+</code></pre></div>
+<p>AOF的命令记录的频率也可以通过redis.conf文件来配置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 表示每执行一次写命令，立即记录到AOF文件</span>
+<span class="na">appendfsync</span><span class="w"> </span><span class="s">always </span>
+<span class="c1">## 写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案</span>
+<span class="na">appendfsync</span><span class="w"> </span><span class="s">everysec </span>
+<span class="c1">## 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘</span>
+<span class="na">appendfsync</span><span class="w"> </span><span class="s">no</span>
+</code></pre></div>
+<p>对比：</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>存盘机制</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always</td>
+<td>同步</td>
+<td>可靠性高</td>
+<td>性能影响大</td>
+</tr>
+<tr>
+<td>everysec</td>
+<td>每秒</td>
+<td>性能适中</td>
+<td>可能丢失1秒数据</td>
+</tr>
+<tr>
+<td>no</td>
+<td>操作系统控制</td>
+<td>性能最好</td>
+<td>可靠性差</td>
+</tr>
+</tbody>
+</table>
+<p><strong>AOF文件重写</strong></p>
+<p>因为是记录命令，AOF文件会比RDB文件大的多。而且AOF会记录对同一个key的多次写操作，但只有最后一次写操作才有意义。通过执行<code>bgrewriteaof</code>命令，<strong>可以让AOF文件执行重写功能，用最少的命令达到相同效果</strong>。</p>
+<p>Redis也会在触发阈值时自动去重写AOF文件。阈值也可以在redis.conf中配置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## AOF文件比上次文件 增长超过多少百分比则触发重写</span>
+<span class="na">auto-aof-rewrite-percentage</span><span class="w"> </span><span class="s">100</span>
+<span class="c1">## AOF文件体积最小多大以上才触发重写 </span>
+<span class="na">auto-aof-rewrite-min-size</span><span class="w"> </span><span class="s">64mb </span>
+</code></pre></div>
+<p>对比</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RDB</th>
+<th>AOF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>持久化方式</td>
+<td>定时做内存快照</td>
+<td>记录写命令</td>
+</tr>
+<tr>
+<td>数据完整性</td>
+<td>不完整，未备份的数据丢失</td>
+<td>相对完整，取决于存盘策略</td>
+</tr>
+<tr>
+<td>文件大小</td>
+<td>有压缩机制，体积小</td>
+<td>记录命令，体积大</td>
+</tr>
+<tr>
+<td>宕机恢复速度</td>
+<td>很快</td>
+<td>慢</td>
+</tr>
+<tr>
+<td>数据恢复优先级</td>
+<td>低</td>
+<td>高（因为完整性更高）</td>
+</tr>
+<tr>
+<td>系统资源占用</td>
+<td>高，大量CPU和内存消耗</td>
+<td>低，主要占用磁盘IO（文件重写时占用CPU和内存）</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>可以容忍部分数据丢失</td>
+<td>对数据完整性要求高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="主从集群">主从集群<a class="headerlink" href="#主从集群" title="链接到此段落">&para;</a></h3>
+<p>单节点Redis的并发能力是有上限的，要进一步提高Redis的并发能力，就需要搭建主从集群，实现读写分离。</p>
+<p>简单架构图：</p>
+<p><img alt="image-20250227154827246" src="../images/image-20250227154827246.png" /></p>
+<p>如图所示，集群中有一个master节点、两个slave节点（现已改为replica）。当我们通过Redis的Java客户端访问主从集群时，应该做好路由：</p>
+<ul>
+<li>如果是写操作，应该访问master节点，master会自动将数据同步给两个slave节点</li>
+<li>如果是读操作，建议访问各个slave节点，从而分担并发压力</li>
+</ul>
+<p>使用docker compose启动多个Redis实例：</p>
+<div class="highlight"><pre><span></span><code>version:<span class="w"> </span><span class="s2">&quot;3.2&quot;</span>
 
-product相关的key：ysh:product:1
-</code></pre></div></p>
-<h2 id="数据类型">数据类型<a class="headerlink" href="#数据类型" title="链接到此段落">&para;</a></h2>
-<p><img alt="image-20250222171456006" src="../images/image-20250222171456006.png" /></p>
-<h3 id="string">String<a class="headerlink" href="#string" title="链接到此段落">&para;</a></h3>
-<p>String类型，也就是字符串类型，是Redis中最简单的存储类型。</p>
-<p>其value是字符串，不过根据字符串的格式不同，又可以分为3类：</p>
+services:
+<span class="w">  </span>r1:
+<span class="w">    </span>image:<span class="w"> </span>redis
+<span class="w">    </span>container_name:<span class="w"> </span>r1
+<span class="w">    </span>network_mode:<span class="w"> </span><span class="s2">&quot;host&quot;</span>
+<span class="w">    </span>entrypoint:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;redis-server&quot;</span>,<span class="w"> </span><span class="s2">&quot;--port&quot;</span>,<span class="w"> </span><span class="s2">&quot;7001&quot;</span><span class="o">]</span>
+<span class="w">  </span>r2:
+<span class="w">    </span>image:<span class="w"> </span>redis
+<span class="w">    </span>container_name:<span class="w"> </span>r2
+<span class="w">    </span>network_mode:<span class="w"> </span><span class="s2">&quot;host&quot;</span>
+<span class="w">    </span>entrypoint:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;redis-server&quot;</span>,<span class="w"> </span><span class="s2">&quot;--port&quot;</span>,<span class="w"> </span><span class="s2">&quot;7002&quot;</span><span class="o">]</span>
+<span class="w">  </span>r3:
+<span class="w">    </span>image:<span class="w"> </span>redis
+<span class="w">    </span>container_name:<span class="w"> </span>r3
+<span class="w">    </span>network_mode:<span class="w"> </span><span class="s2">&quot;host&quot;</span>
+<span class="w">    </span>entrypoint:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;redis-server&quot;</span>,<span class="w"> </span><span class="s2">&quot;--port&quot;</span>,<span class="w"> </span><span class="s2">&quot;7003&quot;</span><span class="o">]</span>
+</code></pre></div>
+<p>需要通过命令来配置主从关系：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 使用redis-cli连接到slave节点</span>
+
+<span class="c1">## Redis5.0以前</span>
+slaveof<span class="w"> </span>&lt;masterip&gt;<span class="w"> </span>&lt;masterport&gt;
+<span class="c1">## Redis5.0以后</span>
+replicaof<span class="w"> </span>&lt;masterip&gt;<span class="w"> </span>&lt;masterport&gt;
+</code></pre></div>
+<p>有临时和永久两种模式：</p>
 <ul>
-<li>string：普通字符串</li>
-<li>int：整数类型，可以做自增、自减操作</li>
-<li>float：浮点类型，可以做自增、自减操作</li>
+<li>永久生效：在redis.conf文件中利用<code>slaveof</code>命令指定<code>master</code>节点</li>
+<li>临时生效：直接利用redis-cli控制台输入<code>slaveof</code>命令，指定<code>master</code>节点</li>
 </ul>
-<p>不管是哪种格式，底层都是<strong>字节数组</strong>形式存储，只不过是编码方式不同。字符串类型的最大空间不能超过512m.</p>
-<p>String的常见命令有：</p>
+<h4 id="全量同步">全量同步<a class="headerlink" href="#全量同步" title="链接到此段落">&para;</a></h4>
+<p>主从第一次建立连接时，会执行<strong>全量同步</strong>，将master节点的所有数据都拷贝给slave节点</p>
+<p><img alt="image-20250227161941450" src="../images/image-20250227161941450.png" /></p>
+<p><code>master</code>如何判断<code>salve</code>是否是第一次来同步？</p>
 <ul>
-<li>SET：<strong>添加或者修改</strong>已经存在的一个String类型的键值对<code>SET key value</code></li>
-<li>GET：根据key获取String类型的value<code>GET key</code></li>
-<li>MSET：批量添加多个String类型的键值对</li>
-<li>MGET：根据多个key获取多个String类型的value</li>
-<li>INCR：让一个整型的key自增1</li>
-<li>INCRBY:让一个整型的key自增并指定步长，例如：incrby num 2 让num值自增2</li>
-<li>INCRBYFLOAT：让一个浮点类型的数字自增并指定步长</li>
-<li>SETNX：添加一个String类型的键值对，<strong>前提是这个key不存在</strong>，否则不执行</li>
-<li>SETEX：添加一个String类型的键值对，并且指定有效期</li>
+<li><strong><code>Replication Id</code></strong>：简称<code>replid</code>，是数据集的标记，replid一致则是同一数据集。每个<code>master</code>都有唯一的<code>replid</code>，<code>slave</code>则会继承<code>master</code>节点的<code>replid</code></li>
+<li><strong><code>offset</code></strong>：偏移量，随着记录在<code>repl_baklog</code>中的数据增多而逐渐增大。<code>slave</code>完成同步时也会记录当前同步的<code>offset</code>。如果<code>slave</code>的<code>offset</code>小于<code>master</code>的<code>offset</code>，说明<code>slave</code>数据落后于<code>master</code>，需要更新。</li>
 </ul>
-<h3 id="hash">Hash<a class="headerlink" href="#hash" title="链接到此段落">&para;</a></h3>
-<p>Hash类型，也叫散列，其value是一个无序字典，类似于Java中的HashMap结构。</p>
-<p>可以将对象序列化为JSON字符串后存储为String结构，但是需要修改对象某个字段时很不方便</p>
-<p>Hash结构可以将对象中的每个字段<strong>独立存储</strong>，可以针对单个字段做CRUD</p>
-<p><img alt="image-20250222174354249" src="../images/image-20250222174354249.png" /></p>
-<p>Hash的常见命令有：</p>
-<ul>
-<li>HSET key field value：添加或者修改hash类型key的field的值</li>
-<li>HGET key field：获取一个hash类型key的field的值</li>
-<li>HMSET：批量添加多个hash类型key的field的值</li>
-<li>HMGET：批量获取多个hash类型key的field的值</li>
-<li>HGETALL：获取一个hash类型的key中的所有的field和value</li>
-<li>HKEYS：获取一个hash类型的key中的所有的field</li>
-<li>HVALS：获取一个hash类型的key中的所有的value</li>
-<li>HINCRBY:让一个hash类型key的字段值自增并指定步长</li>
-<li>HSETNX：添加一个hash类型的key的field值，前提是这个field不存在，否则不执行</li>
-</ul>
-<h3 id="list">List<a class="headerlink" href="#list" title="链接到此段落">&para;</a></h3>
-<p>Redis中的List类型与Java中的LinkedList类似，可以看做是一个双向链表结构。</p>
-<p>特点：</p>
-<ul>
-<li>有序</li>
-<li>元素可以重复</li>
-<li>插入和删除快</li>
-<li>查询速度一般</li>
-</ul>
-<p>List的常见命令有：</p>
-<ul>
-<li>LPUSH key element ... ：向列表左侧插入一个或多个元素</li>
-<li>LPOP key：移除并返回列表左侧的第一个元素，没有则返回nil</li>
-<li>RPUSH key element ... ：向列表右侧插入一个或多个元素</li>
-<li>RPOP key：移除并返回列表右侧的第一个元素</li>
-<li>LRANGE key star end：返回一段角标范围内的所有元素</li>
-<li>BLPOP和BRPOP：与LPOP和RPOP类似，只不过在没有元素时等待指定时间（<strong>阻塞式</strong>），而不是直接返回nil</li>
-</ul>
-<p><img alt="image-20250222175329927" src="../images/image-20250222175329927.png" /></p>
-<h3 id="set">Set<a class="headerlink" href="#set" title="链接到此段落">&para;</a></h3>
-<p>Redis的Set结构与Java中的HashSet类似，可以看做是一个value为null的HashMap。因为也是一个hash表，因此具备与HashSet类似的特征</p>
-<ul>
-<li>无序</li>
-<li>元素不可重复</li>
-<li>查找快</li>
-<li>支持交集、并集、差集等功能</li>
-</ul>
-<p>Set的常见命令有：</p>
-<ul>
-<li>SADD key member ... ：向set中添加一个或多个元素</li>
-<li>SREM key member ... : 移除set中的指定元素</li>
-<li>SCARD key： 返回set中元素的个数</li>
-<li>SISMEMBER key member：判断一个元素是否存在于set中</li>
-<li>SMEMBERS：获取set中的所有元素</li>
-<li>SINTER key1 key2 ... ：求key1与key2的交集</li>
-<li>SDIFF key1 key2 ... ：求key1与key2的差集 </li>
-<li>SUNION key1 key2 ..：求key1和key2的并集</li>
-</ul>
-<p><img alt="image-20250222180737333" src="../images/image-20250222180737333.png" /></p>
-<h3 id="sortedset">SortedSet<a class="headerlink" href="#sortedset" title="链接到此段落">&para;</a></h3>
-<p>Redis的SortedSet是一个可排序的set集合，与Java中的TreeSet有些类似，但底层数据结构却差别很大。SortedSet中的每一个元素都带有一个score属性，可以基于score属性对元素排序，底层的实现是一个跳表（SkipList）加 hash表。</p>
-<ul>
-<li>可排序</li>
-<li>元素不重复</li>
-<li>查询速度快</li>
-</ul>
-<p>SortedSet的常见命令有：</p>
-<ul>
-<li>ZADD key score member：添加一个或多个元素到sorted set ，如果已经存在则更新其score值</li>
-<li>ZREM key member：删除sorted set中的一个指定元素</li>
-<li>ZSCORE key member : 获取sorted set中的指定元素的score值</li>
-<li>ZRANK key member：获取sorted set 中的指定元素的排名（排名从0开始）</li>
-<li>ZCARD key：获取sorted set中的元素个数</li>
-<li>ZCOUNT key min max：统计score值在给定范围内的所有元素的个数</li>
-<li>ZINCRBY key increment member：让sorted set中的指定元素自增，步长为指定的increment值</li>
-<li>ZRANGE key min max：按照score排序后，获取指定排名范围内的元素</li>
-<li>ZRANGEBYSCORE key min max：按照score排序后，获取指定score范围内的元素</li>
-<li>ZDIFF、ZINTER、ZUNION：求差集、交集、并集</li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>所有的排名默认都是升序，如果要降序则在命令的Z后面添加REV即可</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>master判断一个节点是否是第一次同步的依据，就是看replid是否一致</p>
 </div>
+<h4 id="增量同步">增量同步<a class="headerlink" href="#增量同步" title="链接到此段落">&para;</a></h4>
+<p>全量同步需要先做RDB，然后将RDB文件通过网络传输个slave，成本太高了。
+因此除了第一次做全量同步，其它大多数时候slave与master都是做<strong>增量同步</strong></p>
+<p><img alt="image-20250227162518193" src="../images/image-20250227162518193.png" /></p>
+<p>主要由<code>repl_baklog</code>文件实现。这个文件是一个固定大小的数组，只不过数组是环形，也就是说<strong>角标到达数组末尾后，会再次从0开始读写</strong>，这样数组头部的数据就会被覆盖。</p>
+<p><code>repl_baklog</code>中会记录Redis处理过的命令及<code>offset</code>，包括master当前的<code>offset</code>，和slave已经拷贝到的<code>offset</code>：</p>
+<p><img alt="img" src="../images/1740644756468-1.png" /></p>
+<p>slave与master的offset之间的差异，就是slave需要增量拷贝的数据了。</p>
+<p>如果slave出现网络阻塞，导致master的<code>offset</code>远远超过了slave的<code>offset</code>，当master的offset覆盖了slave未同步的offset,如果slave恢复，需要同步，却发现自己的<code>offset</code>都没有了，无法完成增量同步了。只能做<strong>全量同步</strong>。</p>
+<h4 id="主从同步优化">主从同步优化<a class="headerlink" href="#主从同步优化" title="链接到此段落">&para;</a></h4>
+<ul>
+<li>
+<p>在master中配置<code>repl-diskless-sync  yes</code>启用无磁盘复制，避免全量同步时的磁盘IO。</p>
+</li>
+<li>
+<p>Redis单节点上的内存占用不要太大，减少RDB导致的过多磁盘IO</p>
+</li>
+<li>
+<p>适当提高<code>repl_baklog</code>的大小，发现slave宕机时尽快实现故障恢复，尽可能避免全量同步</p>
+</li>
+<li>
+<p>限制一个master上的slave节点数量，如果实在是太多slave，则可以采用<code>主-从-从</code>链式结构，减少master压力</p>
+</li>
+</ul>
+<p><code>主-从-从</code>架构图：</p>
+<p><img alt="img" src="../images/1740645048302-8.png" /></p>
+<h3 id="哨兵模式">哨兵模式<a class="headerlink" href="#哨兵模式" title="链接到此段落">&para;</a></h3>
+<p>Redis提供了<code>哨兵</code>（<code>Sentinel</code>）机制来监控主从集群监控状态，确保集群的高可用性。</p>
+<p><img alt="image-20250227163247450" src="../images/image-20250227163247450.png" /></p>
+<p>哨兵的作用如下：</p>
+<ul>
+<li><strong>状态监控</strong>：<code>Sentinel</code> 会不断检查<code>master</code>和<code>slave</code>是否按预期工作</li>
+<li><strong>故障恢复（failover）</strong>：如果<code>master</code>故障，<code>Sentinel</code>会将一个<code>slave</code>提升为<code>master</code>。当故障实例恢复后会成为<code>slave</code></li>
+<li><strong>状态通知</strong>：<code>Sentinel</code>充当<code>Redis</code>客户端的服务发现来源，当集群发生<code>failover</code>时，会将最新集群信息推送给<code>Redis</code>的客户端</li>
+</ul>
+<p><code>Sentinel</code>基于<strong>心跳机制</strong>监测服务状态，每隔1秒向集群的每个节点发送ping命令，并通过实例的响应结果来做出判断：</p>
+<ul>
+<li><strong>主观下线（sdown）</strong>：如果某sentinel节点发现某Redis节点未在规定时间响应，则认为该节点主观下线。</li>
+<li><strong>客观下线(odown)</strong>：若超过指定数量（通过<code>quorum</code>设置）的sentinel都认为该节点主观下线，则该节点客观下线。quorum值最好超过Sentinel节点数量的一半，Sentinel节点数量至少3台。</li>
+</ul>
+<p>一旦发现master故障，sentinel需要在salve中选择一个作为新的master，选择依据是这样的：</p>
+<ul>
+<li>首先会判断slave节点与master节点断开时间长短，如果超过<code>down-after-milliseconds * 10</code>则会排除该slave节点</li>
+<li>然后判断slave节点的<code>slave-priority</code>值，越小优先级越高，如果是0则永不参与选举（默认都是1）。</li>
+<li>如果<code>slave-prority</code>一样，则判断slave节点的<code>offset</code>值，越大说明数据越新，优先级越高</li>
+<li>最后是判断slave节点的<code>run_id</code>大小，越小优先级越高（<code>通过info server可以查看run_id</code>）。</li>
+</ul>
+<h4 id="搭建哨兵集群">搭建哨兵集群<a class="headerlink" href="#搭建哨兵集群" title="链接到此段落">&para;</a></h4>
+<p>sentinel.conf文件</p>
+<div class="highlight"><pre><span></span><code><span class="na">sentinel</span><span class="w"> </span><span class="s">announce-ip &quot;localhost&quot;</span>
+<span class="na">sentinel</span><span class="w"> </span><span class="s">monitor hmaster localhost 7001 2</span>
+<span class="na">sentinel</span><span class="w"> </span><span class="s">down-after-milliseconds hmaster 5000</span>
+<span class="na">sentinel</span><span class="w"> </span><span class="s">failover-timeout hmaster 60000</span>
+</code></pre></div>
+<ul>
+<li><code>sentinel announce-ip "localhost"</code>：声明当前sentinel的ip</li>
+<li><code>sentinel monitor hmaster localhost 7001 2</code>：指定集群的主节点信息 <ul>
+<li><code>hmaster</code>：主节点名称，自定义，任意写</li>
+<li><code>localhost 7001</code>：主节点的ip和端口</li>
+<li><code>2</code>：认定<code>master</code>下线时的<code>quorum</code>值</li>
+</ul>
+</li>
+<li><code>sentinel down-after-milliseconds hmaster 5000</code>：声明master节点超时多久后被标记下线</li>
+<li><code>sentinel failover-timeout hmaster 60000</code>：在第一次故障转移失败后多久再次重试</li>
+</ul>
+<p><code>docker-compose.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.2&quot;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">r1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r1</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7001&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r2</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7002&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--slaveof&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7001&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r3</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7003&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--slaveof&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7001&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">s1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s1</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/root/redis/s1:/etc/redis</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-sentinel&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;/etc/redis/sentinel.conf&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;27001&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">s2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s2</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/root/redis/s2:/etc/redis</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-sentinel&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;/etc/redis/sentinel.conf&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;27002&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">s3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/root/redis/s3:/etc/redis</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-sentinel&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;/etc/redis/sentinel.conf&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;27003&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h4 id="redistemplate连接哨兵">RedisTemplate连接哨兵<a class="headerlink" href="#redistemplate连接哨兵" title="链接到此段落">&para;</a></h4>
+<p>1.引入redis依赖</p>
+<p>2.配置<code>application.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">spring</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sentinel</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mymaster</span><span class="w"> </span><span class="c1"># 主节点名称</span>
+<span class="w">      </span><span class="nt">nodes</span><span class="p">:</span><span class="w"> </span><span class="c1"># 哨兵集群地址</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7001</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7002</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7003</span>
+</code></pre></div>
+<blockquote>
+<p>通过以上配置后就可以通过哨兵找到主从节点</p>
+</blockquote>
+<p>3.配置读写分离</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Bean</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">LettuceClientConfigurationBuilderCustomizer</span><span class="w"> </span><span class="nf">clientConfigurationBuilderCustomizer</span><span class="p">(){</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">clientConfigurationBuilder</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">clientConfigurationBuilder</span><span class="p">.</span><span class="na">readFrom</span><span class="p">(</span><span class="n">ReadFrom</span><span class="p">.</span><span class="na">REPLICA_PREFERRED</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>这个bean中配置的就是读写策略，包括四种：</p>
+<ul>
+<li><code>MASTER</code>：从主节点读取</li>
+<li><code>MASTER_PREFERRED</code>：优先从master节点读取，master不可用才读取replica</li>
+<li><code>REPLICA</code>：从slave（replica）节点读取</li>
+<li><code>REPLICA _PREFERRED</code>：优先从slave（replica）节点读取，所有的slave都不可用才读取master</li>
+</ul>
+</div>
+<h3 id="分片集群">分片集群<a class="headerlink" href="#分片集群" title="链接到此段落">&para;</a></h3>
+<p>主从模式可以解决高可用、高并发读的问题。但依然有两个问题没有解决：</p>
+<ul>
+<li>海量数据存储</li>
+<li>高并发写</li>
+</ul>
+<p>要解决这两个问题就需要用到分片集群了。分片的意思，就是把数据拆分存储到不同节点，这样整个集群的存储数据量就更大了。</p>
+<p>Redis分片集群的结构如图：</p>
+<p><img alt="img" src="../images/1740648892397-11.jpeg" /></p>
+<p>特征：</p>
+<ul>
+<li>集群中有多个master，每个master保存不同分片数据 ，解决海量数据存储问题</li>
+<li>每个master都可以有多个slave节点 ，确保高可用</li>
+<li>master之间通过ping监测彼此健康状态 ，类似哨兵作用</li>
+<li>客户端请求可以访问集群任意节点，最终都会被转发到数据所在节点 </li>
+</ul>
+<h4 id="搭建分片集群">搭建分片集群<a class="headerlink" href="#搭建分片集群" title="链接到此段落">&para;</a></h4>
+<p>分片集群中的Redis节点必须开启集群模式，一般在配置文件中添加下面参数：</p>
+<div class="highlight"><pre><span></span><code><span class="na">port</span><span class="w"> </span><span class="s">7000</span>
+<span class="na">cluster-enabled</span><span class="w"> </span><span class="s">yes</span>
+<span class="na">cluster-config-file</span><span class="w"> </span><span class="s">nodes.conf</span>
+<span class="na">cluster-node-timeout</span><span class="w"> </span><span class="s">5000</span>
+<span class="na">appendonly</span><span class="w"> </span><span class="s">yes</span>
+</code></pre></div>
+<ul>
+<li><code>cluster-enabled</code>：是否开启集群模式</li>
+<li><code>cluster-config-file</code>：集群模式的配置文件名称，无需手动创建，由集群自动维护</li>
+<li><code>cluster-node-timeout</code>：集群中节点之间心跳超时时间</li>
+</ul>
+<p><code>docker-compose.yaml</code>部署节点</p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.2&quot;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">r1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r1</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7001&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r2</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7002&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r3</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7003&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r4</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r4</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7004&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r5</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r5</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7005&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">r6</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r6</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span>
+<span class="w">    </span><span class="nt">entrypoint</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;redis-server&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--port&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;7006&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-enabled&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;--cluster-config-file&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;node.conf&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>使用Docker部署Redis集群，network模式必须采用host</p>
+</div>
+<p>创建集群</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 进入任意节点容器</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>r1<span class="w"> </span>bash
+<span class="c1">## 然后，执行命令</span>
+redis-cli<span class="w"> </span>--cluster<span class="w"> </span>create<span class="w"> </span>--cluster-replicas<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="m">192</span>.168.150.101:7001<span class="w"> </span><span class="m">192</span>.168.150.101:7002<span class="w"> </span><span class="m">192</span>.168.150.101:7003<span class="w"> </span><span class="se">\</span>
+<span class="m">192</span>.168.150.101:7004<span class="w"> </span><span class="m">192</span>.168.150.101:7005<span class="w"> </span><span class="m">192</span>.168.150.101:7006
+</code></pre></div>
+<ul>
+<li><code>redis-cli --cluster</code>：代表集群操作命令</li>
+<li><code>create</code>：代表是创建集群</li>
+<li><code>--cluster-replicas 1</code> ：指定集群中每个<code>master</code>的副本(<code>slave</code>)个数为1</li>
+<li>此时<code>节点总数 ÷ (replicas + 1)</code> 得到的就是<code>master</code>的数量<code>n</code>。因此节点列表中的前<code>n</code>个节点就是<code>master</code>，其它节点都是<code>slave</code>节点，随机分配到不同<code>master</code></li>
+</ul>
+<p>我们可以通过命令查看集群状态：</p>
+<div class="highlight"><pre><span></span><code>redis-cli<span class="w"> </span>-p<span class="w"> </span><span class="m">7001</span><span class="w"> </span>cluster<span class="w"> </span>nodes
+</code></pre></div>
+<h4 id="散列插槽">散列插槽<a class="headerlink" href="#散列插槽" title="链接到此段落">&para;</a></h4>
+<p>据要分片存储到不同的Redis节点，肯定需要有分片的依据，这样下次查询的时候才能知道去哪个节点查询。很多数据分片都会采用一致性hash算法。而Redis则是利用散列插槽（<strong><code>hash slot</code></strong>）的方式实现数据分片。</p>
+<p>在Redis集群中，共有16384个<code>hash slots</code>，集群中的每一个master节点都会分配一定数量的<code>hash slots</code>。具体的分配在集群创建时就已经指定了</p>
+<p>当我们读写数据时，Redis基于<code>CRC16</code> 算法对<code>key</code>做<code>hash</code>运算，得到的结果与<code>16384</code>取余，就计算出了这个<code>key</code>的<code>slot</code>值。然后到<code>slot</code>所在的Redis节点执行读写操作。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>hash slot</code>的计算也分两种情况：</p>
+<ul>
+<li>当<code>key</code>中包含<code>{}</code>时，根据<code>{}</code>之间的字符串计算<code>hash slot</code></li>
+<li>当<code>key</code>中不包含<code>{}</code>时，则根据整个<code>key</code>字符串计算<code>hash slot</code></li>
+</ul>
+</div>
+<p>连接集群时，要加<code>-c</code>参数：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## 通过7001连接集群</span>
+redis-cli<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span><span class="m">7001</span>
+<span class="c1">## 存入数据</span>
+<span class="nb">set</span><span class="w"> </span>user<span class="w"> </span>jack
+</code></pre></div>
+<p>如何将同一类数据固定的保存在同一个Redis实例？</p>
+<ul>
+<li>Redis计算key的插槽值时会判断key中是否包含<code>{}</code>，如果有则基于<code>{}</code>内的字符计算插槽</li>
+<li>数据的key中可以加入<code>{类型}</code>，例如key都以<code>{typeId}</code>为前缀，这样同类型数据计算的插槽一定相同</li>
+</ul>
+<h4 id="集群伸缩">集群伸缩<a class="headerlink" href="#集群伸缩" title="链接到此段落">&para;</a></h4>
+<p>redis-cli --cluster提供了很多操作集群的命令，可以通过命令<code>redis-cli --cluster help</code></p>
+<p>例：添加节点<code>redis-cli --cluster add-node new_host:new_port existing_host:existing_port</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>默认作为主节点，参数<code>--cluster-slave</code>和<code>--cluster-master-id &lt;arg&gt;</code>指定为从节点</p>
+<p><font color=red>新节点默认无插槽，需要分配</font>，可以从其他节点转移插槽 <code>redis-cli --cluster reshard host:port</code></p>
+</div>
+<h4 id="故障转移">故障转移<a class="headerlink" href="#故障转移" title="链接到此段落">&para;</a></h4>
+<p>分片集群默认存在<strong>自动故障转移</strong>，有节点宕机会自动主从切换</p>
+<p><strong>手动故障转移</strong></p>
+<p>利用cluster failover命令可以手动让集群中的某个master宕机，切换到执行cluster failover命令的这个slave节点，实现无感知的数据迁移。</p>
+<p><img alt="image-20250321231903581" src="../images/image-20250321231903581.png" /></p>
+<p>这种failover命令可以指定三种模式：</p>
+<ul>
+<li>缺省：默认的流程，如图1~6歩</li>
+<li>force：省略了对offset的一致性校验</li>
+<li>takeover：直接执行第5歩，忽略数据一致性、忽略master状态和其它master的意见</li>
+</ul>
+<h4 id="redistemplate连接分片集群">RedisTemplate连接分片集群<a class="headerlink" href="#redistemplate连接分片集群" title="链接到此段落">&para;</a></h4>
+<ol>
+<li>
+<p>引入Redis依赖</p>
+</li>
+<li>
+<p>配置分片集群地址（仅该步骤于哨兵模式有区别）</p>
+<div class="highlight"><pre><span></span><code><span class="nt">spring</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">nodes</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7001</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7002</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:7003</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:8001</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:8002</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:8003</span>
+</code></pre></div>
+</li>
+<li>
+<p>配置读写分离</p>
+</li>
+</ol>
 
 
 

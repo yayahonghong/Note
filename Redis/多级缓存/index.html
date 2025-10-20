@@ -1,0 +1,4019 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://note.pua.asia/Redis/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
+      
+      
+        <link rel="prev" href="../%E9%9B%86%E7%BE%A4/">
+      
+      
+        <link rel="next" href="../%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>多级缓存 - YSH的学习笔记</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#jvm进程缓存" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            YSH的学习笔记
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              多级缓存
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换到浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  随笔
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+          
+  
+  
+  Java 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Spring/" class="md-tabs__link">
+          
+  
+  
+  Spring 全家桶
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
+          
+  
+  
+  数据库技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
+          
+  
+  
+  网络与中间件
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Docker/" class="md-tabs__link">
+          
+  
+  
+  运维技术
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Git/Git/" class="md-tabs__link">
+          
+  
+  
+  开发工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+          
+  
+  
+  其他
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    YSH的学习笔记
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/yayahonghong/Note" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    yayahonghong/Note
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    随笔
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 技术栈
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 技术栈
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 基础
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Java 基础
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    反射
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    代理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变集合
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    函数式编程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Java/IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    JVM
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            JVM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 基础
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 进阶
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 原理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    JVM 总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Java 并发编程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Java 并发编程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    进程与线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Java线程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发编程三要素
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    乐观锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    不可变类
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    并发工具
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 全家桶
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 全家桶
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Spring 核心
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Spring 核心
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于XML的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于注解的Spring应用
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring AOP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Web
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring MVC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Spring Boot
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    SpringCloud 微服务
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            SpringCloud 微服务
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概述
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    单体架构与微服务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务拆分
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务治理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    OpenFeign
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    网关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    配置中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    服务保护
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MyBatis-Plus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MQ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Elasticsearch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    数据库技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            数据库技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    MySQL
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            MySQL
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储引擎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    架构
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    存储过程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    触发器
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    锁
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MySQL管理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    运维
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Redis
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Redis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SQL与NoSQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    认识Redis
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis客户端
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Redis应用场景
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%9B%86%E7%BE%A4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    集群
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    多级缓存
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    多级缓存
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#jvm进程缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      JVM进程缓存
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JVM进程缓存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caffeine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Caffeine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Caffeine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lua入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lua入门
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lua入门">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#变量" class="md-nav__link">
+    <span class="md-ellipsis">
+      变量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#循环" class="md-nav__link">
+    <span class="md-ellipsis">
+      循环
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#函数" class="md-nav__link">
+    <span class="md-ellipsis">
+      函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#条件控制" class="md-nav__link">
+    <span class="md-ellipsis">
+      条件控制
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openresty" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenResty
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenResty">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openresty监听请求" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenResty监听请求
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#请求参数处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      请求参数处理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询tomcat" class="md-nav__link">
+    <span class="md-ellipsis">
+      查询Tomcat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#封装http工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      封装http工具
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cjson工具类" class="md-nav__link">
+    <span class="md-ellipsis">
+      CJSON工具类
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#基于id负载均衡" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于ID负载均衡
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis缓存
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nginx本地缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nginx本地缓存
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存同步" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存同步
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存同步策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存同步策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Canal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#监听canal" class="md-nav__link">
+    <span class="md-ellipsis">
+      监听Canal
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    最佳实践
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    面试题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    网络与中间件
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            网络与中间件
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/Netty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Netty
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kafka
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Zookeeper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Zookeeper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    运维技术
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            运维技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Linux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    开发工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            开发工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Git/Git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    其他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            其他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    系统相关
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#jvm进程缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      JVM进程缓存
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JVM进程缓存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caffeine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Caffeine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Caffeine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#案例" class="md-nav__link">
+    <span class="md-ellipsis">
+      案例
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lua入门" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lua入门
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lua入门">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#变量" class="md-nav__link">
+    <span class="md-ellipsis">
+      变量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#循环" class="md-nav__link">
+    <span class="md-ellipsis">
+      循环
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#函数" class="md-nav__link">
+    <span class="md-ellipsis">
+      函数
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#条件控制" class="md-nav__link">
+    <span class="md-ellipsis">
+      条件控制
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openresty" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenResty
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenResty">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openresty监听请求" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenResty监听请求
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#请求参数处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      请求参数处理
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#查询tomcat" class="md-nav__link">
+    <span class="md-ellipsis">
+      查询Tomcat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#封装http工具" class="md-nav__link">
+    <span class="md-ellipsis">
+      封装http工具
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cjson工具类" class="md-nav__link">
+    <span class="md-ellipsis">
+      CJSON工具类
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#基于id负载均衡" class="md-nav__link">
+    <span class="md-ellipsis">
+      基于ID负载均衡
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis缓存
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nginx本地缓存" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nginx本地缓存
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存同步" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存同步
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存同步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存同步策略" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存同步策略
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Canal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#监听canal" class="md-nav__link">
+    <span class="md-ellipsis">
+      监听Canal
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/多级缓存.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/多级缓存.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+  <h1>多级缓存</h1>
+
+<p>传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库</p>
+<p>存在下面的问题：</p>
+<ul>
+<li>
+<p>请求要经过Tomcat处理，Tomcat的性能成为整个系统的瓶颈</p>
+</li>
+<li>
+<p>Redis缓存失效时，会对数据库产生冲击</p>
+</li>
+</ul>
+<p><strong>多级缓存</strong>就是充分利用请求处理的每个环节，分别添加缓存，减轻Tomcat压力，提升服务性能：</p>
+<ul>
+<li>浏览器访问静态资源时，优先读取浏览器本地缓存</li>
+<li>访问非静态资源（ajax查询数据）时，访问服务端</li>
+<li>请求到达Nginx后，优先读取Nginx本地缓存</li>
+<li>如果Nginx本地缓存未命中，则去直接查询Redis（不经过Tomcat）</li>
+<li>如果Redis查询未命中，则查询Tomcat</li>
+<li>请求进入Tomcat后，优先查询JVM进程缓存</li>
+<li>如果JVM进程缓存未命中，则查询数据库</li>
+</ul>
+<p><img alt="image-20210821075558137" src="../images/image-20210821075558137.png" /></p>
+<p>在多级缓存架构中，Nginx内部需要编写本地缓存查询、Redis查询、Tomcat查询的业务逻辑，因此这样的nginx服务不再是一个<strong>反向代理服务器</strong>，而是一个编写<strong>业务的Web服务器了</strong>。</p>
+<p><img alt="" src="../images/image-20250321232906119.png" /></p>
+<h2 id="jvm进程缓存">JVM进程缓存<a class="headerlink" href="#jvm进程缓存" title="链接到此段落">&para;</a></h2>
+<h3 id="caffeine">Caffeine<a class="headerlink" href="#caffeine" title="链接到此段落">&para;</a></h3>
+<ul>
+<li>分布式缓存，例如Redis：<ul>
+<li>优点：存储容量更大、可靠性更好、可以在集群间共享</li>
+<li>缺点：访问缓存有网络开销</li>
+<li>场景：缓存数据量较大、可靠性要求较高、需要在集群间共享</li>
+</ul>
+</li>
+<li>进程本地缓存，例如HashMap、GuavaCache：<ul>
+<li>优点：读取本地内存，没有网络开销，速度更快</li>
+<li>缺点：存储容量有限、可靠性较低、无法共享</li>
+<li>场景：性能要求较高，缓存数据量较小</li>
+</ul>
+</li>
+</ul>
+<p><strong>Caffeine</strong>是一个基于Java8开发的，提供了近乎最佳命中率的高性能的本地缓存库。目前Spring内部的缓存使用的就是Caffeine。<a href="https://github.com/ben-manes/caffeine">GitHub地址</a></p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>com.github.ben-manes.caffeine<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>caffeine<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+<p><strong>基本使用</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">testBasicOps</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 构建cache对象</span>
+<span class="w">    </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Caffeine</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">().</span><span class="na">build</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 存数据</span>
+<span class="w">    </span><span class="n">cache</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;gf&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;迪丽热巴&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 取数据</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">gf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="na">getIfPresent</span><span class="p">(</span><span class="s">&quot;gf&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;gf = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gf</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 取数据，包含两个参数：</span>
+<span class="w">    </span><span class="c1">// 参数一：缓存的key</span>
+<span class="w">    </span><span class="c1">// 参数二：Lambda表达式，表达式参数就是缓存的key，方法体是查询数据库的逻辑</span>
+<span class="w">    </span><span class="c1">// 优先根据key查询JVM缓存，如果未命中，则执行参数二的Lambda表达式</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">defaultGF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;defaultGF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 根据key去数据库查询数据</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;柳岩&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;defaultGF = &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">defaultGF</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Caffeine提供了三种缓存清除策略：</p>
+<ul>
+<li><strong>基于容量</strong>：设置缓存的数量上限</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// 创建缓存对象</span>
+<span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Caffeine</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">maximumSize</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c1">// 设置缓存大小上限为 1</span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div>
+<ul>
+<li><strong>基于时间</strong>：设置缓存的有效时间</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// 创建缓存对象</span>
+<span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Caffeine</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">()</span>
+<span class="w">    </span><span class="c1">// 设置缓存有效期为 10 秒，从最后一次写入开始计时 </span>
+<span class="w">    </span><span class="p">.</span><span class="na">expireAfterWrite</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofSeconds</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="w"> </span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+</code></pre></div>
+<ul>
+<li><strong>基于引用</strong>：设置缓存为软引用或弱引用，利用GC来回收缓存数据。性能较差，不建议使用。</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>在默认情况下，当一个缓存元素过期的时候，Caffeine不会自动立即将其清理和驱逐。而是在一次读或写操作后，或者在空闲时间完成对失效数据的驱逐。</p>
+</div>
+<h4 id="案例">案例<a class="headerlink" href="#案例" title="链接到此段落">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@Configuration</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CaffeineConfig</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Bean</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">itemCache</span><span class="p">(){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Caffeine</span><span class="p">.</span><span class="na">newBuilder</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">initialCapacity</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">maximumSize</span><span class="p">(</span><span class="mi">10_000</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;item&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ItemController</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Autowired</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">IItemService</span><span class="w"> </span><span class="n">itemService</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@Autowired</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itemCache</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/{id}&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Item</span><span class="w"> </span><span class="nf">findById</span><span class="p">(</span><span class="nd">@PathVariable</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 先查询缓存，再判断是否查询数据库</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">itemCache</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">itemService</span><span class="p">.</span><span class="na">query</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">ne</span><span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">eq</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">one</span><span class="p">()</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="lua入门">Lua入门<a class="headerlink" href="#lua入门" title="链接到此段落">&para;</a></h2>
+<p><code>Nginx</code>编程需要用到Lua语言，Lua 是一种轻量小巧的脚本语言，用标准C语言编写并以源代码形式开放，其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。<a href="https://www.lua.org/">官网</a></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Lua经常嵌入到C语言开发的程序中，例如游戏开发、游戏插件等。
+Nginx本身也是C语言开发，因此也允许基于Lua做拓展。</p>
+</div>
+<h3 id="变量">变量<a class="headerlink" href="#变量" title="链接到此段落">&para;</a></h3>
+<p>Lua中支持的常见数据类型包括：</p>
+<p><img alt="image-20250322210359714" src="../images/image-20250322210359714.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Lua提供了type()函数来判断一个变量的数据类型
+print(type('hello world')) --------&gt; string</p>
+</div>
+<p>Lua<strong>声明变量</strong>的时候无需指定数据类型，而是用local来声明变量为局部变量：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 声明字符串，可以用单引号或双引号，</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;hello&#39;</span>
+<span class="c1">-- 字符串拼接可以使用 ..</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;hello&#39;</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="s1">&#39;world&#39;</span>
+<span class="c1">-- 声明数字</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">21</span>
+<span class="c1">-- 声明布尔类型</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</code></pre></div>
+<p>Lua中的table类型既可以作为数组，又可以作为Java中的map来使用。数组就是特殊的table，key是数组角标而已：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 声明数组 ，key为角标的 table</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;java&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;python&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;lua&#39;</span><span class="p">}</span>
+<span class="c1">-- 声明table，类似java的map</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">map</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">{</span><span class="nv">name</span><span class="o">=</span><span class="s1">&#39;Jack&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">age</span><span class="o">=</span><span class="mi">21</span><span class="p">}</span>
+</code></pre></div>
+<p>Lua中的数组角标是从1开始，访问的时候与Java中类似：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 访问数组，lua数组的角标从1开始</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</code></pre></div>
+<p>Lua中的table可以用key来访问：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 访问table</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">map</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">map</span><span class="p">.</span><span class="py">age</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="循环">循环<a class="headerlink" href="#循环" title="链接到此段落">&para;</a></h3>
+<p>遍历数组：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 声明数组 key为索引的 table</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;java&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;python&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;lua&#39;</span><span class="p">}</span>
+<span class="c1">-- 遍历数组</span>
+<span class="kr">for</span><span class="w"> </span><span class="nv">index</span><span class="p">,</span><span class="nv">value</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="nb">ipairs</span><span class="p">(</span><span class="nv">arr</span><span class="p">)</span><span class="w"> </span>
+<span class="kr">do</span>
+<span class="w">    </span><span class="nb">print</span><span class="p">(</span><span class="nv">index</span><span class="p">,</span><span class="w"> </span><span class="nv">value</span><span class="p">)</span><span class="w"> </span>
+<span class="kr">end</span>
+</code></pre></div>
+<p>遍历普通table</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 声明map，也就是table</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nv">name</span><span class="o">=</span><span class="s1">&#39;Jack&#39;</span><span class="p">,</span><span class="w"> </span><span class="nv">age</span><span class="o">=</span><span class="mi">21</span><span class="p">}</span>
+<span class="c1">-- 遍历table</span>
+<span class="kr">for</span><span class="w"> </span><span class="nv">key</span><span class="p">,</span><span class="nv">value</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="nb">pairs</span><span class="p">(</span><span class="nv">map</span><span class="p">)</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">   </span><span class="nb">print</span><span class="p">(</span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">value</span><span class="p">)</span><span class="w"> </span>
+<span class="kr">end</span>
+</code></pre></div>
+<h3 id="函数">函数<a class="headerlink" href="#函数" title="链接到此段落">&para;</a></h3>
+<p>定义函数的语法：</p>
+<div class="highlight"><pre><span></span><code><span class="kr">function</span><span class="w"> </span><span class="nf">函数名</span><span class="p">(</span><span class="nv">argument1</span><span class="p">,</span><span class="w"> </span><span class="nv">argument2</span><span class="o">..</span><span class="p">.,</span><span class="w"> </span><span class="nv">argumentn</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">-- 函数体</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="err">返回值</span>
+<span class="kr">end</span>
+
+
+<span class="c1">-- 示例</span>
+<span class="kr">function</span><span class="w"> </span><span class="nf">printArr</span><span class="p">(</span><span class="nv">arr</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">for</span><span class="w"> </span><span class="nv">index</span><span class="p">,</span><span class="w"> </span><span class="nv">value</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="nb">ipairs</span><span class="p">(</span><span class="nv">arr</span><span class="p">)</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="nv">value</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="kr">end</span>
+</code></pre></div>
+<h3 id="条件控制">条件控制<a class="headerlink" href="#条件控制" title="链接到此段落">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kr">if</span><span class="p">(</span><span class="err">布尔表达式</span><span class="p">)</span>
+<span class="kr">then</span>
+<span class="w">   </span><span class="c1">--[ 布尔表达式为 true 时执行该语句块 --]</span>
+<span class="kr">else</span>
+<span class="w">   </span><span class="c1">--[ 布尔表达式为 false 时执行该语句块 --]</span>
+<span class="kr">end</span>
+</code></pre></div>
+<p>与java不同，布尔表达式中的逻辑运算是基于英文单词：</p>
+<p><img alt="image-20210821092657918" src="../images/image-20210821092657918.png" /></p>
+<h2 id="openresty">OpenResty<a class="headerlink" href="#openresty" title="链接到此段落">&para;</a></h2>
+<p>OpenResty® 是一个基于 Nginx的高性能 Web 平台，用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。</p>
+<p>其具备下列特点：</p>
+<ul>
+<li>具备Nginx的完整功能</li>
+<li>基于Lua语言进行扩展，集成了大量精良的 Lua 库、第三方模块</li>
+<li>允许使用Lua<strong>自定义业务逻辑</strong>、<strong>自定义库</strong></li>
+</ul>
+<p><a href="https://openresty.org/cn/">官方网站</a></p>
+<h3 id="openresty监听请求">OpenResty监听请求<a class="headerlink" href="#openresty监听请求" title="链接到此段落">&para;</a></h3>
+<p>OpenResty的很多功能都依赖于其目录下的Lua库，需要在nginx.conf中指定依赖库的目录，并导入依赖：</p>
+<ol>
+<li>
+<p>添加对OpenResty的Lua模块的加载</p>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，在其中的http下面，添加下面代码：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">##lua 模块</span>
+<span class="k">lua_package_path</span><span class="w"> </span><span class="s">&quot;/usr/local/openresty/lualib/?.lua</span><span class="p">;</span>;<span class="k">&quot;</span><span class="p">;</span>
+<span class="c1">##c模块     </span>
+<span class="k">lua_package_cpath</span><span class="w"> </span><span class="s">&quot;/usr/local/openresty/lualib/?.so</span><span class="p">;</span>;<span class="k">&quot;</span><span class="p">;</span><span class="w">  </span>
+</code></pre></div>
+</li>
+<li>
+<p>监听/api/item路径</p>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，在nginx.conf的server下面，添加对/api/item这个路径的监听：</p>
+<div class="highlight"><pre><span></span><code><span class="k">location</span><span class="w">  </span><span class="s">/api/item</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># 默认的响应类型</span>
+<span class="w">    </span><span class="kn">default_type</span><span class="w"> </span><span class="s">application/json</span><span class="p">;</span>
+<span class="w">    </span><span class="c1"># 响应结果由lua/item.lua文件来决定</span>
+<span class="w">    </span><span class="kn">content_by_lua_file</span><span class="w"> </span><span class="s">lua/item.lua</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+<li>
+<p>在<code>/usr/loca/openresty/nginx/lua</code>文件夹下，新建文件：item.lua</p>
+<div class="highlight"><pre><span></span><code><span class="nv">ngx</span><span class="p">.</span><span class="nf">say</span><span class="p">(</span><span class="s1">&#39;内容&#39;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ol>
+<h3 id="请求参数处理">请求参数处理<a class="headerlink" href="#请求参数处理" title="链接到此段落">&para;</a></h3>
+<p><code>openresty</code>提供了API获取请求参数</p>
+<p><img alt="image-20250322214448867" src="../images/image-20250322214448867.png" /></p>
+<h3 id="查询tomcat">查询Tomcat<a class="headerlink" href="#查询tomcat" title="链接到此段落">&para;</a></h3>
+<p>nginx提供了内部API用以发送http请求：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">resp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">location</span><span class="p">.</span><span class="nf">capture</span><span class="p">(</span><span class="s2">&quot;/path&quot;</span><span class="p">,{</span>
+<span class="w">    </span><span class="nv">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">HTTP_GET</span><span class="p">,</span><span class="w">   </span><span class="c1">-- 请求方式</span>
+<span class="w">    </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nv">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="nv">b</span><span class="o">=</span><span class="mi">2</span><span class="p">},</span><span class="w">  </span><span class="c1">-- get方式传参数（POST方式使用body）</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>返回的响应内容包括：</p>
+<ul>
+<li>resp.status：响应状态码</li>
+<li>resp.header：响应头，是一个table</li>
+<li>resp.body：响应体，就是响应数据</li>
+</ul>
+<p>注意：这里的path是路径，并不包含IP和端口。这个请求会被nginx内部的server监听并处理。</p>
+<p>但是我们希望这个请求发送到Tomcat服务器，所以还需要编写一个server来对这个路径做反向代理：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="k">location</span><span class="w"> </span><span class="s">/path</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="c1"># Tomcat地址</span>
+<span class="w">     </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://IP:PORT</span><span class="p">;</span><span class="w"> </span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<h3 id="封装http工具">封装http工具<a class="headerlink" href="#封装http工具" title="链接到此段落">&para;</a></h3>
+<p>在<code>/usr/local/openresty/lualib</code>目录下，新建一个common.lua文件：</p>
+<div class="highlight"><pre><span></span><code>vi<span class="w"> </span>/usr/local/openresty/lualib/common.lua
+</code></pre></div>
+<p>内容如下:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 封装函数，发送http请求，并解析响应</span>
+<span class="kd">local</span><span class="w"> </span><span class="kr">function</span><span class="w"> </span><span class="nf">read_http</span><span class="p">(</span><span class="nv">path</span><span class="p">,</span><span class="w"> </span><span class="nv">params</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">resp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">location</span><span class="p">.</span><span class="nf">capture</span><span class="p">(</span><span class="nv">path</span><span class="p">,{</span>
+<span class="w">        </span><span class="nv">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">HTTP_GET</span><span class="p">,</span>
+<span class="w">        </span><span class="nv">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">params</span><span class="p">,</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">resp</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="c1">-- 记录错误信息，返回404</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http请求查询失败, path: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">path</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;, args: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">args</span><span class="p">)</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="nv">resp</span><span class="p">.</span><span class="py">body</span>
+<span class="kr">end</span>
+<span class="c1">-- 将方法导出</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">_M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">  </span>
+<span class="w">    </span><span class="nv">read_http</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">read_http</span>
+<span class="p">}</span><span class="w">  </span>
+<span class="kr">return</span><span class="w"> </span><span class="nv">_M</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>这个工具将read_http函数封装到_M这个table类型的变量中，并且返回，这类似于导出。
+使用的时候，可以利用<code>require('common')</code>来导入该函数库，这里的common是函数库的文件名。</p>
+</div>
+<h3 id="cjson工具类">CJSON工具类<a class="headerlink" href="#cjson工具类" title="链接到此段落">&para;</a></h3>
+<p>OpenResty提供了一个cjson的模块用来处理JSON的序列化和反序列化。</p>
+<p><a href="https://github.com/openresty/lua-cjson/">官方地址</a></p>
+<ol>
+<li>
+<p>引入cjson模块：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">cjson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="w"> </span><span class="s2">&quot;cjson&quot;</span>
+</code></pre></div>
+</li>
+<li>
+<p>序列化</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;jack&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nv">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">21</span>
+<span class="p">}</span>
+<span class="c1">-- 把 table 序列化为 json</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">cjson</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="nv">obj</span><span class="p">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>反序列化</p>
+<div class="highlight"><pre><span></span><code><span class="kd">local</span><span class="w"> </span><span class="nv">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;{&quot;name&quot;: &quot;jack&quot;, &quot;age&quot;: 21}&#39;</span>
+<span class="c1">-- 反序列化 json为 table</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">cjson</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="nv">json</span><span class="p">);</span>
+<span class="nb">print</span><span class="p">(</span><span class="nv">obj</span><span class="p">.</span><span class="py">name</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ol>
+<h3 id="基于id负载均衡">基于ID负载均衡<a class="headerlink" href="#基于id负载均衡" title="链接到此段落">&para;</a></h3>
+<p>实际开发中，OpenResty需要对tomcat集群做负载均衡。</p>
+<p>而默认的负载均衡规则是轮询模式，例如，当我们查询/item/10001时：</p>
+<ul>
+<li>第一次会访问8081端口的tomcat服务，在该服务内部就形成了JVM进程缓存</li>
+<li>第二次会访问8082端口的tomcat服务，该服务内部没有JVM缓存（因为JVM缓存无法共享），会查询数据库</li>
+<li>...</li>
+</ul>
+<p>这样就无法利用JVM进程缓存，影响性能。</p>
+<p>nginx提供了基于请求路径做负载均衡的算法：</p>
+<p>nginx根据请求路径做hash运算，把得到的数值对tomcat服务的数量取余，余数是几，就访问第几个服务，实现负载均衡。</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<ul>
+<li>我们的请求路径是 /item/10001</li>
+<li>tomcat总数为2台（8081、8082）</li>
+<li>对请求路径/item/1001做hash运算求余的结果为1</li>
+<li>则访问第一个tomcat服务，也就是8081</li>
+</ul>
+<p>只要id不变，每次hash运算结果也不会变，那就可以保证同一个商品，一直访问同一个tomcat服务，确保JVM缓存生效。</p>
+</div>
+<p><strong>实现</strong></p>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，实现基于ID做负载均衡。</p>
+<p>首先，定义tomcat集群，并设置基于路径做负载均衡：</p>
+<div class="highlight"><pre><span></span><code><span class="k">upstream</span><span class="w"> </span><span class="s">tomcat-cluster</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">hash</span><span class="w"> </span><span class="nv">$request_uri</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">192.168.150.1</span><span class="p">:</span><span class="mi">8081</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">192.168.150.1</span><span class="p">:</span><span class="mi">8082</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>然后，修改对tomcat服务的反向代理，目标指向tomcat集群：</p>
+<div class="highlight"><pre><span></span><code><span class="k">location</span><span class="w"> </span><span class="s">/item</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://tomcat-cluster</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>重新加载OpenResty</p>
+<div class="highlight"><pre><span></span><code>nginx<span class="w"> </span>-s<span class="w"> </span>reload
+</code></pre></div>
+<h2 id="redis缓存">Redis缓存<a class="headerlink" href="#redis缓存" title="链接到此段落">&para;</a></h2>
+<p><strong>Redis缓存预热</strong></p>
+<p>Redis缓存会面临冷启动问题：</p>
+<p><strong>冷启动</strong>：服务刚刚启动时，Redis中并没有缓存，如果所有商品数据都在第一次查询时添加缓存，可能会给数据库带来较大压力。</p>
+<p><strong>缓存预热</strong>：在实际开发中，我们可以利用<strong>大数据统计</strong>用户访问的热点数据，在项目启动时将这些<strong>热点数据</strong>提前查询并保存到Redis中。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>可以利用<code>InitializingBean</code>接口来实现，因为<code>InitializingBean</code>中的方法<code>afterPropertiesSet</code>可以在对象被Spring创建并且成员变量全部注入后执行。</p>
+</div>
+<p><strong>查询Redis缓存</strong></p>
+<p>当请求进入OpenResty之后：</p>
+<ul>
+<li>优先查询Redis缓存</li>
+<li>如果Redis缓存未命中，再查询Tomcat</li>
+</ul>
+<p>OpenResty提供了操作Redis的模块，我们只要引入该模块就能直接使用。但是为了方便，我们将Redis操作封装到之前的common.lua工具库中。</p>
+<p>修改<code>/usr/local/openresty/lualib/common.lua</code>文件：</p>
+<ol>
+<li>
+<p>引入Redis模块，并初始化Redis对象</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 导入redis</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">redis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s1">&#39;resty.redis&#39;</span><span class="p">)</span>
+<span class="c1">-- 初始化redis</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">red</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">redis</span><span class="p">:</span><span class="nf">new</span><span class="p">()</span>
+<span class="nv">red</span><span class="p">:</span><span class="nf">set_timeouts</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span>
+</code></pre></div>
+</li>
+<li>
+<p>封装函数，用来释放Redis连接，其实是放入连接池</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 关闭redis连接的工具方法，其实是放入连接池</span>
+<span class="kd">local</span><span class="w"> </span><span class="kr">function</span><span class="w"> </span><span class="nf">close_redis</span><span class="p">(</span><span class="nv">red</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">pool_max_idle_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10000</span><span class="w"> </span><span class="c1">-- 连接的空闲时间，单位是毫秒</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="c1">--连接池大小</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">ok</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">red</span><span class="p">:</span><span class="nf">set_keepalive</span><span class="p">(</span><span class="nv">pool_max_idle_time</span><span class="p">,</span><span class="w"> </span><span class="nv">pool_size</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">ok</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;放入redis连接池失败: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="kr">end</span>
+</code></pre></div>
+</li>
+<li>
+<p>封装函数，根据key查询Redis数据</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 查询redis的方法 ip和port是redis地址，key是查询的key</span>
+<span class="kd">local</span><span class="w"> </span><span class="kr">function</span><span class="w"> </span><span class="nf">read_redis</span><span class="p">(</span><span class="nv">ip</span><span class="p">,</span><span class="w"> </span><span class="nv">port</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">-- 获取一个连接</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">ok</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">red</span><span class="p">:</span><span class="nf">connect</span><span class="p">(</span><span class="nv">ip</span><span class="p">,</span><span class="w"> </span><span class="nv">port</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">ok</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;连接redis失败 : &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="w">    </span><span class="c1">-- 查询redis</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">resp</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">red</span><span class="p">:</span><span class="nf">get</span><span class="p">(</span><span class="nv">key</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">-- 查询失败处理</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">resp</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;查询Redis失败: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">err</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;, key = &quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="w">    </span><span class="c1">--得到的数据为空处理</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="nv">resp</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">null</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="nv">resp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;查询Redis数据为空, key = &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="w">    </span><span class="nf">close_redis</span><span class="p">(</span><span class="nv">red</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="nv">resp</span>
+<span class="kr">end</span>
+</code></pre></div>
+</li>
+<li>
+<p>导出</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 将方法导出</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">_M</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">  </span>
+<span class="w">    </span><span class="nv">read_http</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">read_http</span><span class="p">,</span>
+<span class="w">    </span><span class="nv">read_redis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">read_redis</span>
+<span class="p">}</span><span class="w">  </span>
+<span class="kr">return</span><span class="w"> </span><span class="nv">_M</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="nginx本地缓存">Nginx本地缓存<a class="headerlink" href="#nginx本地缓存" title="链接到此段落">&para;</a></h2>
+<p>OpenResty为Nginx提供了<strong>shared dict</strong>的功能，可以在nginx的多个worker之间共享数据，实现缓存功能。</p>
+<ol>
+<li>
+<p>开启共享字典，在nginx.conf的http下添加配置：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 共享字典，也就是本地缓存，名称叫做：item_cache，大小150m</span>
+<span class="k">lua_shared_dict</span><span class="w"> </span><span class="s">item_cache</span><span class="w"> </span><span class="mi">150m</span><span class="p">;</span><span class="w"> </span>
+</code></pre></div>
+</li>
+<li>
+<p>操作共享字典：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 获取本地缓存对象</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">item_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">shared</span><span class="p">.</span><span class="py">item_cache</span>
+<span class="c1">-- 存储, 指定key、value、过期时间，单位s，默认为0代表永不过期</span>
+<span class="nv">item_cache</span><span class="p">:</span><span class="nf">set</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">-- 读取</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">item_cache</span><span class="p">:</span><span class="nf">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p>示例</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 导入共享词典，本地缓存</span>
+<span class="kd">local</span><span class="w"> </span><span class="nv">item_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">ngx</span><span class="p">.</span><span class="py">shared</span><span class="p">.</span><span class="py">item_cache</span>
+
+<span class="c1">-- 封装查询函数</span>
+<span class="kr">function</span><span class="w"> </span><span class="nf">read_data</span><span class="p">(</span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">expire</span><span class="p">,</span><span class="w"> </span><span class="nv">path</span><span class="p">,</span><span class="w"> </span><span class="nv">params</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">-- 查询本地缓存</span>
+<span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">item_cache</span><span class="p">:</span><span class="nf">get</span><span class="p">(</span><span class="nv">key</span><span class="p">)</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">val</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">        </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;本地缓存查询失败，尝试查询Redis， key: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">        </span><span class="c1">-- 查询redis</span>
+<span class="w">        </span><span class="nv">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">read_redis</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">6379</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">        </span><span class="c1">-- 判断查询结果</span>
+<span class="w">        </span><span class="kr">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">val</span><span class="w"> </span><span class="kr">then</span>
+<span class="w">            </span><span class="nv">ngx</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="nv">ngx</span><span class="p">.</span><span class="py">ERR</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;redis查询失败，尝试查询http， key: &quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">key</span><span class="p">)</span>
+<span class="w">            </span><span class="c1">-- redis查询失败，去查询http</span>
+<span class="w">            </span><span class="nv">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">read_http</span><span class="p">(</span><span class="nv">path</span><span class="p">,</span><span class="w"> </span><span class="nv">params</span><span class="p">)</span>
+<span class="w">        </span><span class="kr">end</span>
+<span class="w">    </span><span class="kr">end</span>
+<span class="w">    </span><span class="c1">-- 查询成功，把数据写入本地缓存</span>
+<span class="w">    </span><span class="nv">item_cache</span><span class="p">:</span><span class="nf">set</span><span class="p">(</span><span class="nv">key</span><span class="p">,</span><span class="w"> </span><span class="nv">val</span><span class="p">,</span><span class="w"> </span><span class="nv">expire</span><span class="p">)</span>
+<span class="w">    </span><span class="c1">-- 返回数据</span>
+<span class="w">    </span><span class="kr">return</span><span class="w"> </span><span class="nv">val</span>
+<span class="kr">end</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="缓存同步">缓存同步<a class="headerlink" href="#缓存同步" title="链接到此段落">&para;</a></h2>
+<p>大多数情况下，浏览器查询到的都是缓存数据，如果缓存数据与数据库数据存在较大差异，可能会产生比较严重的后果。
+所以我们必须保证数据库数据、缓存数据的一致性，这就是缓存与数据库的同步。</p>
+<h3 id="缓存同步策略">缓存同步策略<a class="headerlink" href="#缓存同步策略" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>
+<p><strong>设置有效期</strong>：给缓存设置有效期，到期后自动删除。再次查询时更新</p>
+<ul>
+<li>
+<p>优势：简单、方便</p>
+</li>
+<li>
+<p>缺点：时效性差，缓存过期之前可能不一致</p>
+</li>
+<li>
+<p>场景：更新频率较低，时效性要求低的业务</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>同步双写</strong>：在修改数据库的同时，直接修改缓存</p>
+<ul>
+<li>
+<p>优势：时效性强，缓存与数据库强一致</p>
+</li>
+<li>
+<p>缺点：有代码侵入，耦合度高</p>
+</li>
+<li>
+<p>场景：对一致性、时效性要求较高的缓存数据</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>异步通知</strong>：修改数据库时发送事件通知，相关服务监听到通知后修改缓存数据</p>
+<ul>
+<li>
+<p>优势：低耦合，可以同时通知多个缓存服务</p>
+</li>
+<li>
+<p>缺点：时效性一般，可能存在中间不一致状态</p>
+</li>
+<li>
+<p>场景：时效性要求一般，有多个服务需要同步</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>异步通知有两种实现方式，基于<code>MQ</code>（有少量的代码侵入）或者<code>Canal</code>（代码零侵入）</p>
+<p><img alt="image-20250323223547149" src="../images/image-20250323223547149.png" /></p>
+<p><img alt="image-20250323223553395" src="../images/image-20250323223553395.png" /></p>
+<h3 id="canal">Canal<a class="headerlink" href="#canal" title="链接到此段落">&para;</a></h3>
+<p><strong>Canal [kə'næl]</strong>，译意为水道/管道/沟渠，canal是阿里巴巴旗下的一款开源项目，基于Java开发。基于数据库增量日志解析，提供增量数据订阅&amp;消费。<a href="https://github.com/alibaba/canal">GitHub的地址</a></p>
+<p>Canal是基于mysql的主从同步来实现的（Canal就是把自己<strong>伪装成MySQL的一个slave节点</strong>，从而监听master的binary log变化），再把得到的变化信息通知给Canal的客户端，进而完成对其它数据库的同步。</p>
+<p>配置安装过程详见<a href="../%E5%AE%89%E8%A3%85Canal/">Canal安装</a></p>
+<h3 id="监听canal">监听Canal<a class="headerlink" href="#监听canal" title="链接到此段落">&para;</a></h3>
+<p>我们可以利用Canal提供的Java客户端，监听Canal通知消息。当收到变化的消息时，完成对缓存的更新。</p>
+<p>可以使用GitHub上的第三方开源的canal-starter客户端。地址：https://github.com/NormanGyllenhaal/canal-client</p>
+<p>与SpringBoot完美整合，自动装配。</p>
+<ol>
+<li>
+<p>引入依赖</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;dependency&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groupId&gt;</span>top.javatool<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;artifactId&gt;</span>canal-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;version&gt;</span>1.2.1-RELEASE<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>配置文件</p>
+<div class="highlight"><pre><span></span><code><span class="nt">canal</span><span class="p">:</span>
+<span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">heima</span><span class="w"> </span><span class="c1"># canal的集群名字，要与安装canal时设置的名称一致</span>
+<span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.150.101:11111</span><span class="w"> </span><span class="c1"># canal服务地址</span>
+</code></pre></div>
+</li>
+<li>
+<p>修改实体类</p>
+<p>通过<code>@Id</code>、<code>@Column</code> 等注解完成实体类与数据库表字段的映射</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Data</span>
+<span class="nd">@TableName</span><span class="p">(</span><span class="s">&quot;tb_item&quot;</span><span class="p">)</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Item</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@TableId</span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IdType</span><span class="p">.</span><span class="na">AUTO</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@Id</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="c1">//商品id</span>
+
+<span class="w">    </span><span class="nd">@Column</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="c1">//商品名称</span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">title</span><span class="p">;</span><span class="c1">//商品标题</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Long</span><span class="w"> </span><span class="n">price</span><span class="p">;</span><span class="c1">//价格（分）</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">image</span><span class="p">;</span><span class="c1">//商品图片</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">category</span><span class="p">;</span><span class="c1">//分类名称</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">brand</span><span class="p">;</span><span class="c1">//品牌名称</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">spec</span><span class="p">;</span><span class="c1">//规格</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">status</span><span class="p">;</span><span class="c1">//商品状态 1-正常，2-下架</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Date</span><span class="w"> </span><span class="n">createTime</span><span class="p">;</span><span class="c1">//创建时间</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Date</span><span class="w"> </span><span class="n">updateTime</span><span class="p">;</span><span class="c1">//更新时间</span>
+
+<span class="w">    </span><span class="nd">@TableField</span><span class="p">(</span><span class="n">exist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@Transient</span><span class="w">  </span><span class="c1">// 不属于数据库表的数据</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">stock</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@TableField</span><span class="p">(</span><span class="n">exist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+<span class="w">    </span><span class="nd">@Transient</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="n">sold</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+<li>
+<p>编写监听器</p>
+<p>通过实现<code>EntryHandler&lt;T&gt;</code>接口编写监听器，监听Canal消息。注意两点：</p>
+<ul>
+<li>实现类通过<code>@CanalTable("tb_item")</code>指定监听的表信息</li>
+<li><code>EntryHandler</code>的泛型是与表对应的实体类</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nd">@CanalTable</span><span class="p">(</span><span class="s">&quot;tb_item&quot;</span><span class="p">)</span><span class="w">  </span><span class="c1">// 监听的数据库表名</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ItemHandler</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">EntryHandler</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="nd">@Autowired</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">RedisHandler</span><span class="w"> </span><span class="n">redisHandler</span><span class="p">;</span><span class="w">  </span><span class="c1">// 封装的Redis操作类，可使用StringRedisTemplate类代替</span>
+<span class="w">    </span><span class="nd">@Autowired</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="p">,</span><span class="w"> </span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itemCache</span><span class="p">;</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 写数据到JVM进程缓存</span>
+<span class="w">        </span><span class="n">itemCache</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 写数据到redis</span>
+<span class="w">        </span><span class="n">redisHandler</span><span class="p">.</span><span class="na">saveItem</span><span class="p">(</span><span class="n">item</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">Item</span><span class="w"> </span><span class="n">before</span><span class="p">,</span><span class="w"> </span><span class="n">Item</span><span class="w"> </span><span class="n">after</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 写数据到JVM进程缓存</span>
+<span class="w">        </span><span class="n">itemCache</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">after</span><span class="p">.</span><span class="na">getId</span><span class="p">(),</span><span class="w"> </span><span class="n">after</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// 写数据到redis</span>
+<span class="w">        </span><span class="n">redisHandler</span><span class="p">.</span><span class="na">saveItem</span><span class="p">(</span><span class="n">after</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="n">Item</span><span class="w"> </span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 删除数据到JVM进程缓存</span>
+<span class="w">        </span><span class="n">itemCache</span><span class="p">.</span><span class="na">invalidate</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// 删除数据到redis</span>
+<span class="w">        </span><span class="n">redisHandler</span><span class="p">.</span><span class="na">deleteItemById</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/yayahonghong" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

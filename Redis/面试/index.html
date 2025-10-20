@@ -8,22 +8,28 @@
       
       
       
+        <link rel="canonical" href="https://note.pua.asia/Redis/%E9%9D%A2%E8%AF%95/">
       
       
+        <link rel="prev" href="../%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
       
-      <link rel="icon" href="/assets/images/favicon.png">
+      
+        <link rel="next" href="../../Netty/Netty/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
     
     
       
-        <title>YSH的学习笔记</title>
+        <title>面试题 - YSH的学习笔记</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.84d31ad4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
       
         
-        <link rel="stylesheet" href="/assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -42,7 +48,7 @@
       
     
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -67,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#redis应用场景" class="md-skip">
+          跳转至
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -77,7 +88,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="/." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+    <a href="../.." title="YSH的学习笔记" class="md-header__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -97,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              面试题
             
           </span>
         </div>
@@ -215,7 +226,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -234,7 +245,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/blog/" class="md-tabs__link">
+      <a href="../../blog/" class="md-tabs__link">
         
   
   
@@ -262,7 +273,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
+        <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-tabs__link">
           
   
   
@@ -292,7 +303,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/Spring/" class="md-tabs__link">
+        <a href="../../Spring/" class="md-tabs__link">
           
   
   
@@ -311,6 +322,8 @@
   
   
   
+    
+  
   
     
     
@@ -318,11 +331,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/MySQL/SQL/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../MySQL/SQL/" class="md-tabs__link">
           
   
   
@@ -345,7 +360,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/Netty/Netty/" class="md-tabs__link">
+        <a href="../../Netty/Netty/" class="md-tabs__link">
           
   
   
@@ -365,7 +380,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/Docker/" class="md-tabs__link">
+        <a href="../../Docker/" class="md-tabs__link">
           
   
   
@@ -385,7 +400,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/Git/Git/" class="md-tabs__link">
+        <a href="../../Git/Git/" class="md-tabs__link">
           
   
   
@@ -405,7 +420,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
           
   
   
@@ -439,7 +454,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
+    <a href="../.." title="YSH的学习笔记" class="md-nav__button md-logo" aria-label="YSH的学习笔记" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -469,7 +484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -493,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/blog/" class="md-nav__link">
+      <a href="../../blog/" class="md-nav__link">
         
   
   
@@ -601,7 +616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
+      <a href="../../Java/%E5%8F%8D%E5%B0%84/" class="md-nav__link">
         
   
   
@@ -624,7 +639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
+      <a href="../../Java/%E4%BB%A3%E7%90%86/" class="md-nav__link">
         
   
   
@@ -647,7 +662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
+      <a href="../../Java/%E4%B8%8D%E5%8F%AF%E5%8F%98%E9%9B%86%E5%90%88/" class="md-nav__link">
         
   
   
@@ -670,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
+      <a href="../../Java/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" class="md-nav__link">
         
   
   
@@ -693,7 +708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Java/IO/" class="md-nav__link">
+      <a href="../../Java/IO/" class="md-nav__link">
         
   
   
@@ -767,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/JVM/JVM-base/" class="md-nav__link">
+      <a href="../../JVM/JVM-base/" class="md-nav__link">
         
   
   
@@ -790,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/JVM/JVM-practice/" class="md-nav__link">
+      <a href="../../JVM/JVM-practice/" class="md-nav__link">
         
   
   
@@ -813,7 +828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/JVM/JVM-advance/" class="md-nav__link">
+      <a href="../../JVM/JVM-advance/" class="md-nav__link">
         
   
   
@@ -836,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/JVM/JVM-principle/" class="md-nav__link">
+      <a href="../../JVM/JVM-principle/" class="md-nav__link">
         
   
   
@@ -859,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/JVM/JVM-summary/" class="md-nav__link">
+      <a href="../../JVM/JVM-summary/" class="md-nav__link">
         
   
   
@@ -933,7 +948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Overview/" class="md-nav__link">
         
   
   
@@ -956,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
         
   
   
@@ -979,7 +994,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E7%BA%BF%E7%A8%8B/" class="md-nav__link">
         
   
   
@@ -1002,7 +1017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E9%94%81/" class="md-nav__link">
         
   
   
@@ -1025,7 +1040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E4%B8%89%E8%A6%81%E7%B4%A0/" class="md-nav__link">
         
   
   
@@ -1048,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B9%90%E8%A7%82%E9%94%81/" class="md-nav__link">
         
   
   
@@ -1071,7 +1086,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%B1%BB/" class="md-nav__link">
         
   
   
@@ -1094,7 +1109,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
+      <a href="../../%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/" class="md-nav__link">
         
   
   
@@ -1218,7 +1233,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/" class="md-nav__link">
+      <a href="../../Spring/" class="md-nav__link">
         
   
   
@@ -1241,7 +1256,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-Overview/" class="md-nav__link">
+      <a href="../../Spring/Spring-Overview/" class="md-nav__link">
         
   
   
@@ -1264,7 +1279,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-XML/" class="md-nav__link">
+      <a href="../../Spring/Spring-XML/" class="md-nav__link">
         
   
   
@@ -1287,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-Annotation/" class="md-nav__link">
+      <a href="../../Spring/Spring-Annotation/" class="md-nav__link">
         
   
   
@@ -1310,7 +1325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-AOP/" class="md-nav__link">
+      <a href="../../Spring/Spring-AOP/" class="md-nav__link">
         
   
   
@@ -1333,7 +1348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-Web/" class="md-nav__link">
+      <a href="../../Spring/Spring-Web/" class="md-nav__link">
         
   
   
@@ -1356,7 +1371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Spring/Spring-MVC/" class="md-nav__link">
+      <a href="../../Spring/Spring-MVC/" class="md-nav__link">
         
   
   
@@ -1387,7 +1402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringBoot/SpringBoot/" class="md-nav__link">
+      <a href="../../SpringBoot/SpringBoot/" class="md-nav__link">
         
   
   
@@ -1453,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/" class="md-nav__link">
+      <a href="../../SpringCloud/" class="md-nav__link">
         
   
   
@@ -1476,7 +1491,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/Overview/" class="md-nav__link">
+      <a href="../../SpringCloud/Overview/" class="md-nav__link">
         
   
   
@@ -1499,7 +1514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
+      <a href="../../SpringCloud/%E5%8D%95%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="md-nav__link">
         
   
   
@@ -1522,7 +1537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86/" class="md-nav__link">
         
   
   
@@ -1545,7 +1560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/" class="md-nav__link">
         
   
   
@@ -1568,7 +1583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/OpenFeign/" class="md-nav__link">
+      <a href="../../SpringCloud/OpenFeign/" class="md-nav__link">
         
   
   
@@ -1591,7 +1606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
+      <a href="../../SpringCloud/%E7%BD%91%E5%85%B3/" class="md-nav__link">
         
   
   
@@ -1614,7 +1629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
+      <a href="../../SpringCloud/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" class="md-nav__link">
         
   
   
@@ -1637,7 +1652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
+      <a href="../../SpringCloud/%E6%9C%8D%E5%8A%A1%E4%BF%9D%E6%8A%A4/" class="md-nav__link">
         
   
   
@@ -1660,7 +1675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+      <a href="../../SpringCloud/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
         
   
   
@@ -1683,7 +1698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/MyBatisPlus/" class="md-nav__link">
+      <a href="../../SpringCloud/MyBatisPlus/" class="md-nav__link">
         
   
   
@@ -1706,7 +1721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/Docker/" class="md-nav__link">
+      <a href="../../SpringCloud/Docker/" class="md-nav__link">
         
   
   
@@ -1729,7 +1744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/MQ/" class="md-nav__link">
+      <a href="../../SpringCloud/MQ/" class="md-nav__link">
         
   
   
@@ -1752,7 +1767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/SpringCloud/Elasticsearch/" class="md-nav__link">
+      <a href="../../SpringCloud/Elasticsearch/" class="md-nav__link">
         
   
   
@@ -1787,26 +1802,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -1819,7 +1839,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             数据库技术
@@ -1839,17 +1859,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
         
           
-          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
             
   
   
@@ -1876,7 +1899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/SQL/" class="md-nav__link">
+      <a href="../../MySQL/SQL/" class="md-nav__link">
         
   
   
@@ -1899,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="md-nav__link">
         
   
   
@@ -1922,7 +1945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
+      <a href="../../MySQL/%E6%9E%B6%E6%9E%84/" class="md-nav__link">
         
   
   
@@ -1945,7 +1968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
+      <a href="../../MySQL/%E7%B4%A2%E5%BC%95/" class="md-nav__link">
         
   
   
@@ -1968,7 +1991,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
+      <a href="../../MySQL/SQL%E4%BC%98%E5%8C%96/" class="md-nav__link">
         
   
   
@@ -1991,7 +2014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
+      <a href="../../MySQL/%E8%A7%86%E5%9B%BE/" class="md-nav__link">
         
   
   
@@ -2014,7 +2037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
+      <a href="../../MySQL/%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" class="md-nav__link">
         
   
   
@@ -2037,7 +2060,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
+      <a href="../../MySQL/%E8%A7%A6%E5%8F%91%E5%99%A8/" class="md-nav__link">
         
   
   
@@ -2060,7 +2083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E9%94%81/" class="md-nav__link">
+      <a href="../../MySQL/%E9%94%81/" class="md-nav__link">
         
   
   
@@ -2083,7 +2106,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
+      <a href="../../MySQL/MySQL%E7%AE%A1%E7%90%86/" class="md-nav__link">
         
   
   
@@ -2106,7 +2129,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
+      <a href="../../MySQL/%E8%BF%90%E7%BB%B4/" class="md-nav__link">
         
   
   
@@ -2134,26 +2157,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
             
   
   
@@ -2166,7 +2194,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             Redis
@@ -2180,7 +2208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/SQL%E4%B8%8ENoSQL/" class="md-nav__link">
+      <a href="../SQL%E4%B8%8ENoSQL/" class="md-nav__link">
         
   
   
@@ -2203,7 +2231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
+      <a href="../%E8%AE%A4%E8%AF%86Redis/" class="md-nav__link">
         
   
   
@@ -2226,7 +2254,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
+      <a href="../Redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="md-nav__link">
         
   
   
@@ -2249,7 +2277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
+      <a href="../Redis%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF/" class="md-nav__link">
         
   
   
@@ -2272,7 +2300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/%E9%9B%86%E7%BE%A4/" class="md-nav__link">
+      <a href="../%E9%9B%86%E7%BE%A4/" class="md-nav__link">
         
   
   
@@ -2295,7 +2323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="md-nav__link">
+      <a href="../%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" class="md-nav__link">
         
   
   
@@ -2318,7 +2346,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Redis/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="md-nav__link">
+      <a href="../%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="md-nav__link">
         
   
   
@@ -2338,10 +2366,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/Redis/%E9%9D%A2%E8%AF%95/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    面试题
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2352,6 +2400,105 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#redis应用场景" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis应用场景
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存穿透" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存穿透
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存击穿" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存击穿
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存雪崩" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存雪崩
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#双写一致" class="md-nav__link">
+    <span class="md-ellipsis">
+      双写一致
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      持久化
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis的key过期后是否会被立即删除" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis的key过期后是否会被立即删除
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis内存淘汰redis内存不足" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis内存淘汰（Redis内存不足）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis分布式锁" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis分布式锁
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2422,7 +2569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Netty/Netty/" class="md-nav__link">
+      <a href="../../Netty/Netty/" class="md-nav__link">
         
   
   
@@ -2445,7 +2592,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Kafka/" class="md-nav__link">
+      <a href="../../Kafka/" class="md-nav__link">
         
   
   
@@ -2468,7 +2615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Zookeeper/" class="md-nav__link">
+      <a href="../../Zookeeper/" class="md-nav__link">
         
   
   
@@ -2541,7 +2688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Docker/" class="md-nav__link">
+      <a href="../../Docker/" class="md-nav__link">
         
   
   
@@ -2564,7 +2711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Linux/" class="md-nav__link">
+      <a href="../../Linux/" class="md-nav__link">
         
   
   
@@ -2637,7 +2784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/Git/Git/" class="md-nav__link">
+      <a href="../../Git/Git/" class="md-nav__link">
         
   
   
@@ -2710,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
         
   
   
@@ -2751,6 +2898,95 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#redis应用场景" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis应用场景
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存穿透" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存穿透
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存击穿" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存击穿
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#缓存雪崩" class="md-nav__link">
+    <span class="md-ellipsis">
+      缓存雪崩
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#双写一致" class="md-nav__link">
+    <span class="md-ellipsis">
+      双写一致
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#持久化" class="md-nav__link">
+    <span class="md-ellipsis">
+      持久化
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis的key过期后是否会被立即删除" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis的key过期后是否会被立即删除
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis内存淘汰redis内存不足" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis内存淘汰（Redis内存不足）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis分布式锁" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redis分布式锁
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2761,8 +2997,174 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+  
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Redis/面试.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Redis/面试.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+  <h1>面试题</h1>
+
+<h3 id="redis应用场景">Redis应用场景<a class="headerlink" href="#redis应用场景" title="链接到此段落">&para;</a></h3>
+<ol>
+<li>缓存</li>
+<li>分布式锁</li>
+<li>消息队列</li>
+<li>延时队列</li>
+<li>计数器</li>
+</ol>
+<h3 id="缓存穿透">缓存穿透<a class="headerlink" href="#缓存穿透" title="链接到此段落">&para;</a></h3>
+<p>缓存穿透是指查询一个根本不存在的数据，由于缓存和数据库都没有这个数据，因此每次请求都会直接落到数据库上，造成数据库压力过大，甚至宕机。</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>缓存空对象<ul>
+<li>如果查询的数据不存在，可以在缓存中存储一个空对象，并设置一个较短的过期时间（比如5分钟）。这样下次查询同样不存在的数据时，就会直接从缓存中获取，避免了对数据库的访问。</li>
+</ul>
+</li>
+<li>布隆过滤器<ul>
+<li>布隆过滤器使用位图和多个哈希函数来判断一个元素是否存在于集合中。它可以高效地过滤掉不存在的数据，从而减少对数据库的访问。</li>
+<li>布隆过滤器有一定的误判率，即可能会误判一个不存在的数据为存在，但不会误判一个存在的数据为不存在。通过调整位图大小和哈希函数数量，可以控制误判率在可接受范围内。</li>
+<li>实现：Redisson、Guava</li>
+</ul>
+</li>
+</ol>
+<h3 id="缓存击穿">缓存击穿<a class="headerlink" href="#缓存击穿" title="链接到此段落">&para;</a></h3>
+<p>缓存击穿是指某个热点数据在缓存中失效后，大量并发请求直接落到数据库上，造成数据库压力过大，甚至宕机。</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>互斥锁<ul>
+<li>缓存重建时，使用互斥锁来保证同一时间只有一个线程可以访问数据库并重建缓存。其他线程等待锁释放后，再从缓存中获取数据。</li>
+</ul>
+</li>
+<li>逻辑过期<ul>
+<li>给缓存数据设置一个逻辑过期时间，即使数据过期了，仍然可以继续使用旧数据。</li>
+<li>当有请求发现数据过期时，先获取互斥锁，然后异步更新缓存，其他请求获取锁失败则继续使用旧数据。</li>
+<li>该方案存在数据不一致的风险，但可以通过合理设置逻辑过期时间来降低风险。</li>
+</ul>
+</li>
+</ol>
+<h3 id="缓存雪崩">缓存雪崩<a class="headerlink" href="#缓存雪崩" title="链接到此段落">&para;</a></h3>
+<p>缓存雪崩是指大量缓存数据在同一时间失效或者缓存服务宕机，导致大量请求直接落到数据库上，造成数据库压力过大，甚至宕机。</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>为不同缓存key设置随机性过期时间，避免大量缓存同时失效。</li>
+<li>提高缓存服务的可用性，使用集群、主从复制等方式，避免单点故障。</li>
+<li>限流降级策略，当缓存服务不可用时，限制请求速率或者直接返回默认值，避免大量请求落到数据库上。</li>
+<li>多级缓存方案，使用本地缓存和分布式缓存相结合的方式，降低对数据库的压力。</li>
+</ol>
+<h3 id="双写一致">双写一致<a class="headerlink" href="#双写一致" title="链接到此段落">&para;</a></h3>
+<p>双写一致是指在更新数据时，同时更新缓存和数据库，确保两者的数据一致性。</p>
+<ol>
+<li>延时双删<ul>
+<li>在更新数据时，先删除缓存，然后更新数据库，最后再延时删除缓存（数据库可能是主从架构读写分离，需要一定时间同步）。这样可以确保缓存中的数据是最新的。</li>
+<li>该方案存在短暂的数据不一致风险，但可以通过合理设置删除缓存的时间间隔来降低风险。</li>
+</ul>
+</li>
+<li>分布式读写锁<ul>
+<li>使用分布式读写锁来保证同一时间只有一个线程可以更新数据。读操作可以并发进行，写操作需要获取写锁。</li>
+<li>该方案实现复杂度较高，但可以确保数据的强一致性。</li>
+</ul>
+</li>
+<li>消息队列<ul>
+<li>在更新数据时，将更新操作发送到消息队列中，由专门的消费者线程来处理更新缓存和数据库的操作。</li>
+<li>该方案只能保证数据的最终一致性，而且有消息丢失的风险，但可以提高系统的吞吐量和可用性。</li>
+</ul>
+</li>
+</ol>
+<h3 id="持久化">持久化<a class="headerlink" href="#持久化" title="链接到此段落">&para;</a></h3>
+<p>Redis提供了两种持久化机制：</p>
+<ul>
+<li>RDB</li>
+<li>AOF</li>
+</ul>
+<p>RDB（Redis DataBase）是Redis默认的持久化机制，它会在指定的时间间隔内将内存中的数据快照保存到磁盘上。RDB文件是一个二进制文件，包含了Redis数据库的完整状态。
+<div class="highlight"><pre><span></span><code>redis-cli
+
+save<span class="w">    </span><span class="c1"># 手动触发RDB持久化，会阻塞主进程</span>
+bgsave<span class="w">  </span><span class="c1"># fork子进程异步触发RDB持久化，不会阻塞主进程（写时复制，主进程执行写操作时才拷贝数据）</span>
+</code></pre></div></p>
+<p>AOF（Append Only File）是Redis的另一种持久化机制，它会将每个写操作以日志的形式追加到AOF文件中。AOF文件是一个文本文件，包含了所有对Redis数据库的写操作。
+<div class="highlight"><pre><span></span><code>appendonly yes          # 开启AOF持久化
+appendfilename &quot;appendonly.aof&quot;  # AOF文件名
+appendfsync everysec     # 每秒同步到磁盘
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>appendfsync配置的是AOF文件同步到磁盘的频率，写命令首先会被放入操作系统的缓冲区，然后由操作系统负责将数据写入磁盘。appendfsync配置的就是操作系统将数据写入磁盘的频率。</p>
+<p>支持的选项有：</p>
+<ul>
+<li>always：每次有写操作时都同步到磁盘，性能最差</li>
+<li>everysec：每秒同步到磁盘，性能较好，数据丢失风险较低（默认）</li>
+<li>no：完全依赖操作系统，性能最好，但数据丢失风险最高</li>
+</ul>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>AOF文件占用较大，可通过<code>bgrewriteaof</code>命令重写AOF文件，删除冗余命令，减小文件大小。</p>
+</div>
+<h3 id="redis的key过期后是否会被立即删除">Redis的key过期后是否会被立即删除<a class="headerlink" href="#redis的key过期后是否会被立即删除" title="链接到此段落">&para;</a></h3>
+<p>并不会，Redis有两种删除策略：惰性删除和定期删除</p>
+<ul>
+<li>惰性删除：每次访问key时，检查是否过期，过期则删除</li>
+<li>定期删除：每隔一段时间，随机检查部分key，删除过期</li>
+</ul>
+<p>Redis中两种删除策略结合使用，确保过期key最终被删除，但不会立即删除，避免性能问题。</p>
+<h3 id="redis内存淘汰redis内存不足">Redis内存淘汰（Redis内存不足）<a class="headerlink" href="#redis内存淘汰redis内存不足" title="链接到此段落">&para;</a></h3>
+<p>Redis提供了多种内存淘汰策略，常用的有：</p>
+<ul>
+<li>noeviction：不淘汰任何key，内存满时写操作报错（默认）</li>
+<li>volatile-ttl：对设置了TTL的key，比较key的剩余TTL值，TTL越小越先被淘汰</li>
+<li>allkeys-random：对所有key，随机淘汰</li>
+<li>volatile-random：对设置了TTL的key，随机淘汰</li>
+<li>allkeys-lru：对所有key，基于LRU算法淘汰</li>
+<li>volatile-lru：对设置了TTL的key，基于LRU算法淘汰</li>
+<li>allkeys-lfu：对所有key，基于LFU算法淘汰</li>
+<li>volatile-lfu：对设置了TTL的key，基于LFU算法淘汰（推荐）</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">LRU和LFU算法</p>
+<p><strong>LRU</strong>（最近最少使用）</p>
+<ul>
+<li>通过记录每个key的最后访问时间，来判断哪个key最久未被使用，从而进行淘汰。</li>
+</ul>
+<p><strong>LFU</strong>（最不经常使用）</p>
+<ul>
+<li>通过记录每个key的访问频率，来判断哪个key最少被使用，从而进行淘汰。</li>
+</ul>
+</div>
+<h3 id="redis分布式锁">Redis分布式锁<a class="headerlink" href="#redis分布式锁" title="链接到此段落">&para;</a></h3>
+<p>Redis分布式锁是通过Redis的setnx命令实现的，基本原理如下：
+1. 客户端尝试通过setnx命令设置一个唯一的key，如果设置成功，表示获取锁成功
+2. 客户端设置一个过期时间，防止死锁
+3. 客户端执行完业务逻辑后，删除key，释放锁</p>
+<p>Redission是一个基于Redis实现的分布式锁库，提供了更完善的分布式锁功能，包括自动续期、锁重入等。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -2822,10 +3224,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "/assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.path", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.tooltips", "content.action.edit", "content.action.view", "announce.dismiss"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
       
     
   </body>
