@@ -15,6 +15,7 @@ theme:
     - navigation.sections      # 左侧导航分组
     - navigation.path          # 显示导航路径
     - navigation.top           # 返回顶部按钮
+    - navigation.footer        # 页面底部前后翻页控件
 
 
     # 搜索相关
@@ -95,6 +96,8 @@ plugins:
 markdown_extensions:
   - pymdownx.details      # 支持折叠内容块
   - pymdownx.superfences  # 支持代码块和其他内容
+  - pymdownx.tabbed:      # 选项卡切换
+      alternate_style: true
   - admonition           # 支持提示框
   - attr_list               # 属性列表
   - def_list                # 定义列表
