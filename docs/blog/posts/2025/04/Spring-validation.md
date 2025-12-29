@@ -91,13 +91,16 @@ public class UserDTO {
     @NotEmpty(message = "列表不能为空")
     @Size(min = 1, max = 10, message = "最多选择10项")
     private List<String> items;
+
+    @Valid //嵌套校验，会同时校验Address对象的属性
+    private Address address;
 }
 
 ```
 
 ## Controller中使用启用校验
 
-在Controller中，可以在类上使用@Validated 注解启用方法参数的校验。
+在Controller中，可以在类上使用@Validated 注解启用查询参数和路径参数的校验。
 
 @Valid 用于嵌套对象的校验。
 
