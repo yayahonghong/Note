@@ -3492,6 +3492,7 @@
 </code></pre></div>
 <h2 id="controller中使用启用校验">Controller中使用启用校验<a class="headerlink" href="#controller中使用启用校验" title="链接到此段落">&para;</a></h2>
 <p>在Controller中，可以在类上使用@Validated 注解启用查询参数和路径参数的校验。</p>
+<p>一般需要在需要验证的参数上加@Valid注解才会生效，但可以在类上加上@Validated注解触发校验。</p>
 <p>@Valid 用于嵌套对象的校验。</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@Validated</span><span class="w"> </span>
 <span class="nd">@RestController</span>
