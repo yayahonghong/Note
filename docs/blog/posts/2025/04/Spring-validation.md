@@ -102,9 +102,8 @@ public class UserDTO {
 
 在Controller中，可以在类上使用@Validated 注解启用查询参数和路径参数的校验。
 
-一般需要在需要验证的参数上加@Valid注解才会生效，但可以在类上加上@Validated注解触发校验。
-
-@Valid 用于嵌套对象的校验。
+@Validated 注解通常用于类级别，主要用于验证方法参数（如 @RequestParam、@PathVariable 等），但不适用于 @RequestBody。
+@Valid 注解用于验证对象的字段，特别是用于验证请求体（@RequestBody）中的对象，也用于嵌套对象的校验。
 
 ```java
 @Validated 
