@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -361,8 +361,15 @@
   
     
     
+      
+  
+  
+  
+  
+    
+    
       <li class="md-tabs__item">
-        <a href="../../Netty/Netty/" class="md-tabs__link">
+        <a href="../../Netty/NIO%E5%9F%BA%E7%A1%80/" class="md-tabs__link">
           
   
   
@@ -370,6 +377,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -422,7 +432,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+        <a href="../../Windows/" class="md-tabs__link">
           
   
   
@@ -3130,9 +3140,25 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../Netty/Netty/" class="md-nav__link">
+    
+    
+    
+    
+      
+      
         
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -3146,7 +3172,51 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Netty
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Netty/NIO%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NIO基础
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -3476,14 +3546,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+      <a href="../../Windows/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    系统相关
+    Windows
   
 
     
@@ -4551,7 +4621,7 @@ SELECT user_id, amount FROM orders WHERE user_id=100 AND status=1;
 <li>是否避免在索引列上使用函数</li>
 </ol>
 <p>六、索引设计流程图
-<div class="highlight"><pre><span></span><code>graph TD
+<pre class="mermaid"><code>graph TD
     A[分析SQL工作负载] --&gt; B[识别高频查询]
     B --&gt; C[确定查询条件列]
     C --&gt; D{单列 or 联合}
@@ -4561,8 +4631,7 @@ SELECT user_id, amount FROM orders WHERE user_id=100 AND status=1;
     G --&gt; H[验证覆盖索引]
     H --&gt; I[检查三星评级]
     I --&gt; J[性能测试]
-    J --&gt; K[监控调整]
-</code></pre></div></p>
+    J --&gt; K[监控调整]</code></pre></p>
 <p>通过遵循这些原则，可使索引效率提升3-10倍。建议每季度使用<code>pt-index-usage</code>工具进行索引使用率分析，及时清理无效索引。</p>
 
 

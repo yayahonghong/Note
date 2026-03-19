@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -359,8 +359,17 @@
   
     
     
+      
+  
+  
+  
+    
+  
+  
+    
+    
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../Netty/Netty/" class="md-tabs__link">
+        <a href="../Netty/NIO%E5%9F%BA%E7%A1%80/" class="md-tabs__link">
           
   
   
@@ -368,6 +377,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -420,7 +432,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-tabs__link">
+        <a href="../Windows/" class="md-tabs__link">
           
   
   
@@ -2845,9 +2857,28 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../Netty/Netty/" class="md-nav__link">
+    
+    
+    
+    
+      
+      
         
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="">
+            
   
   
   <span class="md-ellipsis">
@@ -2861,7 +2892,51 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Netty
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Netty/NIO%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NIO基础
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -3548,14 +3623,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" class="md-nav__link">
+      <a href="../Windows/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    系统相关
+    Windows
   
 
     
@@ -3954,8 +4029,13 @@
   
     
     
+      
+  
+  
+    
+    
       <li class="md-path__item">
-        <a href="../Netty/Netty/" class="md-path__link">
+        <a href="../Netty/NIO%E5%9F%BA%E7%A1%80/" class="md-path__link">
           
   <span class="md-ellipsis">
     网络与中间件
@@ -3963,6 +4043,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -4268,10 +4351,9 @@ zookeeper
 <p>分布式锁是一种在分布式系统环境下，通过多个节点对共享资源进行访问控制的同步机制。它的主要目的是防止多个节点同时操作同一份数据，从而避免数据的不一致性。与单机环境下的锁不同，分布式锁需要跨越多个节点，确保在整个分布式系统范围内对共享资源的互斥访问。</p>
 <p>在单机环境中，我们可以使用语言提供的同步机制（如Java的synchronized关键字或ReentrantLock类）来实现线程间的同步。但在分布式系统中，应用程序运行在多个物理或虚拟节点上，传统的本地锁机制已无法满足跨节点的同步需求</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code>graph
+<pre class="mermaid"><code>graph
 获取锁 --&gt; 创建节点
-释放锁 --&gt; 删除节点
-</code></pre></div>
+释放锁 --&gt; 删除节点</code></pre>
 <ol>
 <li>获取锁时，在lock节点下创建<font color=red>临时顺序</font>节点</li>
 </ol>

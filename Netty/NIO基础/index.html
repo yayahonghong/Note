@@ -8,9 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://note.pua.asia/Netty/Netty/">
+        <link rel="canonical" href="https://note.pua.asia/Netty/NIO%E5%9F%BA%E7%A1%80/">
       
       
+        <link rel="prev" href="../../Redis/%E9%9D%A2%E8%AF%95/">
+      
+      
+        <link rel="next" href="../../Kafka/">
       
       
         
@@ -21,7 +25,7 @@
     
     
       
-        <title>Netty - YSH的学习笔记</title>
+        <title>NIO基础 - YSH的学习笔记</title>
       
     
     
@@ -72,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#netty" class="md-skip">
+        <a href="#三大组件" class="md-skip">
           跳转至
         </a>
       
@@ -106,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Netty
+              NIO基础
             
           </span>
         </div>
@@ -350,6 +354,8 @@
   
   
   
+    
+  
   
     
     
@@ -357,11 +363,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../NIO%E5%9F%BA%E7%A1%80/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -2790,26 +2798,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   
@@ -2827,7 +2840,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2842,26 +2855,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
         
           
-          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="">
             
   
   
@@ -2879,7 +2897,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2894,10 +2912,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../NIO%E5%9F%BA%E7%A1%80/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NIO基础
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2913,6 +2956,373 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#三大组件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三大组件
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三大组件">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channel--buffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel &amp; Buffer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selector
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bytebuffer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ByteBuffer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ByteBuffer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#示例" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#结构" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#常见方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        常见方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scattering-reads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scattering Reads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gathering-writes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gathering Writes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#文件编程" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件编程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="文件编程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filechannel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FileChannel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#channel互传" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel互传
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#网络编程" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        网络编程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="网络编程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#阻塞-和-非阻塞" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        阻塞 和 非阻塞
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selector_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#处理accept事件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        处理accept事件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#处理read事件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        处理read事件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#消息边界处理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        消息边界处理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#处理write事件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        处理write事件
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#多线程优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        多线程优化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udp传输" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP传输
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#总结" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="总结">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#io模型" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IO模型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#多路复用-vs-bio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        多路复用 VS BIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#零拷贝" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        零拷贝
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#异步io" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        异步IO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#文件-aio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        文件 AIO
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3295,8 +3705,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -3305,18 +3713,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nio基础" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NIO基础
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="NIO基础">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#三大组件" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3354,8 +3750,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#bytebuffer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3426,8 +3822,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#文件编程" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3487,8 +3883,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#网络编程" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3592,8 +3988,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#总结" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3664,195 +4060,6 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#netty基础" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Netty基础
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Netty基础">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#组件" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        组件
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="组件">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#eventloop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        EventLoop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#channel" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Channel
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#future--promise" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Future &amp; Promise
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#handler--pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Handler &amp; Pipeline
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bytebuf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ByteBuf
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#netty进阶" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Netty进阶
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Netty进阶">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#粘包半包" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        粘包&amp;半包
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="粘包&amp;半包">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#解决方案" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        解决方案
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#netty的http" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Netty的HTTP
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#自定义协议" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        自定义协议
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#优化" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        优化
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="优化">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#参数调优" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参数调优
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
     </ul>
   
@@ -3872,6 +4079,72 @@
   
 
 
+  <nav class="md-path" aria-label="导航栏" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    首页
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    网络与中间件
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Netty
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
               
               <article class="md-content__inner md-typeset">
                 
@@ -3879,7 +4152,7 @@
 
 
   
-    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Netty/Netty.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/yayahonghong/Note/edit/main/docs/Netty/NIO基础.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -3888,26 +4161,26 @@
     
       
     
-    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Netty/Netty.md" title="查看本页的源代码" class="md-content__button md-icon">
+    <a href="https://github.com/yayahonghong/Note/raw/main/docs/Netty/NIO基础.md" title="查看本页的源代码" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="netty">Netty<a class="headerlink" href="#netty" title="链接到此段落">&para;</a></h1>
+  <h1>NIO基础</h1>
+
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Netty 网络编程开坑！！！q(≧▽≦q)</p>
 </div>
-<h2 id="nio基础"><em>NIO</em>基础<a class="headerlink" href="#nio基础" title="链接到此段落">&para;</a></h2>
-<blockquote>
-<p>[!Tip]</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
 <p><em>NIO</em>：<em>Non-blocking I/O</em> 或 <em>New I/O</em></p>
-</blockquote>
+</div>
 <h3 id="三大组件">三大组件<a class="headerlink" href="#三大组件" title="链接到此段落">&para;</a></h3>
 <h4 id="channel--buffer"><em>Channel</em> &amp; <em>Buffer</em><a class="headerlink" href="#channel--buffer" title="链接到此段落">&para;</a></h4>
-<p>channel 有一点类似于 stream，它就是读写数据的<strong>双向通道</strong>，可以从 channel 将数据读入 buffer，也可以将 buffer 的数据写入 channel，而之前的 stream 要么是输入，要么是输出，channel 比 stream 更为底层</p>
+<p>channel 有一点类似于 stream，它是读写数据的<strong>双向通道</strong>，可以从 channel 将数据读入 buffer，也可以将 buffer 的数据写入 channel，而之前的 stream 要么是输入，要么是输出，channel 比 stream 更为底层</p>
 <pre class="mermaid"><code>graph LR
 channel --&gt; buffer
 buffer --&gt; channel</code></pre>
@@ -3918,7 +4191,7 @@ buffer --&gt; channel</code></pre>
 <li>SocketChannel</li>
 <li>ServerSocketChannel</li>
 </ul>
-<p>buffer 则用来缓冲读写数据，常见的 buffer 有</p>
+<p>Buffer 则用来缓冲读写数据，常见的 Buffer 有</p>
 <ul>
 <li>ByteBuffer</li>
 <li>MappedByteBuffer</li>
@@ -3954,13 +4227,13 @@ t5(thread) --&gt; s5(socket2)
 t4(thread) -.-&gt; s6(socket3)
 t5(thread) -.-&gt; s7(socket4)
 end</code></pre>
-<p><strong>线程池版缺点⚠️</strong></p>
+<p><strong>线程池版缺点⚠</strong></p>
 <ul>
 <li>阻塞模式下，线程仅能处理一个 socket 连接</li>
 <li>仅适合短连接场景</li>
 </ul>
 <h5 id="selector-版设计">selector 版设计<a class="headerlink" href="#selector-版设计" title="链接到此段落">&para;</a></h5>
-<p>selector 的作用就是配合<strong>一个线程</strong>来管理多个 channel，获取这些 channel 上发生的事件，这些 channel 工作在非阻塞模式下，不会让线程吊死在一个 channel 上。适合连接数特别多，但流量低的场景（low traffic）</p>
+<p>selector 的作用就是配合<strong>一个线程</strong>来管理多个 channel，获取这些 channel 上发生的事件。这些 channel 工作在非阻塞模式下，当某个 channel 没有事件时不会让线程阻塞在它上面。适合连接数特别多，但每条连接的流量低的场景（low traffic）</p>
 <pre class="mermaid"><code>  graph TD
 subgraph selector 版
 thread --&gt; selector
@@ -4053,16 +4326,16 @@ end</code></pre>
 
 <span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">();</span>
 </code></pre></div>
-<blockquote>
-<p>[!Note]</p>
-<div class="highlight"><pre><span></span><code><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">    </span><span class="c1">// 读取下标i的数据，不会改变position的值</span>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<div class="highlight"><pre><span></span><code><span class="n">buffer</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">  </span><span class="c1">// 读取下标i的数据，不会改变position的值</span>
 
 <span class="n">buffer</span><span class="p">.</span><span class="na">rewind</span><span class="p">();</span><span class="w"> </span><span class="c1">// 重新从开始位置读取</span>
 
-<span class="n">buffer</span><span class="p">.</span><span class="na">mark</span><span class="p">();</span><span class="w">    </span><span class="c1">// 在该位置做一个标记</span>
-<span class="n">buffer</span><span class="p">.</span><span class="na">reset</span><span class="p">();</span><span class="w">   </span><span class="c1">// 重置到mark标记位置</span>
+<span class="n">buffer</span><span class="p">.</span><span class="na">mark</span><span class="p">();</span><span class="w">  </span><span class="c1">// 在该位置做一个标记</span>
+<span class="n">buffer</span><span class="p">.</span><span class="na">reset</span><span class="p">();</span><span class="w"> </span><span class="c1">// 重置到mark标记位置</span>
 </code></pre></div>
-</blockquote>
+</div>
 <h5 id="转换字符串">转换字符串<a class="headerlink" href="#转换字符串" title="链接到此段落">&para;</a></h5>
 <div class="highlight"><pre><span></span><code><span class="n">ByteBuffer</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">.</span><span class="na">encode</span><span class="p">(</span><span class="s">&quot;你好&quot;</span><span class="p">);</span>
 
@@ -4072,10 +4345,10 @@ end</code></pre>
 <span class="n">buffer</span><span class="p">.</span><span class="na">flip</span><span class="p">();</span>
 <span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">.</span><span class="na">decode</span><span class="p">(</span><span class="n">buffer</span><span class="p">).</span><span class="na">toString</span><span class="p">();</span>
 </code></pre></div>
-<blockquote>
-<p>[!Warning]</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>Buffer 是<strong>非线程安全的</strong></p>
-</blockquote>
+</div>
 <h4 id="scattering-reads">Scattering Reads<a class="headerlink" href="#scattering-reads" title="链接到此段落">&para;</a></h4>
 <p>分散读取</p>
 <div class="highlight"><pre><span></span><code><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">RandomAccessFile</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RandomAccessFile</span><span class="p">(</span><span class="s">&quot;3parts.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rw&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
@@ -4111,10 +4384,10 @@ end</code></pre>
 </code></pre></div>
 <h3 id="文件编程">文件编程<a class="headerlink" href="#文件编程" title="链接到此段落">&para;</a></h3>
 <h4 id="filechannel">FileChannel<a class="headerlink" href="#filechannel" title="链接到此段落">&para;</a></h4>
-<blockquote>
-<p>[!Warning]</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>FileChannel 只能工作在阻塞模式下</p>
-</blockquote>
+</div>
 <h5 id="得到filechannel">得到FileChannel<a class="headerlink" href="#得到filechannel" title="链接到此段落">&para;</a></h5>
 <p>不能直接打开 FileChannel，必须通过 FileInputStream、FileOutputStream 或者 RandomAccessFile 来获取 FileChannel，它们都有 getChannel 方法</p>
 <ul>
@@ -4135,11 +4408,11 @@ end</code></pre>
 <span class="w">    </span><span class="n">channel</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
-<blockquote>
-<p>[!Tip]</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>出于性能的考虑，操作系统会将数据缓存，不会立刻写入磁盘。</p>
 <p>可以调用 force(true)  方法将文件内容和元数据（文件的权限等信息）立刻写入磁盘。</p>
-</blockquote>
+</div>
 <h5 id="关闭">关闭<a class="headerlink" href="#关闭" title="链接到此段落">&para;</a></h5>
 <p>channel 必须关闭，不过调用了 FileInputStream、FileOutputStream 或者 RandomAccessFile 的 close 方法会间接地调用 channel 的 close 方法</p>
 <h5 id="位置">位置<a class="headerlink" href="#位置" title="链接到此段落">&para;</a></h5>
@@ -4167,14 +4440,14 @@ end</code></pre>
 <span class="w">    </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div>
-<blockquote>
-<p>[!Caution]</p>
-<p>channel一次性最大支持2G数据传输，超过2G的文件可进行多次传输</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>channel一次性最大支持2G数据传输，超过2G的文件可进行多次传输
 <div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">left</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">from</span><span class="p">.</span><span class="na">transferTo</span><span class="p">((</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">left</span><span class="p">),</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="p">);</span>
 <span class="p">}</span>
-</code></pre></div>
-</blockquote>
+</code></pre></div></p>
+</div>
 <h4 id="path">Path<a class="headerlink" href="#path" title="链接到此段落">&para;</a></h4>
 <p>jdk7 引入了 Path 和 Paths 类</p>
 <ul>
@@ -4241,14 +4514,14 @@ end</code></pre>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<blockquote>
-<p>[!Tip]</p>
+<div class="admonition tips">
+<p class="admonition-title">Tips</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// 设置为非阻塞模式</span>
 <span class="n">ServerSocketChannel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
 
 <span class="n">SocketChannel</span><span class="p">.</span><span class="na">configureBlocking</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
 </code></pre></div>
-</blockquote>
+</div>
 <h4 id="selector_1">Selector<a class="headerlink" href="#selector_1" title="链接到此段落">&para;</a></h4>
 <ul>
 <li>一个线程配合 selector 就可以监控多个 channel 的事件，事件发生线程才去处理。避免非阻塞模式下所做无用功</li>
@@ -4291,8 +4564,6 @@ end</code></pre>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selector</span><span class="p">.</span><span class="na">selectNow</span><span class="p">();</span>
 </code></pre></div>
 <h5 id="select-何时不阻塞">select 何时不阻塞<a class="headerlink" href="#select-何时不阻塞" title="链接到此段落">&para;</a></h5>
-<blockquote>
-<p>[!Tip]</p>
 <ul>
 <li>事件发生时</li>
 <li>客户端发起连接请求，会触发 accept 事件</li>
@@ -4303,7 +4574,6 @@ end</code></pre>
 <li>调用 selector.close()</li>
 <li>selector 所在线程 interrupt</li>
 </ul>
-</blockquote>
 <h4 id="处理accept事件">处理accept事件<a class="headerlink" href="#处理accept事件" title="链接到此段落">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ServerSocketChannel</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ServerSocketChannel</span><span class="p">.</span><span class="na">open</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
@@ -4338,10 +4608,10 @@ end</code></pre>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 </code></pre></div>
-<blockquote>
-<p>[!Important]</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
 <p>事件发生后，要么处理，要么取消（cancel），不能什么都不做，否则下次该事件仍会触发，这是因为 nio 底层使用的是水平触发</p>
-</blockquote>
+</div>
 <h4 id="处理read事件">处理read事件<a class="headerlink" href="#处理read事件" title="链接到此段落">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">ServerSocketChannel</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ServerSocketChannel</span><span class="p">.</span><span class="na">open</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
@@ -4387,15 +4657,15 @@ end</code></pre>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 </code></pre></div>
-<blockquote>
-<p>[!Note]</p>
-<ol>
-<li>为什么要 iter.remove()</li>
-<li>因为 select 在事件发生后，就会将相关的 key 放入 selectedKeys 集合，但不会在处理完后从 selectedKeys 集合中移除，需要我们自己编码删除，否则后续还会再次触发该事件。</li>
-<li>cancel 的作用</li>
-<li>cancel 会取消注册在 selector 上的 channel，并从 keys 集合中删除 key 后续不会再监听事件</li>
-</ol>
-</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>为什么要 iter.remove()</p>
+<pre><code>- 因为 select 在事件发生后，就会将相关的 key 放入 selectedKeys 集合，但不会在处理完后从 selectedKeys 集合中移除，需要我们自己编码删除，否则后续还会再次触发该事件。
+</code></pre>
+<p>cancel 的作用</p>
+<pre><code>- cancel 会取消注册在 selector 上的 channel，并从 keys 集合中删除 key 后续不会再监听事件
+</code></pre>
+</div>
 <h4 id="消息边界处理">消息边界处理<a class="headerlink" href="#消息边界处理" title="链接到此段落">&para;</a></h4>
 <p>当接收的数据长度大于Buffer时，数据的边界就无法在一次处理中解决</p>
 <p><strong>解决思路</strong>：</p>
@@ -4904,883 +5174,6 @@ b2 -&gt;&gt; b2: 01234567890abcdef3333\r</code></pre>
 <p>[!Caution]</p>
 <p>文件异步IO使用的是守护线程，即其他所有线程结束，该线程也会立即结束而不会完成后续任务</p>
 </blockquote>
-<h2 id="netty基础">Netty基础<a class="headerlink" href="#netty基础" title="链接到此段落">&para;</a></h2>
-<p>入门示例：</p>
-<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="c1">// 服务端</span>
-<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">ServerBootstrap</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">())</span>
-<span class="w">                </span><span class="c1">// 服务端Channel实现</span>
-<span class="w">                </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioServerSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-<span class="w">                </span><span class="c1">// 负责读写</span>
-<span class="w">                </span><span class="p">.</span><span class="na">childHandler</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">NioSocketChannel</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nd">@Override</span>
-<span class="w">                    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initChannel</span><span class="p">(</span><span class="n">NioSocketChannel</span><span class="w"> </span><span class="n">channel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="c1">// 将消息转换为字符串</span>
-<span class="w">                        </span><span class="n">channel</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">StringDecoder</span><span class="p">());</span>
-<span class="w">                        </span><span class="c1">// 处理接收到的消息</span>
-<span class="w">                        </span><span class="n">channel</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelInboundHandlerAdapter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nd">@Override</span>
-<span class="w">                            </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">channelRead</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;received a message: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">});</span>
-<span class="w">                    </span><span class="p">}</span>
-<span class="w">                </span><span class="p">})</span>
-<span class="w">                </span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="mi">8080</span><span class="p">);</span>
-
-
-<span class="w">        </span><span class="c1">// 客户端</span>
-<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">Bootstrap</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">())</span>
-<span class="w">                </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-<span class="w">                </span><span class="c1">// 处理器</span>
-<span class="w">                </span><span class="p">.</span><span class="na">handler</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">NioSocketChannel</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nd">@Override</span>
-<span class="w">                    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initChannel</span><span class="p">(</span><span class="n">NioSocketChannel</span><span class="w"> </span><span class="n">ch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="c1">// 将字符串转换为字节数组</span>
-<span class="w">                        </span><span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">StringEncoder</span><span class="p">());</span>
-<span class="w">                    </span><span class="p">}</span>
-<span class="w">                </span><span class="p">})</span>
-<span class="w">                </span><span class="p">.</span><span class="na">connect</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">InetSocketAddress</span><span class="p">(</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">8080</span><span class="p">))</span>
-<span class="w">                </span><span class="p">.</span><span class="na">sync</span><span class="p">()</span><span class="w"> </span><span class="c1">// 阻塞等待连接建立</span>
-<span class="w">                </span><span class="p">.</span><span class="na">channel</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">writeAndFlush</span><span class="p">(</span><span class="s">&quot;Hello, Netty!&quot;</span><span class="p">);</span>
-</code></pre></div>
-<h3 id="组件">组件<a class="headerlink" href="#组件" title="链接到此段落">&para;</a></h3>
-<h4 id="eventloop"><em>EventLoop</em><a class="headerlink" href="#eventloop" title="链接到此段落">&para;</a></h4>
-<p><strong>事件循环对象</strong>，<em>EventLoop</em> 本质是一个单线程执行器（同时维护了一个 Selector），处理 Channel 上源源不断的 io 事件。</p>
-<ol>
-<li><strong>单线程设计</strong>：每个EventLoop在其生命周期内只使用一个线程</li>
-<li><strong>事件循环</strong>：不断检查是否有新的事件需要处理</li>
-<li><strong>任务队列</strong>：维护一个任务队列用于执行非I/O任务</li>
-<li><strong>线程安全</strong>：确保所有任务按顺序执行</li>
-</ol>
-<p><strong>事件循环组</strong>，<em>EventLoopGroup</em> 是一组 EventLoop，Channel 一般会调用 EventLoopGroup 的 register 方法来绑定其中一个 EventLoop，后续这个 Channel 上的 io 事件都由此 EventLoop 来处理（保证了 io 事件处理时的线程安全）</p>
-<blockquote>
-<p>[!Tip]</p>
-<ol>
-<li>避免在EventLoop中执行长时间阻塞的操作</li>
-<li>将耗时操作放入业务线程池处理</li>
-<li>合理配置EventLoopGroup的线程数（通常与CPU核心数相关）</li>
-</ol>
-</blockquote>
-<p>IO事件可以由多个Handler处理，而且这些Handler可以在不同的EventLoopGroup中，Handler间交接任务的源码如下</p>
-<div class="highlight"><pre><span></span><code><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">invokeChannelRead</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">AbstractChannelHandlerContext</span><span class="w"> </span><span class="n">next</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span><span class="p">.</span><span class="na">pipeline</span><span class="p">.</span><span class="na">touch</span><span class="p">(</span><span class="n">ObjectUtil</span><span class="p">.</span><span class="na">checkNotNull</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">next</span><span class="p">);</span>
-<span class="w">    </span><span class="c1">// 下一个 handler 的事件循环是否与当前的事件循环是同一个线程</span>
-<span class="w">    </span><span class="n">EventExecutor</span><span class="w"> </span><span class="n">executor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span><span class="p">.</span><span class="na">executor</span><span class="p">();</span>
-
-<span class="w">    </span><span class="c1">// 是，直接调用</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">executor</span><span class="p">.</span><span class="na">inEventLoop</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">next</span><span class="p">.</span><span class="na">invokeChannelRead</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span>
-<span class="w">    </span><span class="c1">// 不是，将要执行的代码作为任务提交给下一个事件循环处理（换人）</span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">executor</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Runnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nd">@Override</span>
-<span class="w">            </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="n">next</span><span class="p">.</span><span class="na">invokeChannelRead</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">});</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<h4 id="channel"><em>Channel</em><a class="headerlink" href="#channel" title="链接到此段落">&para;</a></h4>
-<ul>
-<li>close() 可以用来关闭 channel</li>
-<li>closeFuture() 用来处理 channel 的关闭</li>
-<li>sync() 方法作用是同步等待 channel 关闭</li>
-<li>而 addListener() 方法是异步等待 channel 关闭</li>
-<li>pipeline() 方法添加处理器</li>
-<li>write() 方法将数据写入</li>
-<li>writeAndFlush() 方法将数据写入并刷出</li>
-</ul>
-<h5 id="channelfuture"><em>ChannelFuture</em><a class="headerlink" href="#channelfuture" title="链接到此段落">&para;</a></h5>
-<ol>
-<li><strong>异步通知机制</strong>：通过添加监听器获取操作完成通知</li>
-<li><strong>操作状态查询</strong>：可检查操作是否完成、成功或取消</li>
-<li><strong>不可变性</strong>：一旦创建，结果不可改变</li>
-<li><strong>链式操作</strong>：支持添加多个监听器</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="c1">// 添加监听器，操作完成时回调</span>
-<span class="n">ChannelFuture</span><span class="w"> </span><span class="nf">addListener</span><span class="p">(</span><span class="n">GenericFutureListener</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">super</span><span class="w"> </span><span class="n">Void</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">listener</span><span class="p">);</span>
-
-<span class="c1">// 移除监听器</span>
-<span class="n">ChannelFuture</span><span class="w"> </span><span class="nf">removeListener</span><span class="p">(</span><span class="n">GenericFutureListener</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Future</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">super</span><span class="w"> </span><span class="n">Void</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">listener</span><span class="p">);</span>
-
-<span class="c1">// 等待操作完成（阻塞当前线程）</span>
-<span class="n">ChannelFuture</span><span class="w"> </span><span class="nf">sync</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">InterruptedException</span><span class="p">;</span>
-
-<span class="c1">// 操作是否完成</span>
-<span class="kt">boolean</span><span class="w"> </span><span class="nf">isDone</span><span class="p">();</span>
-
-<span class="c1">// 操作是否成功</span>
-<span class="kt">boolean</span><span class="w"> </span><span class="nf">isSuccess</span><span class="p">();</span>
-
-<span class="c1">// 取消操作（Netty中通常不支持）</span>
-<span class="kt">boolean</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="kt">boolean</span><span class="w"> </span><span class="n">mayInterruptIfRunning</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>[!Note]</p>
-<p>客户端的connect方法是异步方法，并不会等待连接建立成功，所以需要ChannelFuture来同步获取连接的Channel</p>
-</blockquote>
-<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="n">ChannelFuture</span><span class="w"> </span><span class="n">channelFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Bootstrap</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">())</span>
-<span class="w">                </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-<span class="w">                </span><span class="c1">// 处理器</span>
-<span class="w">                </span><span class="p">.</span><span class="na">handler</span><span class="p">(...)</span>
-<span class="w">                </span><span class="p">.</span><span class="na">connect</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">InetSocketAddress</span><span class="p">(</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">8080</span><span class="p">));</span>
-<span class="w">        </span><span class="n">channelFuture</span><span class="p">.</span><span class="na">sync</span><span class="p">();</span><span class="w"> </span><span class="c1">// 等待连接建立</span>
-<span class="w">        </span><span class="n">Channel</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">channelFuture</span><span class="p">.</span><span class="na">channel</span><span class="p">();</span>
-<span class="w">        </span><span class="n">channel</span><span class="p">.</span><span class="na">writeAndFlush</span><span class="p">(</span><span class="s">&quot;Hello, Netty!&quot;</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>[!Tip]</p>
-<p>或者为ChannelFuture添加监视器来等待操作完成，自动回调</p>
-</blockquote>
-<h5 id="正确关闭channel">正确关闭Channel<a class="headerlink" href="#正确关闭channel" title="链接到此段落">&para;</a></h5>
-<p><code>channel.close()</code>也是一个异步操作，如果在关闭后才能进行其他任务，需要使用同步方法或者监听器</p>
-<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="c1">// 同步等待</span>
-<span class="w">        </span><span class="n">ChannelFuture</span><span class="w"> </span><span class="n">closeFuture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">channel</span><span class="p">.</span><span class="na">closeFuture</span><span class="p">();</span>
-<span class="w">        </span><span class="n">closeFuture</span><span class="p">.</span><span class="na">sync</span><span class="p">();</span>
-<span class="w">        </span><span class="c1">// 其他操作</span>
-<span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="s">&quot;关闭连接&quot;</span><span class="p">);</span>
-
-
-<span class="w">        </span><span class="c1">// 或者添加监听器</span>
-<span class="w">        </span><span class="n">closeFuture</span><span class="p">.</span><span class="na">addListener</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelFutureListener</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nd">@Override</span>
-<span class="w">            </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">operationComplete</span><span class="p">(</span><span class="n">ChannelFuture</span><span class="w"> </span><span class="n">future</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="c1">//...</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">});</span>
-</code></pre></div>
-<blockquote>
-<p>[!Tip]</p>
-<p>以上操作之后保证在<code>channel.close()</code>成功后执行</p>
-</blockquote>
-<h5 id="关闭netty">关闭Netty<a class="headerlink" href="#关闭netty" title="链接到此段落">&para;</a></h5>
-<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="n">NioEventLoopGroup</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">();</span>
-<span class="w">        </span><span class="c1">//初始化Netty</span>
-<span class="w">        </span><span class="c1">//...</span>
-<span class="w">        </span><span class="n">group</span><span class="p">.</span><span class="na">shutdownGracefully</span><span class="p">();</span>
-</code></pre></div>
-<h4 id="future--promise"><em>Future</em> &amp; <em>Promise</em><a class="headerlink" href="#future--promise" title="链接到此段落">&para;</a></h4>
-<pre class="mermaid"><code>graph LR
-subgraph 继承体系
-Netty-Future --&gt; JDK-Future
-Promise --&gt; Netty-Future
-end</code></pre>
-<ul>
-<li>jdk Future 只能同步等待任务结束（或成功、或失败）才能得到结果</li>
-<li>netty Future 可以同步等待任务结束得到结果，也可以异步方式得到结果，但都是要等任务结束</li>
-<li>netty Promise 不仅有 netty Future 的功能，而且脱离了任务独立存在，只作为两个线程间传递结果的容器</li>
-</ul>
-<p><strong>常用方法</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>功能/名称</th>
-<th>jdk Future</th>
-<th>netty Future</th>
-<th>Promise</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>cancel</td>
-<td>取消任务</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>isCanceled</td>
-<td>任务是否取消</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>isDone</td>
-<td>任务是否完成，不能区分成功失败</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>get</td>
-<td>获取任务结果，阻塞等待</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>getNow</td>
-<td>-</td>
-<td>获取任务结果，非阻塞，还未产生结果时返回 null</td>
-<td>-</td>
-</tr>
-<tr>
-<td>await</td>
-<td>-</td>
-<td>等待任务结束，如果任务失败，不会抛异常，而是通过 isSuccess 判断</td>
-<td>-</td>
-</tr>
-<tr>
-<td>sync</td>
-<td>-</td>
-<td>等待任务结束，如果任务失败，抛出异常</td>
-<td>-</td>
-</tr>
-<tr>
-<td>isSuccess</td>
-<td>-</td>
-<td>判断任务是否成功</td>
-<td>-</td>
-</tr>
-<tr>
-<td>cause</td>
-<td>-</td>
-<td>获取失败信息，非阻塞，如果没有失败，返回null</td>
-<td>-</td>
-</tr>
-<tr>
-<td>addLinstener</td>
-<td>-</td>
-<td>添加回调，异步接收结果</td>
-<td>-</td>
-</tr>
-<tr>
-<td>setSuccess</td>
-<td>-</td>
-<td>-</td>
-<td>设置成功结果</td>
-</tr>
-<tr>
-<td>setFailure</td>
-<td>-</td>
-<td>-</td>
-<td>设置失败结果</td>
-</tr>
-</tbody>
-</table>
-<h4 id="handler--pipeline"><em>Handler</em> &amp; <em>Pipeline</em><a class="headerlink" href="#handler--pipeline" title="链接到此段落">&para;</a></h4>
-<p>ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站两种。所有 ChannelHandler 被连成一串，就是 Pipeline</p>
-<ul>
-<li>入站处理器通常是 ChannelInboundHandlerAdapter 的子类，主要用来读取客户端数据，写回结果</li>
-<li>出站处理器通常是 ChannelOutboundHandlerAdapter 的子类，主要对写回结果进行加工</li>
-</ul>
-<p><img alt="image-20250517175356906" src="../images/image-20250517175356906.png" /></p>
-<blockquote>
-<p>[!Tip]</p>
-<p>入站顺序 从左到右</p>
-<p>出站顺序 从右到左</p>
-<p>Handler间通过ChannelHandlerContext.fireChannelRead(msg)传递处理的数据</p>
-<p>[!Warning]</p>
-<ul>
-<li>ChannelHandlerContext.channel().write(msg) 从尾部开始查找出站处理器</li>
-<li>ChannelHandlerContext.write(msg) 是从当前节点找上一个出站处理器</li>
-</ul>
-</blockquote>
-<h4 id="bytebuf"><em>ByteBuf</em><a class="headerlink" href="#bytebuf" title="链接到此段落">&para;</a></h4>
-<blockquote>
-<p>[!Tip]</p>
-<p>Netty中的ByteBuf对NIO中的ByteBuffer进行了功能增强</p>
-<p><strong>优势</strong>：</p>
-<ul>
-<li>池化 - 可以重用池中 ByteBuf 实例，更节约内存，减少内存溢出的可能</li>
-<li>读写指针分离，不需要像 ByteBuffer 一样切换读写模式</li>
-<li>可以自动扩容</li>
-<li>支持链式调用，使用更流畅</li>
-<li>很多地方体现零拷贝，例如 slice、duplicate、CompositeByteBuf</li>
-</ul>
-</blockquote>
-<h5 id="创建_1">创建<a class="headerlink" href="#创建_1" title="链接到此段落">&para;</a></h5>
-<div class="highlight"><pre><span></span><code><span class="c1">// 直接内存</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">buffer</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">directBuffer</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-
-<span class="c1">// Java堆内存</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">heapBuffer</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>[!Note]</p>
-<ul>
-<li>直接内存创建和销毁的代价昂贵，但读写性能高（少一次内存复制），适合配合池化功能一起用</li>
-<li>直接内存对 GC 压力小，因为这部分内存不受 JVM 垃圾回收的管理，但也要注意及时主动释放</li>
-</ul>
-</blockquote>
-<h5 id="池化">池化<a class="headerlink" href="#池化" title="链接到此段落">&para;</a></h5>
-<p>池化的最大意义在于可以<strong>重用</strong> ByteBuf</p>
-<ul>
-<li>没有池化，则每次都得创建新的 ByteBuf 实例，这个操作对直接内存代价昂贵，就算是堆内存，也会增加 GC 压力</li>
-<li>有了池化，则可以重用池中 ByteBuf 实例，并且采用了与 jemalloc 类似的内存分配算法提升分配效率</li>
-<li>高并发时，池化功能更节约内存，减少内存溢出的可能</li>
-</ul>
-<blockquote>
-<p>[!Tip]</p>
-<p>默认开启池化，可通过<code>-Dio.netty.allocator.type={unpooled|pooled}</code>配置</p>
-</blockquote>
-<h5 id="结构_1">结构<a class="headerlink" href="#结构_1" title="链接到此段落">&para;</a></h5>
-<p><img alt="image-20250517181626745" src="../images/image-20250517181626745.png" /></p>
-<h5 id="写入_1">写入<a class="headerlink" href="#写入_1" title="链接到此段落">&para;</a></h5>
-<table>
-<thead>
-<tr>
-<th>方法签名</th>
-<th>含义</th>
-<th>备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>writeBoolean(boolean value)</td>
-<td>写入 boolean 值</td>
-<td>用一字节 01|00 代表true|false</td>
-</tr>
-<tr>
-<td>writeByte(int value)</td>
-<td>写入 byte 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeShort(int value)</td>
-<td>写入 short 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeInt(int value)</td>
-<td>写入 int 值</td>
-<td>（大端）Big Endian，即 0x250，写入后 00 00 02 50</td>
-</tr>
-<tr>
-<td>writeIntLE(int value)</td>
-<td>写入 int 值</td>
-<td>（小端）Little Endian，即 0x250，写入后 50 02 00 00</td>
-</tr>
-<tr>
-<td>writeLong(long value)</td>
-<td>写入 long 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeChar(int value)</td>
-<td>写入 char 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeFloat(float value)</td>
-<td>写入 float 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeDouble(double value)</td>
-<td>写入 double 值</td>
-<td></td>
-</tr>
-<tr>
-<td>writeBytes(ByteBuf src)</td>
-<td>写入 netty 的 ByteBuf</td>
-<td></td>
-</tr>
-<tr>
-<td>writeBytes(byte[] src)</td>
-<td>写入 byte[]</td>
-<td></td>
-</tr>
-<tr>
-<td>writeBytes(ByteBuffer src)</td>
-<td>写入 nio 的 ByteBuffer</td>
-<td></td>
-</tr>
-<tr>
-<td>int writeCharSequence(CharSequence sequence, Charset charset)</td>
-<td>写入字符串</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h5 id="读取_1">读取<a class="headerlink" href="#读取_1" title="链接到此段落">&para;</a></h5>
-<p>读过的内容，就属于废弃部分了，再读只能读那些尚未读取的部分，可以在 read 前先做个标记 mark</p>
-<div class="highlight"><pre><span></span><code><span class="n">buffer</span><span class="p">.</span><span class="na">markReaderIndex</span><span class="p">();</span>
-<span class="c1">// ...</span>
-<span class="n">buffer</span><span class="p">.</span><span class="na">resetReaderIndex</span><span class="p">();</span>
-</code></pre></div>
-<h5 id="扩容">扩容<a class="headerlink" href="#扩容" title="链接到此段落">&para;</a></h5>
-<p>扩容规则是</p>
-<ul>
-<li>如何写入后数据大小<strong>未超过 512</strong>，则选择下一个 16 的整数倍，例如写入后大小为 12 ，则扩容后 capacity 是 16</li>
-<li>如果写入后数据大小<strong>超过 512</strong>，则选择下一个 2^n，例如写入后大小为 513，则扩容后 capacity 是 2^10=1024</li>
-<li>扩容不能超过 max capacity</li>
-</ul>
-<h5 id="内存回收">内存回收<a class="headerlink" href="#内存回收" title="链接到此段落">&para;</a></h5>
-<blockquote>
-<p>[!Tip]</p>
-<p>主要针对直接内存</p>
-</blockquote>
-<ul>
-<li>UnpooledHeapByteBuf 使用的是 JVM 内存，只需等 GC 回收内存即可</li>
-<li>UnpooledDirectByteBuf 使用的就是直接内存了，需要特殊的方法来回收内存</li>
-<li>PooledByteBuf 和它的子类使用了池化机制，需要更复杂的规则来回收内存</li>
-</ul>
-<p>Netty 采用了<strong>引用计数法</strong>（可参考笔记JVM垃圾回收篇）来控制回收内存，每个 ByteBuf 都实现了 ReferenceCounted 接口</p>
-<ul>
-<li>每个 ByteBuf 对象的初始计数为 1</li>
-<li>调用 <strong>release</strong> 方法计数减 1，如果计数为 0，ByteBuf 内存被回收</li>
-<li>调用 <strong>retain</strong> 方法计数加 1，表示调用者没用完之前，其它 handler 即使调用了 release 也不会造成回收</li>
-<li>当计数为 0 时，底层内存会被回收，这时即使 ByteBuf 对象还在，其各个方法均无法正常使用</li>
-</ul>
-<p><strong>一些实践规则</strong>：</p>
-<ul>
-<li>入站 ByteBuf 处理原则</li>
-<li>对原始 ByteBuf 不做处理，调用 ctx.fireChannelRead(msg) 向后传递，这时无须 release</li>
-<li>将原始 ByteBuf <strong>转换为其它类型</strong>的 Java 对象，这时 ByteBuf 就没用了，<strong>必须 release</strong></li>
-<li>如果不调用 ctx.fireChannelRead(msg) 向后传递，那么也必须 release</li>
-<li>注意各种异常，如果 ByteBuf 没有成功传递到下一个 ChannelHandler，必须 release</li>
-<li>假设消息一直向后传，那么 TailContext 会负责释放未处理消息（原始的 ByteBuf）</li>
-<li>出站 ByteBuf 处理原则</li>
-<li>出站消息最终都会转为 ByteBuf 输出，一直向前传，由 HeadContext flush 后 release</li>
-</ul>
-<h5 id="切片">切片<a class="headerlink" href="#切片" title="链接到此段落">&para;</a></h5>
-<blockquote>
-<p>[!Tip]</p>
-<p>ByteBuf的切片(Slice)是Netty提供的一种零拷贝机制，允许在不实际复制数据的情况下创建现有缓冲区的<strong>视图</strong>(view)。</p>
-</blockquote>
-<p>切片操作会创建一个新的ByteBuf实例，该实例与原始缓冲区共享相同的内存区域，但有自己的读写索引和标记。</p>
-<p><strong>特点</strong>：</p>
-<ul>
-<li><strong>零拷贝</strong>：不实际复制数据，减少内存开销</li>
-<li><strong>共享底层存储</strong>：多个切片共享同一块内存</li>
-<li><strong>独立索引</strong>：每个切片有自己的读写索引</li>
-<li><strong>视图限制</strong>：切片只能访问原始缓冲区的一部分</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="c1">// 创建一个从readerIndex开始到writerIndex结束的切片</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">slice</span><span class="p">();</span>
-
-<span class="c1">// 创建一个从指定index开始，指定length长度的切片</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">slice</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
-
-<span class="c1">// 创建一个切片并增加引用计数(防止原始缓冲区被释放)</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">slice</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="na">retainedSlice</span><span class="p">();</span>
-</code></pre></div>
-<blockquote>
-<p>[!Caution]</p>
-<p>原始的ByteBuf释放内存后，其切片就无法使用了，建议使用原始ByteBuf的<code>retainedSlice()</code>增加引用计数，或者切片的<code>retain()</code>方法</p>
-</blockquote>
-<h5 id="其他">其他<a class="headerlink" href="#其他" title="链接到此段落">&para;</a></h5>
-<ol>
-<li>duplicate</li>
-</ol>
-<p>【零拷贝】的体现之一，就好比截取了原始 ByteBuf 所有内容，并且没有 max capacity 的限制，也是与原始 ByteBuf 使用同一块底层内存，只是读写指针是独立的</p>
-<ol>
-<li>copy</li>
-</ol>
-<p>会将底层内存数据进行<strong>深拷贝</strong>，因此无论读写，都与原始 ByteBuf 无关</p>
-<ol>
-<li>CompositeByteBuf</li>
-</ol>
-<p>【零拷贝】的体现之一，可以将多个 ByteBuf <strong>合并</strong>为一个逻辑上的 ByteBuf，避免拷贝</p>
-<div class="highlight"><pre><span></span><code><span class="n">CompositeByteBuf</span><span class="w"> </span><span class="n">buf3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">compositeBuffer</span><span class="p">();</span>
-<span class="c1">// true 表示增加新的 ByteBuf 自动递增 write index, 否则 write index 会始终为 0</span>
-<span class="n">buf3</span><span class="p">.</span><span class="na">addComponents</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">buf1</span><span class="p">,</span><span class="w"> </span><span class="n">buf2</span><span class="p">);</span>
-</code></pre></div>
-<ol>
-<li>Unpooled</li>
-</ol>
-<p>Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创建、组合、复制等操作</p>
-<p>其跟【零拷贝】相关的 wrappedBuffer 方法，可以用来包装 ByteBuf</p>
-<hr />
-<h2 id="netty进阶">Netty进阶<a class="headerlink" href="#netty进阶" title="链接到此段落">&para;</a></h2>
-<h3 id="粘包半包">粘包&amp;半包<a class="headerlink" href="#粘包半包" title="链接到此段落">&para;</a></h3>
-<p>在基于流的传输协议（如TCP）中，数据是以字节流的形式传输的，没有明确的消息边界，这会导致：</p>
-<ol>
-<li><strong>粘包（TCP粘包）</strong>：发送方发送的多个数据包被接收方当作一个数据包接收</li>
-<li><strong>半包（拆包）</strong>：接收方一次没有接收到完整的数据包，只接收了部分数据</li>
-</ol>
-<p><strong>原因</strong>：</p>
-<ol>
-<li><strong>粘包原因</strong>：</li>
-<li>发送方使用Nagle算法，将多个小数据包合并发送</li>
-<li>接收方缓冲区较大，一次读取了多个数据包</li>
-<li><strong>半包原因</strong>：</li>
-<li>发送的数据包大于接收方缓冲区大小</li>
-<li>发送的数据包大于TCP最大报文长度</li>
-<li>网络传输过程中发生分片</li>
-</ol>
-<h4 id="解决方案">解决方案<a class="headerlink" href="#解决方案" title="链接到此段落">&para;</a></h4>
-<p>Netty提供了多种解码器来处理粘包和半包问题：</p>
-<ol>
-<li>
-<p>固定长度解码器 FixedLengthFrameDecoder</p>
-</li>
-<li>
-<p>每个数据包都严格按照固定长度进行拆分</p>
-</li>
-<li>当累积读取到指定长度的数据后，解码器会将其作为一个完整消息</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="c1">// 每个数据包固定长度为100字节</span>
-<span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">FixedLengthFrameDecoder</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
-</code></pre></div>
-<p><strong>特点</strong>：</p>
-<ul>
-<li>实现简单</li>
-<li>效率高</li>
-<li>
-<p>不够灵活，浪费带宽（需要填充数据）</p>
-</li>
-<li>
-<p>行分隔符解码器 LineBasedFrameDecoder</p>
-</li>
-<li>
-<p>以换行符(<code>\n</code>或<code>\r\n</code>)作为消息分隔符</p>
-</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="c1">// 以换行符(\n或\r\n)作为消息分隔符</span>
-<span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">LineBasedFrameDecoder</span><span class="p">(</span><span class="mi">1024</span><span class="p">));</span>
-</code></pre></div>
-<ol>
-<li>分隔符解码器 DelimiterBasedFrameDecoder</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="c1">// 使用自定义分隔符</span>
-<span class="n">ByteBuf</span><span class="w"> </span><span class="n">delimiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Unpooled</span><span class="p">.</span><span class="na">copiedBuffer</span><span class="p">(</span><span class="s">&quot;$_&quot;</span><span class="p">.</span><span class="na">getBytes</span><span class="p">());</span>
-<span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">DelimiterBasedFrameDecoder</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="n">delimiter</span><span class="p">));</span>
-</code></pre></div>
-<ol>
-<li>
-<p>长度字段解码器 LengthFieldBasedFrameDecoder</p>
-</li>
-<li>
-<p>基于消息头中的长度字段来标识整个消息的长度</p>
-</li>
-<li>高度可配置，能适应各种协议格式</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="c1">// 参数说明：</span>
-<span class="c1">// maxFrameLength - 最大帧长度</span>
-<span class="c1">// lengthFieldOffset - 长度字段偏移量</span>
-<span class="c1">// lengthFieldLength - 长度字段字节数</span>
-<span class="c1">// lengthAdjustment - 长度调整值（长度字段之后还有多少字节才是内容）</span>
-<span class="c1">// initialBytesToStrip - 需要跳过的字节数</span>
-<span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">LengthFieldBasedFrameDecoder</span><span class="p">(</span>
-<span class="w">    </span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span>
-<span class="w">    </span><span class="mi">4</span><span class="p">));</span>
-</code></pre></div>
-<p>自定义协议示例</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// 协议格式: [长度][内容]</span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyProtocolDecoder</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ByteToMessageDecoder</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="na">readableBytes</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">return</span><span class="p">;</span><span class="w"> </span><span class="c1">// 长度字段不足，等待更多数据</span>
-<span class="w">        </span><span class="p">}</span>
-
-<span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">markReaderIndex</span><span class="p">();</span><span class="w"> </span><span class="c1">// 标记读取位置</span>
-<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span>
-
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">in</span><span class="p">.</span><span class="na">readableBytes</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="n">in</span><span class="p">.</span><span class="na">resetReaderIndex</span><span class="p">();</span><span class="w"> </span><span class="c1">// 数据不足，重置读取位置</span>
-<span class="w">            </span><span class="k">return</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-
-<span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">length</span><span class="o">]</span><span class="p">;</span>
-<span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">readBytes</span><span class="p">(</span><span class="n">content</span><span class="p">);</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">content</span><span class="p">,</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">));</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<h3 id="netty的http">Netty的HTTP<a class="headerlink" href="#netty的http" title="链接到此段落">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">ServerBootstrap</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">())</span>
-<span class="w">                </span><span class="c1">// 服务端Channel实现</span>
-<span class="w">                </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioServerSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-<span class="w">                </span><span class="c1">// 负责读写</span>
-<span class="w">                </span><span class="p">.</span><span class="na">childHandler</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">NioSocketChannel</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nd">@Override</span>
-<span class="w">                    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initChannel</span><span class="p">(</span><span class="n">NioSocketChannel</span><span class="w"> </span><span class="n">channel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="n">channel</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">LoggingHandler</span><span class="p">(</span><span class="n">LogLevel</span><span class="p">.</span><span class="na">DEBUG</span><span class="p">));</span>
-
-<span class="w">                        </span><span class="c1">// Http编解码器</span>
-<span class="w">                        </span><span class="n">channel</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">HttpServerCodec</span><span class="p">());</span>
-
-<span class="w">                        </span><span class="n">channel</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SimpleChannelInboundHandler</span><span class="o">&lt;</span><span class="n">HttpRequest</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nd">@Override</span>
-<span class="w">                            </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">channelRead0</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">HttpRequest</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="n">DefaultFullHttpResponse</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultFullHttpResponse</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">protocolVersion</span><span class="p">(),</span><span class="w"> </span><span class="n">HttpResponseStatus</span><span class="p">.</span><span class="na">OK</span><span class="p">);</span>
-<span class="w">                                </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Hello Netty&quot;</span><span class="p">.</span><span class="na">getBytes</span><span class="p">(</span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">);</span>
-<span class="w">                                </span><span class="n">res</span><span class="p">.</span><span class="na">content</span><span class="p">().</span><span class="na">writeBytes</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
-<span class="w">                                </span><span class="c1">// 设置响应内容长度</span>
-<span class="w">                                </span><span class="n">res</span><span class="p">.</span><span class="na">headers</span><span class="p">().</span><span class="na">setInt</span><span class="p">(</span><span class="n">CONTENT_LENGTH</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">.</span><span class="na">length</span><span class="p">);</span>
-<span class="w">                                </span><span class="n">ctx</span><span class="p">.</span><span class="na">writeAndFlush</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">});</span>
-<span class="w">                    </span><span class="p">}</span>
-<span class="w">                </span><span class="p">})</span>
-<span class="w">                </span><span class="p">.</span><span class="na">bind</span><span class="p">(</span><span class="mi">8080</span><span class="p">);</span>
-</code></pre></div>
-<h3 id="自定义协议">自定义协议<a class="headerlink" href="#自定义协议" title="链接到此段落">&para;</a></h3>
-<ol>
-<li>
-<p><strong>协议标识</strong></p>
-</li>
-<li>
-<p><strong>协议名称/版本</strong>：明确协议标识及版本号，便于兼容性管理。</p>
-</li>
-<li><strong>端口号</strong>：约定服务端监听端口（如HTTP-80，HTTPS-443），需避免冲突。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>消息结构</strong></p>
-</li>
-<li>
-<p>帧格式：定义消息头（Header）和消息体（Body）的组成。</p>
-</li>
-<li><strong>Header</strong>：包含元数据（如消息类型、长度、状态码、时间戳）。</li>
-<li><strong>Body</strong>：承载实际数据（如JSON、二进制流）。</li>
-<li><strong>边界标识</strong>：通过定长字段、分隔符（如<code>\r\n</code>）或长度前缀标记消息边界。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>数据编码</strong></p>
-</li>
-<li>
-<p><strong>序列化方式</strong>：JSON（易读）、Protocol Buffers（高效）、XML（结构化）或自定义二进制格式。</p>
-</li>
-<li><strong>字符编码</strong>：如UTF-8，确保多语言兼容。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>交互模型</strong></p>
-</li>
-<li>
-<p><strong>通信模式</strong>：请求-响应（如HTTP）、发布-订阅（如MQTT）或单向推送。</p>
-</li>
-<li><strong>状态管理</strong>：无状态（如HTTP）或有状态（如FTP控制连接）。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>错误处理</strong></p>
-</li>
-<li>
-<p><strong>错误码/消息</strong>：定义标准错误码（如<code>404-Not Found</code>）和恢复机制。</p>
-</li>
-<li><strong>重试策略</strong>：超时后重试次数、退避算法（Exponential Backoff）。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>安全机制</strong></p>
-</li>
-<li>
-<p><strong>认证</strong>：API Key、OAuth 2.0、JWT等。</p>
-</li>
-<li><strong>加密</strong>：TLS/SSL传输加密或端到端加密（如Signal协议）。</li>
-<li><strong>防篡改</strong>：数字签名（HMAC）验证数据完整性。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>性能优化</strong></p>
-</li>
-<li>
-<p><strong>压缩</strong>：Gzip、Brotli减少传输体积。</p>
-</li>
-<li><strong>长连接</strong>：复用TCP连接（如HTTP/2多路复用）。</li>
-<li><strong>缓存控制</strong>：类似HTTP的<code>Cache-Control</code>头。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>扩展性设计</strong></p>
-</li>
-<li>
-<p><strong>预留字段</strong>：Header中保留扩展位或自定义字段。</p>
-</li>
-<li><strong>版本协商</strong>：客户端与服务端协商支持的协议版本（如TLS握手）。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>流量控制</strong></p>
-</li>
-<li>
-<p><strong>限速机制</strong>：令牌桶算法限制请求速率。</p>
-</li>
-<li><strong>拥塞控制</strong>：动态调整发送窗口（类似TCP）。</li>
-</ol>
-<hr />
-<ol>
-<li>
-<p><strong>调试与日志</strong></p>
-</li>
-<li>
-<p><strong>请求ID</strong>：唯一标识请求，便于链路追踪。</p>
-</li>
-<li><strong>日志格式</strong>：结构化日志（如JSON）记录关键事件。</li>
-</ol>
-<p>示例：</p>
-<ul>
-<li>魔数，用来在第一时间判定是否是无效数据包</li>
-<li>版本号，可以支持协议的升级</li>
-<li>序列化算法，消息正文到底采用哪种序列化反序列化方式，可以由此扩展，例如：json、protobuf、hessian、jdk</li>
-<li>指令类型</li>
-<li>请求序号，为了双工通信，提供异步能力</li>
-<li>正文长度</li>
-<li>消息正文</li>
-</ul>
-<p><strong>自定义编解码器</strong>：</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@Slf4j</span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MessageCodec</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ByteToMessageCodec</span><span class="o">&lt;</span><span class="n">Message</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">Message</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// 4 字节的魔数</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeBytes</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[]</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">});</span>
-<span class="w">        </span><span class="c1">// 1 字节的版本,</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeByte</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="w">        </span><span class="c1">// 1 字节的序列化方式 jdk 0 , json 1</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeByte</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="w">        </span><span class="c1">// 1 字节的指令类型</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeByte</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">getMessageType</span><span class="p">());</span>
-<span class="w">        </span><span class="c1">// 4 个字节</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeInt</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="na">getSequenceId</span><span class="p">());</span>
-<span class="w">        </span><span class="c1">// 无意义，对齐填充</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeByte</span><span class="p">(</span><span class="mh">0xff</span><span class="p">);</span>
-<span class="w">        </span><span class="c1">// 获取内容的字节数组</span>
-<span class="w">        </span><span class="n">ByteArrayOutputStream</span><span class="w"> </span><span class="n">bos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ByteArrayOutputStream</span><span class="p">();</span>
-<span class="w">        </span><span class="n">ObjectOutputStream</span><span class="w"> </span><span class="n">oos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ObjectOutputStream</span><span class="p">(</span><span class="n">bos</span><span class="p">);</span>
-<span class="w">        </span><span class="n">oos</span><span class="p">.</span><span class="na">writeObject</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
-<span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bos</span><span class="p">.</span><span class="na">toByteArray</span><span class="p">();</span>
-<span class="w">        </span><span class="c1">// 长度</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeInt</span><span class="p">(</span><span class="n">bytes</span><span class="p">.</span><span class="na">length</span><span class="p">);</span>
-<span class="w">        </span><span class="c1">// 写入内容</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">writeBytes</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">magicNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">byte</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readByte</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">byte</span><span class="w"> </span><span class="n">serializerType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readByte</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">byte</span><span class="w"> </span><span class="n">messageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readByte</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sequenceId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span>
-<span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">readByte</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span>
-<span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">length</span><span class="o">]</span><span class="p">;</span>
-<span class="w">        </span><span class="n">in</span><span class="p">.</span><span class="na">readBytes</span><span class="p">(</span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
-<span class="w">        </span><span class="n">ObjectInputStream</span><span class="w"> </span><span class="n">ois</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ObjectInputStream</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ByteArrayInputStream</span><span class="p">(</span><span class="n">bytes</span><span class="p">));</span>
-<span class="w">        </span><span class="n">Message</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Message</span><span class="p">)</span><span class="w"> </span><span class="n">ois</span><span class="p">.</span><span class="na">readObject</span><span class="p">();</span>
-<span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="s">&quot;{}, {}, {}, {}, {}, {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">magicNum</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="p">,</span><span class="w"> </span><span class="n">serializerType</span><span class="p">,</span><span class="w"> </span><span class="n">messageType</span><span class="p">,</span><span class="w"> </span><span class="n">sequenceId</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
-<span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
-<span class="w">        </span><span class="n">out</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<blockquote>
-<p>[!Warning]</p>
-<p>以上编解码不能解决粘包半包问题，仍然需要在pipeline中添加<code>LengthFieldBasedFrameDecoder</code>帧解码器</p>
-<p>[!Note]</p>
-<p><code>@Sharable</code>注解在Netty中用于标记线程安全的Handler</p>
-<ul>
-<li>
-<p>如<code>LengthFieldBasedFrameDecoder</code>，其未使用注解标记，会产生线程安全问题（每个Channel都应该使用新的实例），主要原因是该解码器需要记录半包消息等待消息完全到达，属于<strong>有状态的类</strong></p>
-</li>
-<li>
-<p>对于编解码器类（一般线程安全），不应该继承 <code>ByteToMessageCodec</code> 或 <code>CombinedChannelDuplexHandler</code> ，因为其被限制了不能使用<code>@Sharable</code>注解</p>
-</li>
-<li>
-<p><code>MessageToMessageCodec</code>父类的子类可以使用<code>@Sharable</code>注解</p>
-</li>
-</ul>
-</blockquote>
-<h3 id="优化">优化<a class="headerlink" href="#优化" title="链接到此段落">&para;</a></h3>
-<h4 id="参数调优">参数调优<a class="headerlink" href="#参数调优" title="链接到此段落">&para;</a></h4>
-<h5 id="connect_timeout_millis"><em>CONNECT_TIMEOUT_MILLIS</em><a class="headerlink" href="#connect_timeout_millis" title="链接到此段落">&para;</a></h5>
-<ul>
-<li>属于 SocketChannal 参数</li>
-<li>用在客户端建立连接时，如果在指定毫秒内无法连接，会抛出 timeout 异常</li>
-</ul>
-<p>客户端进行配置：</p>
-<div class="highlight"><pre><span></span><code><span class="n">bootstrap</span><span class="p">.</span><span class="na">option</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">CONNECT_TIMEOUT_MILLIS</span><span class="p">,</span><span class="w"> </span><span class="mi">5000</span><span class="p">);</span>
-</code></pre></div>
-<blockquote>
-<p>[!Tip]</p>
-<p>在客户端</p>
-<div class="highlight"><pre><span></span><code><span class="n">serverBootstrap</span><span class="p">.</span><span class="na">option</span><span class="p">();</span><span class="w">       </span><span class="c1">// 配置服务端参数</span>
-<span class="n">serverBootstrap</span><span class="p">.</span><span class="na">childOption</span><span class="p">();</span><span class="w">  </span><span class="c1">// 配置客户端参数</span>
-</code></pre></div>
-</blockquote>
-<h5 id="so_backlog"><em>SO_BACKLOG</em><a class="headerlink" href="#so_backlog" title="链接到此段落">&para;</a></h5>
-<ul>
-<li>服务器端配置</li>
-<li>通过  <code>option(ChannelOption.SO_BACKLOG, value)</code> 来设置大小</li>
-</ul>
-<pre class="mermaid"><code>sequenceDiagram
-
-participant c as client
-participant s as server
-participant sq as syns queue
-participant aq as accept queue
-
-s -&gt;&gt; s : bind()
-s -&gt;&gt; s : listen()
-c -&gt;&gt; c : connect()
-c -&gt;&gt; s : 1. SYN
-Note left of c : SYN_SEND
-s -&gt;&gt; sq : put
-Note right of s : SYN_RCVD
-s -&gt;&gt; c : 2. SYN + ACK
-Note left of c : ESTABLISHED
-c -&gt;&gt; s : 3. ACK
-sq -&gt;&gt; aq : put
-Note right of s : ESTABLISHED
-aq --&gt;&gt; s : 
-s -&gt;&gt; s : accept()</code></pre>
-<ol>
-<li>第一次握手，client 发送 SYN 到 server，状态修改为 SYN_SEND，server 收到，状态改变为 SYN_REVD，并将该请求放入 sync queue 队列</li>
-<li>第二次握手，server 回复 SYN + ACK 给 client，client 收到，状态改变为 ESTABLISHED，并发送 ACK 给 server</li>
-<li>第三次握手，server 收到 ACK，状态改变为 ESTABLISHED，将该请求从 sync queue 放入 accept queue</li>
-</ol>
-<p>其中</p>
-<ul>
-<li>
-<p>在 linux 2.2 之前，<strong>backlog</strong> 大小包括了两个队列的大小，在 2.2 之后，分别用下面两个参数来控制</p>
-</li>
-<li>
-<p>sync queue - 半连接队列</p>
-</li>
-<li>大小通过 /proc/sys/net/ipv4/tcp_max_syn_backlog 指定，在 <code>syncookies</code> 启用的情况下，逻辑上没有最大值限制，这个设置便被忽略</li>
-<li>accept queue - 全连接队列</li>
-<li>其大小通过 /proc/sys/net/core/somaxconn 指定，在使用 listen 函数时，内核会根据传入的 backlog 参数与系统参数，取二者的较小值</li>
-<li>如果 accpet queue 队列满了，server 将发送一个拒绝连接的错误信息到 client</li>
-</ul>
-<h5 id="ulimit--n-value"><em>ulimit -n value</em><a class="headerlink" href="#ulimit--n-value" title="链接到此段落">&para;</a></h5>
-<p>操作系统级别参数，设置<strong>进程可打开文件描述符数量上限</strong></p>
-<h5 id="tcp_nodelay"><em>TCP_NODELAY</em><a class="headerlink" href="#tcp_nodelay" title="链接到此段落">&para;</a></h5>
-<p><code>childOption(ChannelOption.TCP_NODELAY, true)</code> <em>// 关键配置</em></p>
-<ul>
-<li><strong>Nagle 算法</strong>：TCP 默认启用该算法，会缓冲小数据包（等待一定时间或数据量达到 MSS 最大报文段大小），合并发送以减少网络拥塞。</li>
-<li><strong><code>TCP_NODELAY=true</code></strong>：禁用 Nagle 算法，数据立即发送，<strong>降低延迟</strong>（适合交互式应用，如实时游戏、SSH、RPC）。</li>
-<li><strong><code>TCP_NODELAY=false</code></strong>：启用 Nagle 算法，<strong>提高吞吐量</strong>（适合大文件传输等延迟不敏感场景）。</li>
-</ul>
-<h5 id="allocator"><em>ALLOCATOR</em><a class="headerlink" href="#allocator" title="链接到此段落">&para;</a></h5>
-<p>用于配置 <strong>内存分配器（ByteBufAllocator）</strong>，决定如何分配和管理网络通信中的内存（ByteBuf）</p>
-<ul>
-<li><strong><code>PooledByteBufAllocator</code></strong>（默认）：基于内存池的高性能分配器，减少 GC 压力。</li>
-<li><strong><code>UnpooledByteBufAllocator</code></strong>：非池化分配器，每次请求都新建 <code>ByteBuf</code>（简单但效率低）。</li>
-<li><strong><code>PreferHeapByteBufAllocator</code></strong>：优先使用堆内存（<code>byte[]</code>）。</li>
-</ul>
-<p><code>option(ChannelOption.ALLOCATOR, new PreferHeapByteBufAllocator())</code></p>
-<p><code>option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)</code></p>
-<div class="highlight"><pre><span></span><code><span class="c1">## 指定内存池中每个区域的块大小（默认：16MB）</span>
--Dio.netty.allocator.pageSize<span class="o">=</span><span class="m">8192</span>
-<span class="c1">## 是否使用直接内存（默认：true）</span>
--Dio.netty.noPreferDirect<span class="o">=</span><span class="nb">true</span>
-<span class="c1">## 是否开启池化</span>
--Dio.netty.allocator.type<span class="o">=</span>pooled
-</code></pre></div>
 
 
 
@@ -5813,6 +5206,44 @@ s -&gt;&gt; s : accept()</code></pre>
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../Redis/%E9%9D%A2%E8%AF%95/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 面试题">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                面试题
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../Kafka/" class="md-footer__link md-footer__link--next" aria-label="下一页: Kafka">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                Kafka
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
