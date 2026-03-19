@@ -95,7 +95,11 @@ plugins:
       authors_file: "{blog}/.authors.yml"  # 作者配置文件
 markdown_extensions:
   - pymdownx.details      # 支持折叠内容块
-  - pymdownx.superfences  # 支持代码块和其他内容
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:      # 选项卡切换
       alternate_style: true
   - admonition           # 支持提示框
@@ -190,7 +194,8 @@ nav:
       - 最佳实践: Redis/最佳实践.md
       - 面试题: Redis/面试.md
   - 网络与中间件:
-    - Netty: Netty/Netty.md
+    - Netty: 
+      - NIO基础: Netty/NIO基础.md
     - Kafka: Kafka.md
     - Zookeeper: Zookeeper.md
   - 运维技术:
@@ -199,9 +204,11 @@ nav:
   - 开发工具:
     - Git: Git/Git.md
   - 其他:
-    - 系统相关: 系统相关.md
+    - Windows: Windows.md
 
 extra:
+  mermaid2:
+    theme: neutral
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/yayahonghong

@@ -1,20 +1,15 @@
-# Netty
-
-
 !!!note
     Netty 网络编程开坑！！！q(≧▽≦q)
 
-## *NIO*基础
 
-> [!Tip]
->
-> *NIO*：*Non-blocking I/O* 或 *New I/O*
+!!!tip
+    *NIO*：*Non-blocking I/O* 或 *New I/O*
 
 ### 三大组件
 
 #### *Channel* & *Buffer*
 
-channel 有一点类似于 stream，它就是读写数据的**双向通道**，可以从 channel 将数据读入 buffer，也可以将 buffer 的数据写入 channel，而之前的 stream 要么是输入，要么是输出，channel 比 stream 更为底层
+channel 有一点类似于 stream，它是读写数据的**双向通道**，可以从 channel 将数据读入 buffer，也可以将 buffer 的数据写入 channel，而之前的 stream 要么是输入，要么是输出，channel 比 stream 更为底层
 
 ```mermaid
 graph LR
@@ -29,7 +24,7 @@ buffer --> channel
 * SocketChannel
 * ServerSocketChannel
 
-buffer 则用来缓冲读写数据，常见的 buffer 有
+Buffer 则用来缓冲读写数据，常见的 Buffer 有
 
 * ByteBuffer
   * MappedByteBuffer
@@ -81,7 +76,7 @@ t5(thread) -.-> s7(socket4)
 end
 ```
 
-**线程池版缺点⚠️**
+**线程池版缺点⚠**
 
 * 阻塞模式下，线程仅能处理一个 socket 连接
 * 仅适合短连接场景
@@ -90,7 +85,8 @@ end
 
 ##### selector 版设计
 
-selector 的作用就是配合**一个线程**来管理多个 channel，获取这些 channel 上发生的事件，这些 channel 工作在非阻塞模式下，不会让线程吊死在一个 channel 上。适合连接数特别多，但流量低的场景（low traffic）
+
+selector 的作用就是配合**一个线程**来管理多个 channel，获取这些 channel 上发生的事件。这些 channel 工作在非阻塞模式下，当某个 channel 没有事件时不会让线程阻塞在它上面。适合连接数特别多，但每条连接的流量低的场景（low traffic）
 
 ```mermaid
   graph TD
@@ -226,16 +222,15 @@ channel.write(buffer);
 buffer.get();
 ```
 
-> [!Note]
->
-> ```java
-> buffer.get(i);	// 读取下标i的数据，不会改变position的值
-> 
-> buffer.rewind(); // 重新从开始位置读取
-> 
-> buffer.mark();	// 在该位置做一个标记
-> buffer.reset();	// 重置到mark标记位置
-> ```
+!!!note
+    ```java
+    buffer.get(i);	// 读取下标i的数据，不会改变position的值
+
+    buffer.rewind(); // 重新从开始位置读取
+
+    buffer.mark();	// 在该位置做一个标记
+    buffer.reset();	// 重置到mark标记位置
+    ```
 
 
 
@@ -253,9 +248,8 @@ String str = StandardCharsets.UTF_8.decode(buffer).toString();
 
 
 
-> [!Warning]
->
-> Buffer 是**非线程安全的**
+!!!warning
+    Buffer 是**非线程安全的**
 
 
 
@@ -273,7 +267,7 @@ try (RandomAccessFile file = new RandomAccessFile("3parts.txt", "rw")) {
     a.flip();
     b.flip();
     c.flip();
-	// ...
+    // ...
 } catch (IOException e) {
     e.printStackTrace();
 }
@@ -308,9 +302,8 @@ try (RandomAccessFile file = new RandomAccessFile("3parts.txt", "rw")) {
 
 #### FileChannel
 
-> [!Warning]
->
-> FileChannel 只能工作在阻塞模式下
+!!!warning
+    FileChannel 只能工作在阻塞模式下
 
 ##### 得到FileChannel
 
@@ -344,11 +337,11 @@ while(buffer.hasRemaining()) {
 }
 ```
 
-> [!Tip]
->
-> 出于性能的考虑，操作系统会将数据缓存，不会立刻写入磁盘。
->
-> 可以调用 force(true)  方法将文件内容和元数据（文件的权限等信息）立刻写入磁盘。
+
+!!!note
+    出于性能的考虑，操作系统会将数据缓存，不会立刻写入磁盘。
+
+    可以调用 force(true)  方法将文件内容和元数据（文件的权限等信息）立刻写入磁盘。
 
 
 
@@ -388,22 +381,20 @@ String TO = "to.txt";
 
 try (FileChannel from = new FileInputStream(FROM).getChannel();
      FileChannel to = new FileOutputStream(TO).getChannel();) {
-	// 传输数据，利用操作系统零拷贝优化效率高
+    // 传输数据，利用操作系统零拷贝优化效率高
     from.transferTo(0, from.size(), to);
 } catch (IOException e) {
     e.printStackTrace();
 }
 ```
 
-> [!Caution]
->
-> channel一次性最大支持2G数据传输，超过2G的文件可进行多次传输
->
-> ```java
-> for (long left = size; left > 0; ) {
->     left -= from.transferTo((size - left), left, to);
-> }
-> ```
+!!!warning
+    channel一次性最大支持2G数据传输，超过2G的文件可进行多次传输
+    ```java
+    for (long left = size; left > 0; ) {
+        left -= from.transferTo((size - left), left, to);
+    }
+    ```
 
 
 
@@ -487,14 +478,13 @@ while (true) {
 }
 ```
 
-> [!Tip]
->
-> ```java
-> // 设置为非阻塞模式
-> ServerSocketChannel.configureBlocking(false);
-> 
-> SocketChannel.configureBlocking(false);
-> ```
+!!!tips
+    ```java
+    // 设置为非阻塞模式
+    ServerSocketChannel.configureBlocking(false);
+
+    SocketChannel.configureBlocking(false);
+    ```
 
 
 
@@ -564,16 +554,14 @@ int count = selector.selectNow();
 
 #####  select 何时不阻塞
 
-> [!Tip]
->
-> * 事件发生时
->   * 客户端发起连接请求，会触发 accept 事件
->   * 客户端发送数据过来，客户端正常、异常关闭时，都会触发 read 事件，另外如果发送的数据大于 buffer 缓冲区，会触发多次读取事件
->   * channel 可写，会触发 write 事件
->   * 在 linux 下 nio bug 发生时
-> * 调用 selector.wakeup()
-> * 调用 selector.close()
-> * selector 所在线程 interrupt
+* 事件发生时
+  * 客户端发起连接请求，会触发 accept 事件
+  * 客户端发送数据过来，客户端正常、异常关闭时，都会触发 read 事件，另外如果发送的数据大于 buffer 缓冲区，会触发多次读取事件
+  * channel 可写，会触发 write 事件
+  * 在 linux 下 nio bug 发生时
+* 调用 selector.wakeup()
+* 调用 selector.close()
+* selector 所在线程 interrupt
 
 
 
@@ -583,7 +571,7 @@ int count = selector.selectNow();
     public static void main(String[] args) {
         try (ServerSocketChannel channel = ServerSocketChannel.open()) {
             channel.bind(new InetSocketAddress(8080));
-			// 创建selector并注册事件
+            // 创建selector并注册事件
             Selector selector = Selector.open();
             channel.configureBlocking(false);
             channel.register(selector, SelectionKey.OP_ACCEPT);
@@ -614,17 +602,16 @@ int count = selector.selectNow();
     }
 ```
 
-> [!Important]
->
-> 事件发生后，要么处理，要么取消（cancel），不能什么都不做，否则下次该事件仍会触发，这是因为 nio 底层使用的是水平触发
+!!!important
+    事件发生后，要么处理，要么取消（cancel），不能什么都不做，否则下次该事件仍会触发，这是因为 nio 底层使用的是水平触发
 
 
 
 #### 处理read事件
 
 ```java
-	public static void main(String[] args) {
-		try (ServerSocketChannel channel = ServerSocketChannel.open()) {
+    public static void main(String[] args) {
+        try (ServerSocketChannel channel = ServerSocketChannel.open()) {
             channel.bind(new InetSocketAddress(8080));
 
             Selector selector = Selector.open();
@@ -668,12 +655,14 @@ int count = selector.selectNow();
     }
 ```
 
-> [!Note]
->
-> 1.  为什么要 iter.remove()
->    - 因为 select 在事件发生后，就会将相关的 key 放入 selectedKeys 集合，但不会在处理完后从 selectedKeys 集合中移除，需要我们自己编码删除，否则后续还会再次触发该事件。
-> 2.  cancel 的作用
->    - cancel 会取消注册在 selector 上的 channel，并从 keys 集合中删除 key 后续不会再监听事件
+!!!note
+    为什么要 iter.remove()
+
+        - 因为 select 在事件发生后，就会将相关的 key 放入 selectedKeys 集合，但不会在处理完后从 selectedKeys 集合中移除，需要我们自己编码删除，否则后续还会再次触发该事件。
+
+    cancel 的作用
+    
+        - cancel 会取消注册在 selector 上的 channel，并从 keys 集合中删除 key 后续不会再监听事件
 
 
 
@@ -969,8 +958,8 @@ public static void main(String[] args) throws IOException {
 * server 这边的 receive 方法会将接收到的数据存入 byte buffer，但如果数据报文超过 buffer 大小，多出来的数据会被默默抛弃
 
 ```java
-	// 服务端
-	public static void main(String[] args) {
+    // 服务端
+    public static void main(String[] args) {
         try (DatagramChannel channel = DatagramChannel.open()) {
             channel.socket().bind(new InetSocketAddress(8080));
             ByteBuffer buffer = ByteBuffer.allocate(32);
@@ -982,7 +971,7 @@ public static void main(String[] args) throws IOException {
         }
     }
 
-	// 客户端
+    // 客户端
     public static void main(String[] args) {
         try (DatagramChannel channel = DatagramChannel.open()) {
             ByteBuffer buffer = StandardCharsets.UTF_8.encode("hello");
@@ -1231,889 +1220,4 @@ socket.getOutputStream().write(buf);
 >
 > 文件异步IO使用的是守护线程，即其他所有线程结束，该线程也会立即结束而不会完成后续任务
 
-
-
-## Netty基础
-
-入门示例：
-
-```java
-        // 服务端
-		new ServerBootstrap()
-                .group(new NioEventLoopGroup())
-                // 服务端Channel实现
-                .channel(NioServerSocketChannel.class)
-                // 负责读写
-                .childHandler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel channel) {
-                        // 将消息转换为字符串
-                        channel.pipeline().addLast(new StringDecoder());
-                        // 处理接收到的消息
-                        channel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) {
-                                log.info("received a message: {}", msg);
-                            }
-                        });
-                    }
-                })
-                .bind(8080);
-
-		
-		// 客户端
-        new Bootstrap()
-                .group(new NioEventLoopGroup())
-                .channel(NioSocketChannel.class)
-                // 处理器
-                .handler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel ch) {
-                        // 将字符串转换为字节数组
-                        ch.pipeline().addLast(new StringEncoder());
-                    }
-                })
-                .connect(new InetSocketAddress("localhost", 8080))
-                .sync() // 阻塞等待连接建立
-                .channel()
-                .writeAndFlush("Hello, Netty!");
-```
-
-
-
-### 组件
-
-#### *EventLoop*
-
-**事件循环对象**，*EventLoop* 本质是一个单线程执行器（同时维护了一个 Selector），处理 Channel 上源源不断的 io 事件。
-
-1. **单线程设计**：每个EventLoop在其生命周期内只使用一个线程
-2. **事件循环**：不断检查是否有新的事件需要处理
-3. **任务队列**：维护一个任务队列用于执行非I/O任务
-4. **线程安全**：确保所有任务按顺序执行
-
-
-
-**事件循环组**，*EventLoopGroup* 是一组 EventLoop，Channel 一般会调用 EventLoopGroup 的 register 方法来绑定其中一个 EventLoop，后续这个 Channel 上的 io 事件都由此 EventLoop 来处理（保证了 io 事件处理时的线程安全）
-
-
-
-> [!Tip]
->
-> 1. 避免在EventLoop中执行长时间阻塞的操作
-> 2. 将耗时操作放入业务线程池处理
-> 3. 合理配置EventLoopGroup的线程数（通常与CPU核心数相关）
-
-
-
-IO事件可以由多个Handler处理，而且这些Handler可以在不同的EventLoopGroup中，Handler间交接任务的源码如下
-
-```java
-static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
-    final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
-    // 下一个 handler 的事件循环是否与当前的事件循环是同一个线程
-    EventExecutor executor = next.executor();
-    
-    // 是，直接调用
-    if (executor.inEventLoop()) {
-        next.invokeChannelRead(m);
-    } 
-    // 不是，将要执行的代码作为任务提交给下一个事件循环处理（换人）
-    else {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                next.invokeChannelRead(m);
-            }
-        });
-    }
-}
-```
-
-
-
-#### *Channel*
-
-* close() 可以用来关闭 channel
-* closeFuture() 用来处理 channel 的关闭
-  * sync() 方法作用是同步等待 channel 关闭
-  * 而 addListener() 方法是异步等待 channel 关闭
-* pipeline() 方法添加处理器
-* write() 方法将数据写入
-* writeAndFlush() 方法将数据写入并刷出
-
-
-
-##### *ChannelFuture*
-
-1. **异步通知机制**：通过添加监听器获取操作完成通知
-2. **操作状态查询**：可检查操作是否完成、成功或取消
-3. **不可变性**：一旦创建，结果不可改变
-4. **链式操作**：支持添加多个监听器
-
-```java
-// 添加监听器，操作完成时回调
-ChannelFuture addListener(GenericFutureListener<? extends Future<? super Void>> listener);
-
-// 移除监听器
-ChannelFuture removeListener(GenericFutureListener<? extends Future<? super Void>> listener);
-
-// 等待操作完成（阻塞当前线程）
-ChannelFuture sync() throws InterruptedException;
-
-// 操作是否完成
-boolean isDone();
-
-// 操作是否成功
-boolean isSuccess();
-
-// 取消操作（Netty中通常不支持）
-boolean cancel(boolean mayInterruptIfRunning);
-```
-
-
-
-> [!Note]
->
-> 客户端的connect方法是异步方法，并不会等待连接建立成功，所以需要ChannelFuture来同步获取连接的Channel
-
-```java
-        ChannelFuture channelFuture = new Bootstrap()
-                .group(new NioEventLoopGroup())
-                .channel(NioSocketChannel.class)
-                // 处理器
-                .handler(...)
-                .connect(new InetSocketAddress("localhost", 8080));
-        channelFuture.sync(); // 等待连接建立
-        Channel channel = channelFuture.channel();
-        channel.writeAndFlush("Hello, Netty!");
-```
-
-> [!Tip]
->
-> 或者为ChannelFuture添加监视器来等待操作完成，自动回调
-
-
-
-##### 正确关闭Channel
-
-`channel.close()`也是一个异步操作，如果在关闭后才能进行其他任务，需要使用同步方法或者监听器
-
-```java
-        // 同步等待
-		ChannelFuture closeFuture = channel.closeFuture();
-        closeFuture.sync();
-        // 其他操作
-        log.debug("关闭连接");
-
-		
-		// 或者添加监听器
-        closeFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                //...
-            }
-        });
-```
-
-> [!Tip]
->
-> 以上操作之后保证在`channel.close()`成功后执行
-
-
-
-##### 关闭Netty
-
-```java
-        NioEventLoopGroup group = new NioEventLoopGroup();
-		//初始化Netty
-		//...
-		group.shutdownGracefully();
-```
-
-
-
-
-
-#### *Future* & *Promise*
-
-```mermaid
-graph LR
-subgraph 继承体系
-Netty-Future --> JDK-Future
-Promise --> Netty-Future
-end
-```
-
-* jdk Future 只能同步等待任务结束（或成功、或失败）才能得到结果
-* netty Future 可以同步等待任务结束得到结果，也可以异步方式得到结果，但都是要等任务结束
-* netty Promise 不仅有 netty Future 的功能，而且脱离了任务独立存在，只作为两个线程间传递结果的容器
-
-
-
-**常用方法**：
-
-| 功能/名称    | jdk Future                     | netty Future                                                 | Promise      |
-| ------------ | ------------------------------ | ------------------------------------------------------------ | ------------ |
-| cancel       | 取消任务                       | -                                                            | -            |
-| isCanceled   | 任务是否取消                   | -                                                            | -            |
-| isDone       | 任务是否完成，不能区分成功失败 | -                                                            | -            |
-| get          | 获取任务结果，阻塞等待         | -                                                            | -            |
-| getNow       | -                              | 获取任务结果，非阻塞，还未产生结果时返回 null                | -            |
-| await        | -                              | 等待任务结束，如果任务失败，不会抛异常，而是通过 isSuccess 判断 | -            |
-| sync         | -                              | 等待任务结束，如果任务失败，抛出异常                         | -            |
-| isSuccess    | -                              | 判断任务是否成功                                             | -            |
-| cause        | -                              | 获取失败信息，非阻塞，如果没有失败，返回null                 | -            |
-| addLinstener | -                              | 添加回调，异步接收结果                                       | -            |
-| setSuccess   | -                              | -                                                            | 设置成功结果 |
-| setFailure   | -                              | -                                                            | 设置失败结果 |
-
-
-
-#### *Handler* & *Pipeline*
-
-ChannelHandler 用来处理 Channel 上的各种事件，分为入站、出站两种。所有 ChannelHandler 被连成一串，就是 Pipeline
-
-* 入站处理器通常是 ChannelInboundHandlerAdapter 的子类，主要用来读取客户端数据，写回结果
-* 出站处理器通常是 ChannelOutboundHandlerAdapter 的子类，主要对写回结果进行加工
-
-![image-20250517175356906](./images/image-20250517175356906.png)
-
-> [!Tip]
->
-> 入站顺序 从左到右
->
-> 出站顺序 从右到左
->
-> Handler间通过ChannelHandlerContext.fireChannelRead(msg)传递处理的数据
-
-> [!Warning]
->
-> * ChannelHandlerContext.channel().write(msg) 从尾部开始查找出站处理器
-> * ChannelHandlerContext.write(msg) 是从当前节点找上一个出站处理器
-
-
-
-#### *ByteBuf*
-
-> [!Tip]
->
-> Netty中的ByteBuf对NIO中的ByteBuffer进行了功能增强
->
-> **优势**：
->
-> * 池化 - 可以重用池中 ByteBuf 实例，更节约内存，减少内存溢出的可能
-> * 读写指针分离，不需要像 ByteBuffer 一样切换读写模式
-> * 可以自动扩容
-> * 支持链式调用，使用更流畅
-> * 很多地方体现零拷贝，例如 slice、duplicate、CompositeByteBuf
-
-##### 创建
-
-```java
-// 直接内存
-ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(10);
-ByteBuf buffer = ByteBufAllocator.DEFAULT.directBuffer(10);
-
-// Java堆内存
-ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer(10);
-```
-
-> [!Note]
->
-> * 直接内存创建和销毁的代价昂贵，但读写性能高（少一次内存复制），适合配合池化功能一起用
-> * 直接内存对 GC 压力小，因为这部分内存不受 JVM 垃圾回收的管理，但也要注意及时主动释放
-
-
-
-##### 池化
-
-池化的最大意义在于可以**重用** ByteBuf
-
-* 没有池化，则每次都得创建新的 ByteBuf 实例，这个操作对直接内存代价昂贵，就算是堆内存，也会增加 GC 压力
-* 有了池化，则可以重用池中 ByteBuf 实例，并且采用了与 jemalloc 类似的内存分配算法提升分配效率
-* 高并发时，池化功能更节约内存，减少内存溢出的可能
-
-> [!Tip]
->
-> 默认开启池化，可通过`-Dio.netty.allocator.type={unpooled|pooled}`配置
-
-
-
-##### 结构
-
-![image-20250517181626745](./images/image-20250517181626745.png)
-
-
-
-##### 写入
-
-| 方法签名                                                     | 含义                   | 备注                                                |
-| ------------------------------------------------------------ | ---------------------- | --------------------------------------------------- |
-| writeBoolean(boolean value)                                  | 写入 boolean 值        | 用一字节 01\|00 代表true\|false                     |
-| writeByte(int value)                                         | 写入 byte 值           |                                                     |
-| writeShort(int value)                                        | 写入 short 值          |                                                     |
-| writeInt(int value)                                          | 写入 int 值            | （大端）Big Endian，即 0x250，写入后 00 00 02 50    |
-| writeIntLE(int value)                                        | 写入 int 值            | （小端）Little Endian，即 0x250，写入后 50 02 00 00 |
-| writeLong(long value)                                        | 写入 long 值           |                                                     |
-| writeChar(int value)                                         | 写入 char 值           |                                                     |
-| writeFloat(float value)                                      | 写入 float 值          |                                                     |
-| writeDouble(double value)                                    | 写入 double 值         |                                                     |
-| writeBytes(ByteBuf src)                                      | 写入 netty 的 ByteBuf  |                                                     |
-| writeBytes(byte[] src)                                       | 写入 byte[]            |                                                     |
-| writeBytes(ByteBuffer src)                                   | 写入 nio 的 ByteBuffer |                                                     |
-| int writeCharSequence(CharSequence sequence, Charset charset) | 写入字符串             |                                                     |
-
-
-
-##### 读取
-
-读过的内容，就属于废弃部分了，再读只能读那些尚未读取的部分，可以在 read 前先做个标记 mark
-
-```java
-buffer.markReaderIndex();
-// ...
-buffer.resetReaderIndex();
-```
-
-
-
-##### 扩容
-
-扩容规则是
-
-* 如何写入后数据大小**未超过 512**，则选择下一个 16 的整数倍，例如写入后大小为 12 ，则扩容后 capacity 是 16
-* 如果写入后数据大小**超过 512**，则选择下一个 2^n，例如写入后大小为 513，则扩容后 capacity 是 2^10=1024
-* 扩容不能超过 max capacity
-
-
-
-##### 内存回收
-
-> [!Tip]
->
-> 主要针对直接内存
-
-* UnpooledHeapByteBuf 使用的是 JVM 内存，只需等 GC 回收内存即可
-* UnpooledDirectByteBuf 使用的就是直接内存了，需要特殊的方法来回收内存
-* PooledByteBuf 和它的子类使用了池化机制，需要更复杂的规则来回收内存
-
-
-
-Netty 采用了**引用计数法**（可参考笔记JVM垃圾回收篇）来控制回收内存，每个 ByteBuf 都实现了 ReferenceCounted 接口
-
-* 每个 ByteBuf 对象的初始计数为 1
-* 调用 **release** 方法计数减 1，如果计数为 0，ByteBuf 内存被回收
-* 调用 **retain** 方法计数加 1，表示调用者没用完之前，其它 handler 即使调用了 release 也不会造成回收
-* 当计数为 0 时，底层内存会被回收，这时即使 ByteBuf 对象还在，其各个方法均无法正常使用
-
-
-
-**一些实践规则**：
-
-* 入站 ByteBuf 处理原则
-  * 对原始 ByteBuf 不做处理，调用 ctx.fireChannelRead(msg) 向后传递，这时无须 release
-  * 将原始 ByteBuf **转换为其它类型**的 Java 对象，这时 ByteBuf 就没用了，**必须 release**
-  * 如果不调用 ctx.fireChannelRead(msg) 向后传递，那么也必须 release
-  * 注意各种异常，如果 ByteBuf 没有成功传递到下一个 ChannelHandler，必须 release
-  * 假设消息一直向后传，那么 TailContext 会负责释放未处理消息（原始的 ByteBuf）
-* 出站 ByteBuf 处理原则
-  * 出站消息最终都会转为 ByteBuf 输出，一直向前传，由 HeadContext flush 后 release
-
-
-
-##### 切片
-
-> [!Tip]
->
-> ByteBuf的切片(Slice)是Netty提供的一种零拷贝机制，允许在不实际复制数据的情况下创建现有缓冲区的**视图**(view)。
-
-切片操作会创建一个新的ByteBuf实例，该实例与原始缓冲区共享相同的内存区域，但有自己的读写索引和标记。
-
-**特点**：
-
-- **零拷贝**：不实际复制数据，减少内存开销
-- **共享底层存储**：多个切片共享同一块内存
-- **独立索引**：每个切片有自己的读写索引
-- **视图限制**：切片只能访问原始缓冲区的一部分
-
-```java
-// 创建一个从readerIndex开始到writerIndex结束的切片
-ByteBuf slice = buffer.slice();
-
-// 创建一个从指定index开始，指定length长度的切片
-ByteBuf slice = buffer.slice(offset, length);
-
-// 创建一个切片并增加引用计数(防止原始缓冲区被释放)
-ByteBuf slice = buffer.retainedSlice();
-```
-
-> [!Caution]
->
-> 原始的ByteBuf释放内存后，其切片就无法使用了，建议使用原始ByteBuf的`retainedSlice()`增加引用计数，或者切片的`retain()`方法
-
-
-
-##### 其他
-
-1. duplicate
-
-【零拷贝】的体现之一，就好比截取了原始 ByteBuf 所有内容，并且没有 max capacity 的限制，也是与原始 ByteBuf 使用同一块底层内存，只是读写指针是独立的
-
-
-
-2. copy
-
-会将底层内存数据进行**深拷贝**，因此无论读写，都与原始 ByteBuf 无关
-
-
-
-3. CompositeByteBuf
-
-【零拷贝】的体现之一，可以将多个 ByteBuf **合并**为一个逻辑上的 ByteBuf，避免拷贝
-
-```java
-CompositeByteBuf buf3 = ByteBufAllocator.DEFAULT.compositeBuffer();
-// true 表示增加新的 ByteBuf 自动递增 write index, 否则 write index 会始终为 0
-buf3.addComponents(true, buf1, buf2);
-```
-
-
-
-4. Unpooled
-
-Unpooled 是一个工具类，类如其名，提供了非池化的 ByteBuf 创建、组合、复制等操作
-
-其跟【零拷贝】相关的 wrappedBuffer 方法，可以用来包装 ByteBuf
-
-
-
----
-
-## Netty进阶
-
-### 粘包&半包
-
-在基于流的传输协议（如TCP）中，数据是以字节流的形式传输的，没有明确的消息边界，这会导致：
-
-1. **粘包（TCP粘包）**：发送方发送的多个数据包被接收方当作一个数据包接收
-2. **半包（拆包）**：接收方一次没有接收到完整的数据包，只接收了部分数据
-
-
-
-**原因**：
-
-1. **粘包原因**：
-   - 发送方使用Nagle算法，将多个小数据包合并发送
-   - 接收方缓冲区较大，一次读取了多个数据包
-2. **半包原因**：
-   - 发送的数据包大于接收方缓冲区大小
-   - 发送的数据包大于TCP最大报文长度
-   - 网络传输过程中发生分片
-
-
-
-#### 解决方案
-
-Netty提供了多种解码器来处理粘包和半包问题：
-
-1. 固定长度解码器 FixedLengthFrameDecoder
-
-- 每个数据包都严格按照固定长度进行拆分
-- 当累积读取到指定长度的数据后，解码器会将其作为一个完整消息
-
-```java
-// 每个数据包固定长度为100字节
-ch.pipeline().addLast(new FixedLengthFrameDecoder(100));
-```
-
-**特点**：
-
-- 实现简单
-- 效率高
-- 不够灵活，浪费带宽（需要填充数据）
-
-
-
-2. 行分隔符解码器 LineBasedFrameDecoder
-
-- 以换行符(`\n`或`\r\n`)作为消息分隔符
-
-```java
-// 以换行符(\n或\r\n)作为消息分隔符
-ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
-```
-
-
-
-3. 分隔符解码器 DelimiterBasedFrameDecoder
-
-```java
-// 使用自定义分隔符
-ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
-ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
-```
-
-
-
-4. 长度字段解码器 LengthFieldBasedFrameDecoder
-
-- 基于消息头中的长度字段来标识整个消息的长度
-- 高度可配置，能适应各种协议格式
-
-```java
-// 参数说明：
-// maxFrameLength - 最大帧长度
-// lengthFieldOffset - 长度字段偏移量
-// lengthFieldLength - 长度字段字节数
-// lengthAdjustment - 长度调整值（长度字段之后还有多少字节才是内容）
-// initialBytesToStrip - 需要跳过的字节数
-ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(
-    1024 * 1024, 
-    0, 
-    4, 
-    0, 
-    4));
-```
-
-
-
-自定义协议示例
-
-```java
-// 协议格式: [长度][内容]
-public class MyProtocolDecoder extends ByteToMessageDecoder {
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        if (in.readableBytes() < 4) {
-            return; // 长度字段不足，等待更多数据
-        }
-        
-        in.markReaderIndex(); // 标记读取位置
-        int length = in.readInt();
-        
-        if (in.readableBytes() < length) {
-            in.resetReaderIndex(); // 数据不足，重置读取位置
-            return;
-        }
-        
-        byte[] content = new byte[length];
-        in.readBytes(content);
-        out.add(new String(content, StandardCharsets.UTF_8));
-    }
-}
-```
-
-
-
-### Netty的HTTP
-
-```java
-        new ServerBootstrap()
-                .group(new NioEventLoopGroup())
-                // 服务端Channel实现
-                .channel(NioServerSocketChannel.class)
-                // 负责读写
-                .childHandler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel channel) {
-                        channel.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
-
-                        // Http编解码器
-                        channel.pipeline().addLast(new HttpServerCodec());
-
-                        channel.pipeline().addLast(new SimpleChannelInboundHandler<HttpRequest>() {
-                            @Override
-                            protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) {
-                                DefaultFullHttpResponse res = new DefaultFullHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK);
-                                byte[] bytes = "Hello Netty".getBytes(StandardCharsets.UTF_8);
-                                res.content().writeBytes(bytes);
-                                // 设置响应内容长度
-                                res.headers().setInt(CONTENT_LENGTH, bytes.length);
-                                ctx.writeAndFlush(res);
-                            }
-                        });
-                    }
-                })
-                .bind(8080);
-```
-
-
-
-### 自定义协议
-
-1. **协议标识**
-
-- **协议名称/版本**：明确协议标识及版本号，便于兼容性管理。
-- **端口号**：约定服务端监听端口（如HTTP-80，HTTPS-443），需避免冲突。
-
-------
-
-2. **消息结构**
-
-- 帧格式：定义消息头（Header）和消息体（Body）的组成。
-  - **Header**：包含元数据（如消息类型、长度、状态码、时间戳）。
-  - **Body**：承载实际数据（如JSON、二进制流）。
-- **边界标识**：通过定长字段、分隔符（如`\r\n`）或长度前缀标记消息边界。
-
-------
-
-3. **数据编码**
-
-- **序列化方式**：JSON（易读）、Protocol Buffers（高效）、XML（结构化）或自定义二进制格式。
-- **字符编码**：如UTF-8，确保多语言兼容。
-
-------
-
-4. **交互模型**
-
-- **通信模式**：请求-响应（如HTTP）、发布-订阅（如MQTT）或单向推送。
-- **状态管理**：无状态（如HTTP）或有状态（如FTP控制连接）。
-
-------
-
-5. **错误处理**
-
-- **错误码/消息**：定义标准错误码（如`404-Not Found`）和恢复机制。
-- **重试策略**：超时后重试次数、退避算法（Exponential Backoff）。
-
-------
-
-6. **安全机制**
-
-- **认证**：API Key、OAuth 2.0、JWT等。
-- **加密**：TLS/SSL传输加密或端到端加密（如Signal协议）。
-- **防篡改**：数字签名（HMAC）验证数据完整性。
-
-------
-
-7. **性能优化**
-
-- **压缩**：Gzip、Brotli减少传输体积。
-- **长连接**：复用TCP连接（如HTTP/2多路复用）。
-- **缓存控制**：类似HTTP的`Cache-Control`头。
-
-------
-
-8. **扩展性设计**
-
-- **预留字段**：Header中保留扩展位或自定义字段。
-- **版本协商**：客户端与服务端协商支持的协议版本（如TLS握手）。
-
-------
-
-9. **流量控制**
-
-- **限速机制**：令牌桶算法限制请求速率。
-- **拥塞控制**：动态调整发送窗口（类似TCP）。
-
-------
-
-10. **调试与日志**
-
-- **请求ID**：唯一标识请求，便于链路追踪。
-- **日志格式**：结构化日志（如JSON）记录关键事件。
-
-
-
-
-
-示例：
-
-* 魔数，用来在第一时间判定是否是无效数据包
-* 版本号，可以支持协议的升级
-* 序列化算法，消息正文到底采用哪种序列化反序列化方式，可以由此扩展，例如：json、protobuf、hessian、jdk
-* 指令类型
-* 请求序号，为了双工通信，提供异步能力
-* 正文长度
-* 消息正文
-
-
-
-**自定义编解码器**：
-
-```java
-@Slf4j
-public class MessageCodec extends ByteToMessageCodec<Message> {
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
-        // 4 字节的魔数
-        out.writeBytes(new byte[]{1, 2, 3, 4});
-        // 1 字节的版本,
-        out.writeByte(1);
-        // 1 字节的序列化方式 jdk 0 , json 1
-        out.writeByte(0);
-        // 1 字节的指令类型
-        out.writeByte(msg.getMessageType());
-        // 4 个字节
-        out.writeInt(msg.getSequenceId());
-        // 无意义，对齐填充
-        out.writeByte(0xff);
-        // 获取内容的字节数组
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(msg);
-        byte[] bytes = bos.toByteArray();
-        // 长度
-        out.writeInt(bytes.length);
-        // 写入内容
-        out.writeBytes(bytes);
-    }
-
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        int magicNum = in.readInt();
-        byte version = in.readByte();
-        byte serializerType = in.readByte();
-        byte messageType = in.readByte();
-        int sequenceId = in.readInt();
-        in.readByte();
-        int length = in.readInt();
-        byte[] bytes = new byte[length];
-        in.readBytes(bytes, 0, length);
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-        Message message = (Message) ois.readObject();
-        log.debug("{}, {}, {}, {}, {}, {}", magicNum, version, serializerType, messageType, sequenceId, length);
-        log.debug("{}", message);
-        out.add(message);
-    }
-}
-```
-
-> [!Warning]
->
-> 以上编解码不能解决粘包半包问题，仍然需要在pipeline中添加`LengthFieldBasedFrameDecoder`帧解码器
-
-
-
-> [!Note]
->
-> `@Sharable`注解在Netty中用于标记线程安全的Handler
->
-> - 如`LengthFieldBasedFrameDecoder`，其未使用注解标记，会产生线程安全问题（每个Channel都应该使用新的实例），主要原因是该解码器需要记录半包消息等待消息完全到达，属于**有状态的类**
->
-> - 对于编解码器类（一般线程安全），不应该继承 `ByteToMessageCodec` 或 `CombinedChannelDuplexHandler` ，因为其被限制了不能使用`@Sharable`注解
->
-> - `MessageToMessageCodec`父类的子类可以使用`@Sharable`注解
-
-
-
-
-
-### 优化
-
-#### 参数调优
-
-##### *CONNECT_TIMEOUT_MILLIS*
-
-* 属于 SocketChannal 参数
-* 用在客户端建立连接时，如果在指定毫秒内无法连接，会抛出 timeout 异常
-
-
-
-客户端进行配置：
-
-```java
-bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
-```
-
-
-
-> [!Tip]
->
-> 在客户端
->
-> ```java
-> serverBootstrap.option();       // 配置服务端参数
-> serverBootstrap.childOption();  // 配置客户端参数
-> ```
-
-
-
-##### *SO_BACKLOG*
-
-- 服务器端配置
-- 通过  `option(ChannelOption.SO_BACKLOG, value)` 来设置大小
-
-```mermaid
-sequenceDiagram
-
-participant c as client
-participant s as server
-participant sq as syns queue
-participant aq as accept queue
-
-s ->> s : bind()
-s ->> s : listen()
-c ->> c : connect()
-c ->> s : 1. SYN
-Note left of c : SYN_SEND
-s ->> sq : put
-Note right of s : SYN_RCVD
-s ->> c : 2. SYN + ACK
-Note left of c : ESTABLISHED
-c ->> s : 3. ACK
-sq ->> aq : put
-Note right of s : ESTABLISHED
-aq -->> s : 
-s ->> s : accept()
-```
-
-1. 第一次握手，client 发送 SYN 到 server，状态修改为 SYN_SEND，server 收到，状态改变为 SYN_REVD，并将该请求放入 sync queue 队列
-2. 第二次握手，server 回复 SYN + ACK 给 client，client 收到，状态改变为 ESTABLISHED，并发送 ACK 给 server
-3. 第三次握手，server 收到 ACK，状态改变为 ESTABLISHED，将该请求从 sync queue 放入 accept queue
-
-其中
-
-* 在 linux 2.2 之前，**backlog** 大小包括了两个队列的大小，在 2.2 之后，分别用下面两个参数来控制
-
-* sync queue - 半连接队列
-  * 大小通过 /proc/sys/net/ipv4/tcp_max_syn_backlog 指定，在 `syncookies` 启用的情况下，逻辑上没有最大值限制，这个设置便被忽略
-* accept queue - 全连接队列
-  * 其大小通过 /proc/sys/net/core/somaxconn 指定，在使用 listen 函数时，内核会根据传入的 backlog 参数与系统参数，取二者的较小值
-  * 如果 accpet queue 队列满了，server 将发送一个拒绝连接的错误信息到 client
-
-
-
-##### *ulimit -n value*
-
-操作系统级别参数，设置**进程可打开文件描述符数量上限**
-
-
-
-##### *TCP_NODELAY*
-
-`childOption(ChannelOption.TCP_NODELAY, true)` *// 关键配置*
-
-
-
-- **Nagle 算法**：TCP 默认启用该算法，会缓冲小数据包（等待一定时间或数据量达到 MSS 最大报文段大小），合并发送以减少网络拥塞。
-- **`TCP_NODELAY=true`**：禁用 Nagle 算法，数据立即发送，**降低延迟**（适合交互式应用，如实时游戏、SSH、RPC）。
-- **`TCP_NODELAY=false`**：启用 Nagle 算法，**提高吞吐量**（适合大文件传输等延迟不敏感场景）。
-
-
-
-##### *ALLOCATOR*
-
-用于配置 **内存分配器（ByteBufAllocator）**，决定如何分配和管理网络通信中的内存（ByteBuf）
-
-- **`PooledByteBufAllocator`**（默认）：基于内存池的高性能分配器，减少 GC 压力。
-- **`UnpooledByteBufAllocator`**：非池化分配器，每次请求都新建 `ByteBuf`（简单但效率低）。
-- **`PreferHeapByteBufAllocator`**：优先使用堆内存（`byte[]`）。
-
-`option(ChannelOption.ALLOCATOR, new PreferHeapByteBufAllocator())`
-
-`option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)`
-
-
-
-```bash
-## 指定内存池中每个区域的块大小（默认：16MB）
--Dio.netty.allocator.pageSize=8192
-## 是否使用直接内存（默认：true）
--Dio.netty.noPreferDirect=true
-## 是否开启池化
--Dio.netty.allocator.type=pooled
-```
 
