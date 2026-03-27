@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -3154,6 +3154,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#虚拟化-vs-容器化" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        虚拟化 VS 容器化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#安装docker" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3780,6 +3791,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#虚拟化-vs-容器化" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        虚拟化 VS 容器化
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#安装docker" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4220,6 +4242,52 @@
 <li><strong>轻量级</strong>：容器共享主机的操作系统内核，因此比虚拟机更轻量。</li>
 <li><strong>可移植性</strong>：容器可以在任何支持 Docker 的环境中运行，确保开发、测试和生产环境的一致性。</li>
 <li><strong>隔离性</strong>：每个容器都运行在独立的环境中，互不干扰。</li>
+</ul>
+<h2 id="虚拟化-vs-容器化">虚拟化 VS 容器化<a class="headerlink" href="#虚拟化-vs-容器化" title="链接到此段落">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>虚拟化（Virtualization）</th>
+<th>容器化（Containerization）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启动速度</td>
+<td>慢（分钟级）</td>
+<td>快（秒级）</td>
+</tr>
+<tr>
+<td>资源占用</td>
+<td>高（需完整操作系统）</td>
+<td>低（共享主机内核）</td>
+</tr>
+<tr>
+<td>隔离性</td>
+<td>强（独立操作系统）</td>
+<td>较强（进程级隔离）</td>
+</tr>
+<tr>
+<td>便携性</td>
+<td>一般（依赖虚拟机管理器）</td>
+<td>很好（跨平台一致性）</td>
+</tr>
+<tr>
+<td>典型技术</td>
+<td>VMware、KVM、Hyper-V</td>
+<td>Docker、Kubernetes</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>多操作系统、多租户环境</td>
+<td>微服务、持续集成、快速部署</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>虚拟化通过Hypervisor在物理服务器上运行多个虚拟机，每个虚拟机有独立的操作系统。</li>
+<li>容器化则在同一操作系统内核上运行多个容器，容器之间相互隔离但更轻量，启动更快，资源利用率更高。</li>
 </ul>
 <hr />
 <h2 id="安装docker">安装Docker<a class="headerlink" href="#安装docker" title="链接到此段落">&para;</a></h2>
